@@ -186,6 +186,8 @@ def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400
         ax2.set_ylabel('log(erreur)')
         ax2.set_title("Erreur en pression")
 
+        print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1))
+        print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1))
     if len(eps.shape) == 2:
         trace(eps)
 

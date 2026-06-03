@@ -12,12 +12,10 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600]):
     nM = len(M_li)
     eps = np.zeros((len(M_li),2))
     for i in range(nM):
-        print(i)
         data1, data2 = Donnee1D(M = int(M_li[i])), Donnee1D(M = int(M_li[i]))
         U = LaxWendroff1D(data1)
         u = analytique1D(data2)
         ti = int(t/data1.dt)
-        print(t, ti, data1.N, data1.dt)
         tracer1D_analytiqueVSnumerique(ti, data1, data2)
         eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/data1.M
     return eps

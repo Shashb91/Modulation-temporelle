@@ -80,7 +80,27 @@ def tracer1D(data,t):
 
     plt.show()
 
-def analytiqueVSnumerique(data1, data2):
+def tracer1D_analytiqueVSnumerique(t, data1, data2):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label='LaxWendroff')
+    ax1.plot(data2.x, data2.U[t, :, 0], 'b--', lw=2, label='Analytique')
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
+    ax1.legend()
+    ax1.grid(True)
+
+    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label='LaxWendroff')
+    ax2.plot(data2.x, data2.U[t, :, 1], 'r--', lw=2, label='Analytique')
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Pression p (Pa)')
+    ax2.set_title('Champ des pressions')
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.show()
+
+def anim1D_analytiqueVSnumerique(data1, data2):
     """
     Compare l'évolution de la vitesse, la pression et l'énergie avec Lax-Wendroff et la solution analytique
     :param data1: Donnee1D, regroupe l'ensemble des données du problème avec Lax Wendroff
@@ -149,3 +169,24 @@ def analytiqueVSnumerique(data1, data2):
     anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=20, blit=True)
     plt.show()
     return anim
+
+def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400)):
+    def trace(eps):
+        dx_li = xc[1]/M_li
+        fig, (ax1, ax2) = plt.subplots(1,2)
+        ax1.plot(np.log10(dx_li), np.log10(eps[:,0]), 'b.-', lw=2, ms = 8)
+        ax1.grid(True)
+        ax1.set_xlabel('dx (en m)')
+        ax1.set_ylabel('log(erreur)')
+        ax1.set_title("Erreur en vitesse")
+
+        ax2.plot(np.log10(dx_li), np.log10(eps[:,1]), 'r.-', lw=2, ms = 8)
+        ax2.grid(True)
+        ax2.set_xlabel('dx (en m)')
+        ax2.set_ylabel('log(erreur)')
+        ax2.set_title("Erreur en pression")
+
+    if len(eps.shape) == 2:
+        trace(eps)
+
+    plt.show()

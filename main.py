@@ -23,5 +23,5 @@ data2 = Donnee1D()                       #Solution analytique
 #Etude de l'évolution de l'erreur
 #=============================================================
 
-eps = erreur1D_temporel(0.1)
+eps = erreur1D(0.1)
 erreur1D_trace(eps)

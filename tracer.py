@@ -171,24 +171,23 @@ def anim1D_analytiqueVSnumerique(data1, data2):
     return anim
 
 def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400)):
-    def trace(eps):
-        dx_li = xc[1]/M_li
-        fig, (ax1, ax2) = plt.subplots(1,2)
-        ax1.plot(np.log10(dx_li), np.log10(eps[:,0]), 'b.-', lw=2, ms = 8)
-        ax1.grid(True)
-        ax1.set_xlabel('dx (en m)')
-        ax1.set_ylabel('log(erreur)')
-        ax1.set_title("Erreur en vitesse")
+    c1 = "blue"
+    c2 = "red"
 
-        ax2.plot(np.log10(dx_li), np.log10(eps[:,1]), 'r.-', lw=2, ms = 8)
-        ax2.grid(True)
-        ax2.set_xlabel('dx (en m)')
-        ax2.set_ylabel('log(erreur)')
-        ax2.set_title("Erreur en pression")
+    dx_li = xc[1]/M_li
+    fig, (ax1, ax2) = plt.subplots(1,2)
+    ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = c1, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax1.grid(True)
+    ax1.set_xlabel('dx (en m)')
+    ax1.set_ylabel('log(erreur)')
+    ax1.set_title("Erreur en vitesse")
 
-        print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1))
-        print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1))
-    if len(eps.shape) == 2:
-        trace(eps)
+    ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = c2, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax2.grid(True)
+    ax2.set_xlabel('dx (en m)')
+    ax2.set_ylabel('log(erreur)')
+    ax2.set_title("Erreur en pression")
 
+    print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1))
+    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1))
     plt.show()

@@ -16,22 +16,6 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600]):
         U = LaxWendroff1D(data1)
         u = analytique1D(data2)
         ti = int(t/data1.dt)
-        tracer1D_analytiqueVSnumerique(ti, data1, data2)
+        #tracer1D_analytiqueVSnumerique(ti, data1, data2)
         eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/data1.M
-    return eps
-
-def erreur1D_temporel(tf, nt = 4, M_li = [100, 200, 400, 800, 1600]):
-    """
-    Calcule l'erreur avec la norme L1,  avec la fonction erreur1D, et envoie une matrice des erreurs en vitesse et pression à des temps réguliers
-    :param M_li: [int], liste des dscretisations à calculer
-    :param N: int, iscrétisation temporel
-    :param nt: int, nombre de pas de temps
-    :return: np.ndarray, matrice des erreurs en vitesse et pression à des temps réguliers
-    """
-    nM = len(M_li)
-    eps = np.zeros((nt, nM,2))
-    li_t = [int(i*tf/nt) for i in range(nt)]
-
-    for i in range(nt):
-        eps[i, : ,: ] = erreur1D(li_t[i], M_li)
     return eps

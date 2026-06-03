@@ -1,14 +1,32 @@
-from dataclasses import dataclass
+from source import*
 
-c = 2800
-rho = 1200
-fmax = 200
+class Donnee1D:
+    def __init__(self, c = 2800, rho = 1200, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, **kwargs):
+        self.c : float = c                                                 #célérité en m/s
+        self.rho : float = rho                                             #masse volumique en g/m^3
+        self.f : float = f                                                 #frequence max observable
+        self.xc : tuple = xc                                               #couple position min, max
+        self.tc : tuple = tc                                               #couple temps init, final
+        self.M : int = M                                                   #discretisation spatiale
+        self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
+        self.dt : float = 0.95 * self.dx / self.c                          #infinitesimal temporel
+        self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle
+        self.x = np.linspace(self.xc[0], self.xc[1], self.M)               #axe x
+        self.t = np.linspace(self.tc[0], self.tc[1], self.N)               #axe temporel
+        
+        if "U" in kwargs.keys(): self.U : np.ndarray() = kwargs["U"]       #vecteur [v, p] solution
+        else: self.U : np.ndarray() = np.zeros((self.N, self.M, 2))
+        
+        self.fmax : float = self.f*10
+        
+        if "S" in kwargs.keys(): self.S = kwargs["S"]                      #donnee point source
+        else: self.S = pt_source
 
-xc = (x0, xf) = (0, 400)
-tc = (t0, tf) = (0, 0.125)
+        if "xs" in kwargs.keys(): self.xs : int = kwargs["xs"]             #postion point source
+        else: self.xs : int = self.M // 2
 
-M = 400
-dx = xf / M
-dt = 0.95 * dx / c
-N = int(tf/dt)
+        if "E" in kwargs.keys(): self.E : np.ndarray() = kwargs["E"]       #energie
+        else: self.E : np.ndarray() = np.zeros(self.N)
 
+        if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
+        else: self.opt : bool = True

@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 def anim1D(data):
     """
     Trace l'évolution de la vitesse, la pression et l'énergie des données de data
-    :param data: Donnee, regroupe l'ensemble des données du problème
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: plot
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
@@ -61,7 +61,7 @@ def anim1D(data):
 def tracer1D(data,t):
     """
     Trace la vitesse et la pression selon x à un temps t fixé
-    :param data: Donnee, regroupe l'ensemble des données du problème
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
     :param t: int, indice entre 0 et N
     :return: plot
     """
@@ -83,8 +83,8 @@ def tracer1D(data,t):
 def analytiqueVSnumerique(data1, data2):
     """
     Compare l'évolution de la vitesse, la pression et l'énergie avec Lax-Wendroff et la solution analytique
-    :param data1: Donnee, regroupe l'ensemble des données du problème avec Lax Wendroff
-    :param data2: Donnee, regroupe l'ensemble des données du problème avec la solution analytique
+    :param data1: Donnee1D, regroupe l'ensemble des données du problème avec Lax Wendroff
+    :param data2: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
     :return: plot
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))

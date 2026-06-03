@@ -5,7 +5,7 @@ def pt_source(f, t):
     Retourne l'array de dimension N, retracant l'ondelette tronquée sur toute la durée N*dt
     :param f: float, fréquence d'oscillation
     :param N: int, discrétisation temporelle
-    :param dt: float, infinitésimale temporel
+    :param dt: float, infinitésimal temporel
     :return: np.ndarray(), ondelette tronquée totale
     """
     omega = 2 * np.pi * f

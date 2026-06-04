@@ -1,11 +1,9 @@
 from schemas_numeriques import*
 from analytique import*
-from schemas_numeriques import LaxWendroff1D
-
 
 def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     """
-    Calcule l'erreur avec la norme L1, au temps d'indice t, entre 10^Mc[0] et 10^Mc[1] points nM fois
+    Calcule l'erreur avec la norme L1, au temps d'indice t, avec les discretisations de M_li
     :param M_li: [int], liste des dscretisations à calculer
     :param t: float, temps en seconde
     :return: np.darray, matrice des erreurs en vitesse et pression

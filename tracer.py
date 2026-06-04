@@ -175,12 +175,14 @@ def anim1D_comparaison(data1, data2):
     plt.show()
     return anim
 
-def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400)):
+def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400), f = "LW"):
     c1 = "blue"
     c2 = "red"
 
     dx_li = xc[1]/M_li
     fig, (ax1, ax2) = plt.subplots(1,2)
+    title = fig.suptitle('', fontsize=14)
+
     ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = c1, linestyle = '-', marker = ".", lw=2, ms = 8)
     ax1.grid(True)
     ax1.set_xlabel('dx (en m)')
@@ -193,6 +195,7 @@ def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400
     ax2.set_ylabel('log(erreur)')
     ax2.set_title("Erreur en pression")
 
+    title.set_text("Erreur avec " + f)
     print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1))
     print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1))
     plt.show()

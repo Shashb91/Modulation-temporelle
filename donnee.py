@@ -11,7 +11,7 @@ class Donnee1D:
         self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
         self.dt : float = 0.95 * self.dx / self.c
 
-        if "label" in kwargs.keys(): self.label = kwargs["label"]          #label de data
+        if "label" in kwargs.keys(): self.label = kwargs["label"]          #label
         else: self.label = ""
 
         self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle

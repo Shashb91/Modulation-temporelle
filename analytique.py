@@ -1,0 +1,19 @@
+from donnee import*
+
+def signe(a):
+    return -1 * (a < 0) + 1 * (a >= 0)
+
+def analytique1D(data):
+    """
+    Solution analytique pour le problème de propagation
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
+    :return: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
+    """
+    data.U = np.zeros((data.N, data.M, 2))
+    for n in range(1, data.N):
+        for i in range(1, data.M-1):
+            ind = n*data.dt - np.abs(i-data.xs)*data.dx/data.c
+            a = 1/(2*data.c) * data.S(data.f, ind)
+            b = signe(i - data.M//2) * data.rho/2 * data.S(data.f, ind)
+            data.U[n, i, :] = np.array([a,b])
+    return data.U

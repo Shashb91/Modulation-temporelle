@@ -1,5 +1,6 @@
 from schemas_numeriques import*
 from analytique import*
+from tracer import*
 
 def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     """
@@ -11,11 +12,15 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     nM = len(M_li)
     eps = np.zeros((len(M_li),2))
     for i in range(nM):
-        data1, data2 = Donnee1D(M = int(M_li[i])), Donnee1D(M = int(M_li[i]))
+        data1, data2 = Donnee1D(M = int(M_li[i]), label = f ), Donnee1D(M = int(M_li[i]), label = "Analytique")
+
         if f == "LW": U = LaxWendroff1D(data1)
         elif f == "ADER4": U = ADER41D(data1)
+        elif f == "ADER2": U = ADER21D(data1)
+
         u = analytique1D(data2)
         ti = int(t/data1.dt)
-        #tracer1D_comparaison(ti, data1, data2)
-        eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/data1.M
+        tracer1D_comparaison(ti, data2, data1)
+        print(M_li[i])
+        eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/(data1.M)
     return eps

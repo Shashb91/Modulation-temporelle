@@ -17,7 +17,7 @@ data3 = Donnee1D(M = 800, label = "ADER4")                                      
 
 #u = analytique1D(data2)
 #anim1D(data2)
-#
+
 #U_ADER4 = ADER41D(data3)
 #anim1D(data3)
 
@@ -30,6 +30,9 @@ data3 = Donnee1D(M = 800, label = "ADER4")                                      
 
 #epsLW = erreur1D(0.05, f = "LW")
 #erreur1D_trace(epsLW, f = "LW")
+
+epsADER2 = erreur1D(0.05, f = "ADER2")
+erreur1D_trace(epsADER2, f = "ADER2")
 
 epsADER4 = erreur1D(0.05, f = "ADER4")
 erreur1D_trace(epsADER4, f = "ADER4")

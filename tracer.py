@@ -89,7 +89,7 @@ def tracer1D_comparaison(t, data1, data2):
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
-    ax1.plot(data2.x, data2.U[t, :, 0], 'b--', lw=2, label=data2.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'blue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
@@ -97,7 +97,7 @@ def tracer1D_comparaison(t, data1, data2):
     ax1.grid(True)
 
     ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
-    ax2.plot(data2.x, data2.U[t, :, 1], 'r--', lw=2, label=data2.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'red', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')
@@ -185,17 +185,17 @@ def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400
 
     ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = c1, linestyle = '-', marker = ".", lw=2, ms = 8)
     ax1.grid(True)
-    ax1.set_xlabel('dx (en m)')
+    ax1.set_xlabel('log(dx) (en m)')
     ax1.set_ylabel('log(erreur)')
     ax1.set_title("Erreur en vitesse")
 
     ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = c2, linestyle = '-', marker = ".", lw=2, ms = 8)
     ax2.grid(True)
-    ax2.set_xlabel('dx (en m)')
+    ax2.set_xlabel('log(dx) (en m)')
     ax2.set_ylabel('log(erreur)')
     ax2.set_title("Erreur en pression")
 
     title.set_text("Erreur avec " + f)
-    print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1))
-    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1))
+    print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1)[0])
+    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1)[0])
     plt.show()

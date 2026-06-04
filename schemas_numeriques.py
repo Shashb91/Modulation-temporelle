@@ -37,7 +37,7 @@ def ADER41D(data):
     for s in range(0, 5):
         a = np.zeros((2, 2))
         for m in range(0, 4):
-            a += gamma[s, m] * (data.dt/data.dx)** (m + 1) * np.linalg.matrix_power(A, m + 1)
+            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(A, m + 1)
         C[s, :, :] = a
 
     for n in range(0, data.N - 1):

@@ -36,12 +36,12 @@ def anim1D(data):
     ax3.set_title("Evolution de l'energie (J)")
     ax3.grid(True)
 
-    title = fig.suptitle('Courbe de pression, vitesse et énergie pour la solution '+data.label, fontsize=14)
+    title = fig.suptitle('', fontsize=14)
     def init():
         line1.set_data([], [])
         line2.set_data([], [])
         line3.set_data([], [])
-        title.set_text('')
+        title.set_text('Courbe de pression, vitesse et énergie pour la solution '+data.label)
         return line1, line2, line3
 
     def update(n):
@@ -79,13 +79,13 @@ def tracer1D(data,t):
 
     plt.show()
 
-def tracer1D_analytiqueVSnumerique(t, data1, data2):
+def tracer1D_comparaison(t, data1, data2):
     """
-
-    :param t:
-    :param data1:
-    :param data2:
-    :return:
+    Compare la vitesses, pression et énergie des deux solutions à un temps t fixé
+    :param t: int, indice entre 0 et N
+    :param data1: Donnee1D, regroupe l'ensemble des données du problème
+    :param data2: Donnee1D, regroupe l'ensemble des données du problème
+    :return: plot
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
@@ -108,9 +108,9 @@ def tracer1D_analytiqueVSnumerique(t, data1, data2):
 
 def anim1D_comparaison(data1, data2):
     """
-    Compare l'évolution de la vitesse, la pression et l'énergie avec Lax-Wendroff et la solution analytique
-    :param data1: Donnee1D, regroupe l'ensemble des données du problème avec la solution numérique
-    :param data2: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
+    Compare l'évolution de la vitesse, la pression et l'énergie avec deux solutions différentes
+    :param data1: Donnee1D, regroupe l'ensemble des données du problème avec la solution 1
+    :param data2: Donnee1D, regroupe l'ensemble des données du problème avec la solution 2
     :return: plot
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))

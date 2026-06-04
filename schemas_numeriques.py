@@ -26,7 +26,7 @@ def ADER41D(data):
     """
     gamma = np.array([[1 / 12, 1 / 24, -1 / 12, -1 / 24],
                       [-2 / 3, -2 / 3, 1 / 6, 1 / 6],
-                      [0, 5 / 4, 0, 1 / 4],
+                      [0, 5 / 4, 0, -1 / 4],
                       [2 / 3, -2 / 3, -1 / 6, 1 / 6],
                       [-1 / 12, 1 / 24, 1 / 12, -1 / 24]])
 
@@ -35,11 +35,15 @@ def ADER41D(data):
     C = np.zeros((5, 2, 2))
 
     for s in range(0, 5):
-        C[s, :, :] = np.sum([gamma[s, m] * (data.dt / data.dx) ** (m + 1) * np.linalg.matrix_power(A, m + 1) for m in range(0, 4)],axis=0)
+        terme_somme = np.zeros((2, 2))
+        for m in range(0, 4):
+            terme_somme += gamma[s, m] * (data.dt/data.dx)** (m + 1) * np.linalg.matrix_power(A, m + 1)
+        C[s, :, :] = terme_somme
 
     for n in range(0, data.N - 1):
         for i in range(2, data.M - 2):
             a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, 5)])
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + data.dt/data.dx * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([data.opt, not data.opt]).transpose()
+            a2 = (data.dt / data.dx) * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([float(data.opt), float(not data.opt)])
+            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
 
     return data.U

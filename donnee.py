@@ -9,14 +9,10 @@ class Donnee1D:
         self.tc : tuple = tc                                               #couple temps init, final
         self.M : int = M                                                   #discretisation spatiale
         self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
+        self.dt : float = 0.95 * self.dx / self.c
 
-        if "label" in kwargs.keys(): self.label = kwargs["label"]       #infinitesimal temporel
+        if "label" in kwargs.keys(): self.label = kwargs["label"]          #label de data
         else: self.label = ""
-
-        if self.label == "analytique_LW": self.dt : float = 0.95 * self.dx / self.c
-        elif self.label == "analytique_ADER4": self.dt : float = 0.35 * self.dx / self.c
-        elif self.label == "LW": self.dt : float = 0.95 * self.dx / self.c
-        elif self.label == "ADER4": self.dt : float = 0.35 * self.dx / self.c
 
         self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle
         self.x = np.linspace(self.xc[0], self.xc[1], self.M)               #axe x

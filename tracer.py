@@ -36,7 +36,7 @@ def anim1D(data):
     ax3.set_title("Evolution de l'energie (J)")
     ax3.grid(True)
 
-    title = fig.suptitle('', fontsize=14)
+    title = fig.suptitle('Courbe de pression, vitesse et énergie pour la solution '+data.label, fontsize=14)
     def init():
         line1.set_data([], [])
         line2.set_data([], [])
@@ -48,7 +48,6 @@ def anim1D(data):
         line1.set_data(data.x, data.U[n, :, 0])
         line2.set_data(data.x, data.U[n, :, 1])
         line3.set_data(data.t[:n+1], data.E[:n+1])
-        title.set_text(f"Temps t = {n * data.dt:.4f} s")
         return line1, line2, line3
 
     ax1.set_box_aspect(1)
@@ -81,17 +80,24 @@ def tracer1D(data,t):
     plt.show()
 
 def tracer1D_analytiqueVSnumerique(t, data1, data2):
+    """
+
+    :param t:
+    :param data1:
+    :param data2:
+    :return:
+    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label='LaxWendroff')
-    ax1.plot(data2.x, data2.U[t, :, 0], 'b--', lw=2, label='Analytique')
+    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], 'b--', lw=2, label=data2.label)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
     ax1.legend()
     ax1.grid(True)
 
-    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label='LaxWendroff')
-    ax2.plot(data2.x, data2.U[t, :, 1], 'r--', lw=2, label='Analytique')
+    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], 'r--', lw=2, label=data2.label)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')
@@ -100,17 +106,17 @@ def tracer1D_analytiqueVSnumerique(t, data1, data2):
 
     plt.show()
 
-def anim1D_analytiqueVSnumerique(data1, data2):
+def anim1D_comparaison(data1, data2):
     """
     Compare l'évolution de la vitesse, la pression et l'énergie avec Lax-Wendroff et la solution analytique
-    :param data1: Donnee1D, regroupe l'ensemble des données du problème avec Lax Wendroff
+    :param data1: Donnee1D, regroupe l'ensemble des données du problème avec la solution numérique
     :param data2: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
     :return: plot
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
-    line1_num, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label='LaxWendroff')
-    line1_ana, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label='Analytique')
+    line1_num, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
+    line1_ana, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -119,8 +125,8 @@ def anim1D_analytiqueVSnumerique(data1, data2):
     ax1.legend()
     ax1.grid(True)
 
-    line2_num, = ax2.plot([], [], color='red', lw=2, linestyle='-', label='LaxWendroff')
-    line2_ana, = ax2.plot([], [], color='red', lw=2, linestyle='--', label='Analytique')
+    line2_num, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
+    line2_ana, = ax2.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -129,8 +135,8 @@ def anim1D_analytiqueVSnumerique(data1, data2):
     ax2.legend()
     ax2.grid(True)
 
-    line3_num, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label='LaxWendroff')
-    line3_ana, = ax3.plot([], [], color='orange', lw=2, linestyle='--', label='Analytique')
+    line3_num, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
+    line3_ana, = ax3.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
     data1.E = np.array([sum([0.5 * data1.rho * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1] / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     data2.E = np.array([sum([0.5 * data1.rho * data2.U[n, i, 0] ** 2 + data2.U[n, i, 1] / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -150,7 +156,7 @@ def anim1D_analytiqueVSnumerique(data1, data2):
         line2_ana.set_data([], [])
         line3_num.set_data([], [])
         line3_ana.set_data([], [])
-        title.set_text('')
+        title.set_text(data1.label + " VS " + data2.label)
         return line1_num, line1_ana, line2_num, line2_ana, line3_num, line3_ana
 
     def update(n):
@@ -160,7 +166,6 @@ def anim1D_analytiqueVSnumerique(data1, data2):
         line2_ana.set_data(data1.x, data2.U[n, :, 1])
         line3_num.set_data(data1.t[:n + 1], data1.E[:n + 1])
         line3_ana.set_data(data1.t[:n + 1], data2.E[:n + 1])
-        title.set_text(f"Temps t = {n * data1.dt:.4f} s")
         return line1_num, line1_ana, line2_num, line2_ana, line3_num, line3_ana
 
     ax1.set_box_aspect(1)

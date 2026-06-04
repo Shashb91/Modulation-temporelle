@@ -10,11 +10,13 @@ class Donnee1D:
         self.M : int = M                                                   #discretisation spatiale
         self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
 
-        if "schema" in kwargs.keys(): self.schema = kwargs["schema"]       #infinitesimal temporel
-        else: self.schema = "LW"
+        if "label" in kwargs.keys(): self.label = kwargs["label"]       #infinitesimal temporel
+        else: self.label = ""
 
-        if self.schema == "LW":self.dt : float = 0.95 * self.dx / self.c
-        elif self.schema == "ADER4": self.dt : float = 0.35 * self.dx / self.c
+        if self.label == "analytique_LW": self.dt : float = 0.95 * self.dx / self.c
+        elif self.label == "analytique_ADER4": self.dt : float = 0.35 * self.dx / self.c
+        elif self.label == "LW": self.dt : float = 0.95 * self.dx / self.c
+        elif self.label == "ADER4": self.dt : float = 0.35 * self.dx / self.c
 
         self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle
         self.x = np.linspace(self.xc[0], self.xc[1], self.M)               #axe x

@@ -1,6 +1,5 @@
-from tracer import tracer1D_analytiqueVSnumerique
-from LaxWendroff import*
-import numpy as np
+from schemas_numeriques import*
+from analytique import*
 
 def erreur1D(t, M_li = [100, 200, 400, 800, 1600]):
     """

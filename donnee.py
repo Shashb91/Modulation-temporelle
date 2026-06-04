@@ -9,7 +9,13 @@ class Donnee1D:
         self.tc : tuple = tc                                               #couple temps init, final
         self.M : int = M                                                   #discretisation spatiale
         self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
-        self.dt : float = 0.95 * self.dx / self.c                          #infinitesimal temporel
+
+        if "schema" in kwargs.keys(): self.schema = kwargs["schema"]       #infinitesimal temporel
+        else: self.schema = "LW"
+
+        if self.schema == "LW":self.dt : float = 0.95 * self.dx / self.c
+        elif self.schema == "ADER4": self.dt : float = 0.35 * self.dx / self.c
+
         self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle
         self.x = np.linspace(self.xc[0], self.xc[1], self.M)               #axe x
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)               #axe temporel

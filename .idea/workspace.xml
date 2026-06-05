@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implementation de l'erreur en ADER4">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schemas_numeriques.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas_numeriques.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,7 +250,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780592350524</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1780644626413</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1780644626413</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -261,9 +269,9 @@
     <MESSAGE value="Implementation de la variable label" />
     <MESSAGE value="Implementation du schema numerique ADER4" />
     <MESSAGE value="Corrections des paramètres d'erreur" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Implementation de l'erreur en ADER4" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementation de l'erreur en ADER4" />
+    <MESSAGE value="Corrections mineures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

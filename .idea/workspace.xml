@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implementation de l'erreur en ADER4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytique.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytique.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas_numeriques.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas_numeriques.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +234,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780581982391</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Implementation de l'erreur en ADER4">
+      <option name="closed" value="true" />
+      <created>1780592343327</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1780592343327</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Implementation de l'erreur en ADER4">
+      <option name="closed" value="true" />
+      <created>1780592350524</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1780592350524</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -248,7 +262,8 @@
     <MESSAGE value="Implementation du schema numerique ADER4" />
     <MESSAGE value="Corrections des paramètres d'erreur" />
     <MESSAGE value="Corrections mineures" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
+    <MESSAGE value="Implementation de l'erreur en ADER4" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementation de l'erreur en ADER4" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

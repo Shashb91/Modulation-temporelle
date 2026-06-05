@@ -78,7 +78,7 @@ def ADER41D(data):
             S0 = data.S(data.f, n * data.dt)
             S_half = data.S(data.f, (n + 0.5) * data.dt)
             S1 = data.S(data.f, (n + 1) * data.dt)
-            source = (S0 + 4 * S_half + S1) / 6  # O(dt^4) accurate
+            source = (S0 + 4 * S_half + S1) / 6
 
             a2 = (data.dt / data.dx) * source * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2

@@ -22,5 +22,5 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
         ti = int(t/data1.dt)
         tracer1D_comparaison(ti, data2, data1)
         print(M_li[i])
-        eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/(data1.M)
+        eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(2,data1.M-2)])/(data1.M-4)
     return eps

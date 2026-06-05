@@ -84,3 +84,26 @@ def ADER41D(data):
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
 
     return data.U
+
+def LaxWendroff2D(data):
+    """
+    Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 2D
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
+    """
+    data.U = np.zeros((data.N, data.Mx, data.My, 2))
+    A = np.array([[0,0, 1 / data.rho],
+                  [0,0, 0],
+                  [data.rho * data.c ** 2, 0, 0]])
+    B = np.array([[0,0,0],
+                  [0,0,1/data.rho],
+                  [0, data.rho*data.c**2, 0]])
+
+    for n in range(0, data.N - 1):
+        for i in range(1, data.Mx - 1):
+            for j in range(1, data.My - 1):
+                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1,j, :])
+                b1 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
+                c = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2 + (data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
+                data.U[n + 1, i, :] = data.U[n, i, :] - a1 - b1 + c + data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([1,1, 0]).transpose()
+    return data.U

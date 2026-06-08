@@ -31,5 +31,5 @@ def analytique2D(data):
                 ind = n * data.dt - (np.abs(i - data.xs) * data.dx + np.abs(j - data.ys) * data.dy)/ data.c
                 a = 1 / (2 * data.c) * data.S(data.f, ind)
                 b = signe(i - data.xs) * signe(j-data.ys)* data.rho / 2 * data.S(data.f, ind)
-                data.U[n, i, :] = np.array([a, b])
+                data.U[n, i, j, :] = np.array([a, b])
     return data.U

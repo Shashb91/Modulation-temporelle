@@ -125,6 +125,7 @@ def LaxWendroff2D(data):
     B_m = 0.5*np.array([[0,0,0],[0,-data.c,1/data.rho],[0,rc2,-data.c]])
 
     for n in range(0, data.N - 1):
+        print(n)
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
                 a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, j, :] - data.U[n, i-1,j, :])

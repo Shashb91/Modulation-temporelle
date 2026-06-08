@@ -2,7 +2,7 @@ import pickle
 import os
 from datetime import datetime
 
-def sauvegarder(instance, nom_fichier: str) -> None:
+def sauvegarder(instance, nom_fichier = "") -> None:
     """
     Sauvegarde une instance de Donnee1D ou Donnee2D dans un fichier binaire (.pkl).
     :param instance: Donnee1D ou Donnee2D à sauvegarder.

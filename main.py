@@ -8,6 +8,7 @@ Implementation de Lax-Wendroff 1D/2D
 from tracer import *
 from erreur import *
 from donnee import *
+from sauvegarde import *
 
 #============================================================
 #Implémentation de la résolution 1D homogène
@@ -51,4 +52,5 @@ data4 = Donnee2D(label = "Lax Wendroff 2D")
 data5 = Donnee2D(label = "Analytique")
 
 U = LaxWendroff2D(data4)
+sauvegarder(data4)
 anim2D(data4)

@@ -390,27 +390,31 @@ def anim2D_comparaison(data1, data2):
     plt.show()
     return anim
 
-def erreur2D_trace(eps, M_li = np.array([100, 150, 200, 250]), xc = (0,30), f = "LW"):
-    c1 = "blue"
-    c2 = "red"
-
+def erreur2D_trace(eps, M_li = np.array([70,100,130,160]), xc = (0,40), f = "LW"):
     dx_li = xc[1]/M_li
-    fig, (ax1, ax2) = plt.subplots(1,2)
+    fig, (ax1, ax2, ax3) = plt.subplots(1,3)
     title = fig.suptitle('', fontsize=14)
 
-    ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = c1, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = "blue", linestyle = '-', marker = ".", lw=2, ms = 8)
     ax1.grid(True)
     ax1.set_xlabel('log(dx) (en m)')
     ax1.set_ylabel('log(erreur)')
     ax1.set_title("Erreur en vitesse")
 
-    ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = c2, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = "green", linestyle = '-', marker = ".", lw=2, ms = 8)
     ax2.grid(True)
     ax2.set_xlabel('log(dx) (en m)')
     ax2.set_ylabel('log(erreur)')
-    ax2.set_title("Erreur en pression")
+    ax2.set_title("Erreur en vitesse selon y")
+
+    ax3.plot(np.log10(dx_li), np.log10(eps[:,2]),color = "red", linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax3.grid(True)
+    ax3.set_xlabel('log(dx) (en m)')
+    ax3.set_ylabel('log(erreur)')
+    ax3.set_title("Erreur en pression")
 
     title.set_text("Erreur avec " + f)
-    print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1)[0])
-    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1)[0])
+    print("Degré d'erreur en vitesse en x",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1)[0])
+    print("Degré d'erreur en vitesse en y", np.polyfit(np.log10(dx_li), np.log10(eps[:, 1]), 1)[0])
+    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,2]), 1)[0])
     plt.show()

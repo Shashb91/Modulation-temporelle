@@ -26,7 +26,7 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
         else: eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/data1.M
     return eps
 
-def erreur2D(t, M_li = [100, 150, 200, 250], f = "LW"):
+def erreur2D(t, M_li = [70,100,130,160], f = "LW"):
     """
     Calcule l'erreur avec la norme L1, au temps d'indice t, avec les discretisations de M_li
     :param M_li: [int], liste des dscretisations à calculer
@@ -41,6 +41,7 @@ def erreur2D(t, M_li = [100, 150, 200, 250], f = "LW"):
         if f == "LW": U = LaxWendroff2D(data1)
 
         u = analytique2D(data2)
+        sauvegarde(data1)
         ti = int(t/data1.dt)
         print(M_li[i])
 

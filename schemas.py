@@ -131,8 +131,8 @@ def LaxWendroff2D(data):
                 a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
                 b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
-                d1 = (data.dt/data.dx)*(A_p @ (data.U[n,i,j,:] - data.U[n,i-1,j,:]) + A_m @ (data.U[n,i+1,j,:] - data.U[n,i,j,:])) #correction d'ordre 1
-                d2 = (data.dt/data.dy)*(B_p @ (data.U[n,i,j,:] - data.U[n,i,j-1,:]) + B_m @ (data.U[n,i,j+1,:] - data.U[n,i,j,:]))
+                c1 = (data.dt/data.dx)*(A_p @ (data.U[n,i,j,:] - data.U[n,i-1,j,:]) + A_m @ (data.U[n,i+1,j,:] - data.U[n,i,j,:])) #correction d'ordre 1
+                c2 = (data.dt/data.dy)*(B_p @ (data.U[n,i,j,:] - data.U[n,i,j-1,:]) + B_m @ (data.U[n,i,j+1,:] - data.U[n,i,j,:]))
                 s = data.dt**2 /(data.dx*data.dy) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([1,0,0]).transpose()
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s - d1 - d2
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s - c1 - c2
     return data.U

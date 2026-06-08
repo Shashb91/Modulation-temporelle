@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Correction d'ADER4 terminée">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation de LW2D avec une correction d'ordre 1">
+      <change afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytique.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytique.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
@@ -303,7 +300,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780910190881</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Implémentation de LW2D avec une correction d'ordre 1">
+      <option name="closed" value="true" />
+      <created>1780913025983</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1780913025983</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -330,7 +335,8 @@
     <MESSAGE value="Implémentation de la résolution 2D LW" />
     <MESSAGE value="Correction d'ADER4" />
     <MESSAGE value="Correction d'ADER4 terminée" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correction d'ADER4 terminée" />
+    <MESSAGE value="Implémentation de LW2D avec une correction d'ordre 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentation de LW2D avec une correction d'ordre 1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

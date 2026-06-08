@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib.widgets import Slider
 
 def anim1D(data):
     """
@@ -88,8 +89,8 @@ def anim1D_comparaison(data1, data2):
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
-    line1_num, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
-    line1_ana, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
+    line1_1, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
+    line1_2, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -98,8 +99,8 @@ def anim1D_comparaison(data1, data2):
     ax1.legend()
     ax1.grid(True)
 
-    line2_num, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
-    line2_ana, = ax2.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
+    line2_1, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
+    line2_2, = ax2.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -108,8 +109,8 @@ def anim1D_comparaison(data1, data2):
     ax2.legend()
     ax2.grid(True)
 
-    line3_num, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
-    line3_ana, = ax3.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
+    line3_1, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
+    line3_2, = ax3.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
     data1.E = np.array([sum([0.5 * data1.rho * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1] / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     data2.E = np.array([sum([0.5 * data1.rho * data2.U[n, i, 0] ** 2 + data2.U[n, i, 1] / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -123,23 +124,23 @@ def anim1D_comparaison(data1, data2):
     title = fig.suptitle('', fontsize=14)
 
     def init():
-        line1_num.set_data([], [])
-        line1_ana.set_data([], [])
-        line2_num.set_data([], [])
-        line2_ana.set_data([], [])
-        line3_num.set_data([], [])
-        line3_ana.set_data([], [])
+        line1_1.set_data([], [])
+        line1_2.set_data([], [])
+        line2_1.set_data([], [])
+        line2_2.set_data([], [])
+        line3_1.set_data([], [])
+        line3_2.set_data([], [])
         title.set_text(data1.label + " VS " + data2.label)
-        return line1_num, line1_ana, line2_num, line2_ana, line3_num, line3_ana
+        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2
 
     def update(n):
-        line1_num.set_data(data1.x, data1.U[n, :, 0])
-        line1_ana.set_data(data1.x, data2.U[n, :, 0])
-        line2_num.set_data(data1.x, data1.U[n, :, 1])
-        line2_ana.set_data(data1.x, data2.U[n, :, 1])
-        line3_num.set_data(data1.t[:n + 1], data1.E[:n + 1])
-        line3_ana.set_data(data1.t[:n + 1], data2.E[:n + 1])
-        return line1_num, line1_ana, line2_num, line2_ana, line3_num, line3_ana
+        line1_1.set_data(data1.x, data1.U[n, :, 0])
+        line1_2.set_data(data1.x, data2.U[n, :, 0])
+        line2_1.set_data(data1.x, data1.U[n, :, 1])
+        line2_2.set_data(data1.x, data2.U[n, :, 1])
+        line3_1.set_data(data1.t[:n + 1], data1.E[:n + 1])
+        line3_2.set_data(data1.t[:n + 1], data2.E[:n + 1])
+        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2
 
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
@@ -282,11 +283,112 @@ def anim2D(data):
 
 def anim2D_comparaison(data1, data2):
     """
-    Compare l'évolution de la vitesse, la pression et l'énergie avec deux solutions différentes
-    :param data1: Donnee2D, regroupe l'ensemble des données du problème avec la solution 1
-    :param data2: Donnee2D, regroupe l'ensemble des données du problème avec la solution 2
-    :return: plot
+    Compare l'évolution de vx, vy, p et l'énergie totale avec une coupe dynamique en y via un Slider
+    :param data1: Donnee2D, contient la solution 1
+    :param data2: Donnee2D, contient la solution 2
+    :return: plot animation
     """
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(16, 5))
+    plt.subplots_adjust(bottom=0.25) 
+
+    init_iy = data1.My // 2
+    slice_idx = [init_iy] 
+
+    line1_1, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
+    line1_2, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
+    ax1.set_xlim(data1.x[0], data1.x[-1])
+    ax1.set_ylim(np.min(data1.U[:, :, :, 0]) * 1.1, np.max(data1.U[:, :, :, 0]) * 1.1)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v en x (m/s)')
+    ax1.set_title('Vitesse vx')
+    ax1.legend()
+    ax1.grid(True)
+
+    line2_1, = ax2.plot([], [], color='green', lw=2, linestyle='-', label=data1.label)
+    line2_2, = ax2.plot([], [], color='green', lw=2, linestyle='--', label=data2.label)
+    ax2.set_xlim(data1.x[0], data1.x[-1])
+    ax2.set_ylim(np.min(data1.U[:, :, :, 1]) * 1.1, np.max(data1.U[:, :, :, 1]) * 1.1)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Vitesse vy (m/s)')
+    ax2.set_title('Vitesse vy')
+    ax2.legend()
+    ax2.grid(True)
+
+    line3_1, = ax3.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
+    line3_2, = ax3.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
+    ax3.set_xlim(data1.x[0], data1.x[-1])
+    ax3.set_ylim(np.min(data1.U[:, :, :, 2]) * 1.1, np.max(data1.U[:, :, :, 2]) * 1.1)
+    ax3.set_xlabel('Position x (m)')
+    ax3.set_ylabel('Pression p (Pa)')
+    ax3.set_title('Champ des pressions')
+    ax3.legend()
+    ax3.grid(True)
+
+
+    data1.E = np.sum(0.5 * data1.rho * (data1.U[:, :, :, 0] ** 2 + data1.U[:, :, :, 1] ** 2) + (data1.U[:, :, :, 2] ** 2) / (
+                    data1.rho * data1.c ** 2), axis=(1, 2))
+    data2.E = np.sum(0.5 * data1.rho * (data2.U[:, :, :, 0] ** 2 + data2.U[:, :, :, 1] ** 2) + (data2.U[:, :, :, 2] ** 2) / (
+                    data1.rho * data1.c ** 2), axis=(1, 2))
+
+    line4_1, = ax4.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
+    line4_2, = ax4.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
+    ax4.set_xlim(data1.t[0], data1.t[-1])
+    ax4.set_ylim(min(np.min(data1.E), np.min(data2.E)) * 0.9, max(np.max(data1.E), np.max(data2.E)) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel('Energie (J)')
+    ax4.set_title("Evolution de l'énergie")
+    ax4.legend()
+    ax4.grid(True)
+
+    title = fig.suptitle('', fontsize=14)
+
+    ax_slider = plt.axes([0.25, 0.05, 0.5, 0.03])
+    slider_y = Slider(ax_slider, 'Coupe coordonnée y (index)', 0, data1.My - 1, valinit=init_iy, valfmt='%d')
+
+    def update_slider(val):
+        slice_idx[0] = int(slider_y.val)
+        fig.canvas.draw_idle()
+
+    slider_y.on_changed(update_slider)
+
+    def init():
+        line1_1.set_data([], [])
+        line1_2.set_data([], [])
+        line2_1.set_data([], [])
+        line2_2.set_data([], [])
+        line3_1.set_data([], [])
+        line3_2.set_data([], [])
+        line4_1.set_data([], [])
+        line4_2.set_data([], [])
+        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4_1, line4_2
+
+    def update(n):
+        iy = slice_idx[0] 
+        line1_1.set_data(data1.x, data1.U[n, :, iy, 0])
+        line1_2.set_data(data1.x, data2.U[n, :, iy, 0])
+
+        line2_1.set_data(data1.x, data1.U[n, :, iy, 1])
+        line2_2.set_data(data1.x, data2.U[n, :, iy, 1])
+
+        line3_1.set_data(data1.x, data1.U[n, :, iy, 2])
+        line3_2.set_data(data1.x, data2.U[n, :, iy, 2])
+
+        line4_1.set_data(data1.t[:n + 1], data1.E[:n + 1])
+        line4_2.set_data(data1.t[:n + 1], data2.E[:n + 1])
+
+        title.set_text(f"{data1.label} VS {data2.label} | t = {data1.t[n]:.4f} s | Coupe y = {data1.y[iy]:.2f} m")
+        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4_1, line4_2
+
+    ax1.set_box_aspect(1)
+    ax2.set_box_aspect(1)
+    ax3.set_box_aspect(1)
+    ax4.set_box_aspect(1)
+
+    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=20, blit=True)
+
+    anim._slider = slider_y
+    plt.show()
+    return anim
 
 
 def erreur2D_trace(eps, M_li = np.array([100, 150, 200, 250]), xc = (0,30), f = "LW"):

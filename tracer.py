@@ -390,7 +390,6 @@ def anim2D_comparaison(data1, data2):
     plt.show()
     return anim
 
-
 def erreur2D_trace(eps, M_li = np.array([100, 150, 200, 250]), xc = (0,30), f = "LW"):
     c1 = "blue"
     c2 = "red"

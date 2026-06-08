@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation de LW2D avec une correction d'ordre 1">
-      <change afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
-    </list>
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation de Lax Wendroff 2D avec des corrections" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -308,7 +303,23 @@
       <option name="project" value="LOCAL" />
       <updated>1780913025983</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Implémentation de la sauvegarde des instances">
+      <option name="closed" value="true" />
+      <created>1780918713019</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1780918713019</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Implémentation de Lax Wendroff 2D avec des corrections">
+      <option name="closed" value="true" />
+      <created>1780918732558</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1780918732558</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -336,7 +347,9 @@
     <MESSAGE value="Correction d'ADER4" />
     <MESSAGE value="Correction d'ADER4 terminée" />
     <MESSAGE value="Implémentation de LW2D avec une correction d'ordre 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implémentation de LW2D avec une correction d'ordre 1" />
+    <MESSAGE value="Implémentation de la sauvegarde des instances" />
+    <MESSAGE value="Implémentation de Lax Wendroff 2D avec des corrections" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentation de Lax Wendroff 2D avec des corrections" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

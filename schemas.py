@@ -75,15 +75,35 @@ def ADER41D(data):
     for n in range(0, data.N - 1):
         for i in range(2, data.M - 2):
             a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
-            S0 = data.S(data.f, n * data.dt)
-            S_half = data.S(data.f, (n + 0.5) * data.dt)
-            S1 = data.S(data.f, (n + 1) * data.dt)
-            source = (S0 + 4 * S_half + S1) / 6
-
-            a2 = (data.dt / data.dx) * source * (i == data.xs) * np.array([data.opt, not data.opt])
+            a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
 
     return data.U
+
+#def ADER41D(data): inutile
+#    data.U = np.zeros((data.N, data.M, 2))
+#    A = np.array([[0, 1 / data.rho], [data.rho * data.c ** 2, 0]])
+#    beta = data.dt / data.dx
+#
+#    for n in range(0, data.N - 1):
+#        for i in range(2, data.M - 2):
+#            Um2 = data.U[n, i-2, :]
+#            Um1 = data.U[n, i-1, :]
+#            U0  = data.U[n, i,   :]
+#            Up1 = data.U[n, i+1, :]
+#            Up2 = data.U[n, i+2, :]
+#
+#            a1 = (1/12)*(Um2 - Up2) + (2/3)*(Up1 - Um1)
+#            a2 = (1/24)*(Um2 + Up2) - (2/3)*(Um1 + Up1) + (5/4)*U0
+#            a3 = (1/12)*(Up2 - Um2) - (1/6)*(Up1 - Um1)
+#            a4 = -(1/24)*(Um2 + Up2) + (1/6)*(Um1 + Up1) - (1/4)*U0
+#
+#            a1 = (beta * (A @ D1) + beta**2 * (A @ A @ D2) + beta**3 * (A @ A @ A @ D3) + beta**4 * (A @ A @ A @ A @ D4))
+#            a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+#
+#            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
+#
+#    return data.U
 
 def LaxWendroff2D(data):
     """
@@ -91,7 +111,7 @@ def LaxWendroff2D(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
-    data.U = np.zeros((data.N, data.Mx, data.My, 2))
+    data.U = np.zeros((data.N, data.Mx, data.My, 3))
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],
                   [data.rho * data.c ** 2, 0, 0]])
@@ -102,8 +122,9 @@ def LaxWendroff2D(data):
     for n in range(0, data.N - 1):
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
-                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1,j, :])
+                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, j, :] - data.U[n, i-1,j, :])
                 b1 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
-                c = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2 + (data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
-                data.U[n + 1, i, :] = data.U[n, i, :] - a1 - b1 + c + data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([1,1, 0]).transpose()
+                c1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
+                c2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - b1 + c1 + c2 + data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * ((i == 2) + (i == data.Mx -2) + (j == data.My - 2) + (j == 2)) * np.array([1,1,0]).transpose()
     return data.U

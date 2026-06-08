@@ -1,5 +1,6 @@
 import pickle
 import os
+from datetime import datetime
 
 def sauvegarder(instance, nom_fichier: str) -> None:
     """
@@ -7,6 +8,9 @@ def sauvegarder(instance, nom_fichier: str) -> None:
     :param instance: Donnee1D ou Donnee2D à sauvegarder.
     :param nom_fichier: Le nom ou le chemin du fichier de destination.
     """
+    if nom_fichier == "":
+        nom_fichier = datetime.now().strftime('%m-%d_%H%M%S')
+
     if not nom_fichier.endswith('.pkl'):
         nom_fichier += '.pkl'
 

@@ -40,7 +40,7 @@ class Donnee1D:
         else: self.opt : bool = True
 
 class Donnee2D:
-    def __init__(self, c=2800, rho=1200, f=20, xc=(0, 400), yc = (0, 400), tc=(0, 0.125), Mx=400, My = 400, **kwargs):
+    def __init__(self, c=2800, rho=1200, f=20, xc=(0, 30), yc = (0, 30), tc=(0, 0.05), Mx=200, My = 200, **kwargs):
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
         self.f: float = f                                              # frequence max observable
@@ -51,7 +51,7 @@ class Donnee2D:
         self.My: int = My                                              # discretisation spatiale selon y
         self.dx: float = self.xc[1] / self.Mx                          # infinitesimal spatial en x
         self.dy: float = self.xc[1] / self.My                          # infinitesimal spatial en y
-        self.dt: float = 0.95 * norme(self.dx,self.dy) / self.c        # infinitesimal temporel
+        self.dt: float = 0.95 * max(self.dx,self.dy) / (self.c * sqrt(2)) # infinitesimal temporel
 
         if "label" in kwargs.keys(): self.label = kwargs["label"]      # label
         else: self.label = ""
@@ -71,7 +71,6 @@ class Donnee2D:
 
         if "xs" in kwargs.keys(): self.xs: int = kwargs["xs"]          # postion point source
         else: self.xs: int = self.Mx // 2
-
         if "ys" in kwargs.keys(): self.ys: int = kwargs["ys"]
         else: self.ys: int = self.My // 2
 

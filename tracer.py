@@ -78,34 +78,7 @@ def tracer1D(data,t):
     ax2.grid(True)
 
     plt.show()
-
-def tracer1D_comparaison(t, data1, data2):
-    """
-    Compare la vitesses, pression et énergie des deux solutions à un temps t fixé
-    :param t: int, indice entre 0 et N
-    :param data1: Donnee1D, regroupe l'ensemble des données du problème
-    :param data2: Donnee1D, regroupe l'ensemble des données du problème
-    :return: plot
-    """
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
-    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'blue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
-    ax1.set_xlabel('Position x (m)')
-    ax1.set_ylabel('Vitesse v (m/s)')
-    ax1.set_title('Champ des vitesses')
-    ax1.legend()
-    ax1.grid(True)
-
-    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
-    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'red', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
-    ax2.set_xlabel('Position x (m)')
-    ax2.set_ylabel('Pression p (Pa)')
-    ax2.set_title('Champ des pressions')
-    ax2.legend()
-    ax2.grid(True)
-
-    plt.show()
-
+    
 def anim1D_comparaison(data1, data2):
     """
     Compare l'évolution de la vitesse, la pression et l'énergie avec deux solutions différentes
@@ -175,7 +148,34 @@ def anim1D_comparaison(data1, data2):
     plt.show()
     return anim
 
-def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400), f = "LW"):
+def tracer1D_comparaison(t, data1, data2):
+    """
+    Compare la vitesse, pression et énergie des deux solutions à un temps t fixé
+    :param t: int, indice entre 0 et N
+    :param data1: Donnee1D, regroupe l'ensemble des données du problème tracé en trait plein
+    :param data2: Donnee1D, regroupe l'ensemble des données du problème tracé avec des markers transparents
+    :return: plot
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'blue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
+    ax1.legend()
+    ax1.grid(True)
+
+    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'red', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Pression p (Pa)')
+    ax2.set_title('Champ des pressions')
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.show()
+
+def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,30), f = "LW"):
     c1 = "blue"
     c2 = "red"
 
@@ -200,6 +200,11 @@ def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,400
     print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1)[0])
     plt.show()
 
+"""
+Fonctions adpatées pour les instances de Donnee2D uniquement !
+Pas de fonctions tracer2D ni de fonctions tracer2D_comparaison : 
+tracé selon x et y en image, fixé avec un subplot ... bcp d'efforts, pas forcément utile
+"""
 
 def anim2D(data):
     """
@@ -271,6 +276,140 @@ def anim2D(data):
     ax4.set_box_aspect(1)
 
     plt.tight_layout()
-    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=5, blit=True)
+    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=30, blit=True)
     plt.show()
     return anim
+
+def anim2D_comparaison(data1, data2):
+    """
+    Compare l'évolution de la vitesse, la pression et l'énergie avec deux solutions différentes
+    :param data1: Donnee2D, regroupe l'ensemble des données du problème avec la solution 1
+    :param data2: Donnee2D, regroupe l'ensemble des données du problème avec la solution 2
+    :return: plot
+    """
+    fig, axs = plt.subplots(2, 4, figsize=(12, 10))
+    ax1, ax2 = axs[0, 0], axs[0, 1]
+    ax3, ax4 = axs[1, 0], axs[1, 1]
+    
+    ax_1, ax_2 = axs[0,2], axs[0,3]
+    ax_3, ax_4 = axs[1,2], axs[1,3]
+
+    extent = [data1.x[0], data1.x[-1], data1.y[0], data1.y[-1]]
+
+    im1 = ax1.imshow(np.zeros((len(data1.y), len(data1.x))), cmap='jet', origin='lower', extent=extent,
+                     vmin=np.min(data1.U[..., 0]), vmax=np.max(data1.U[..., 0]))
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Position y (m)')
+    ax1.set_title('Champ des vitesses vx' + data1.label)
+    fig.colorbar(im1, ax=ax1)
+
+    im2 = ax2.imshow(np.zeros((len(data1.y), len(data1.x))), cmap='jet', origin='lower', extent=extent,
+                     vmin=np.min(data1.U[..., 1]), vmax=np.max(data1.U[..., 1]))
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Position y (m)')
+    ax2.set_title('Champ des vitesses vy')
+    fig.colorbar(im2, ax=ax2)
+
+    im3 = ax3.imshow(np.zeros((len(data1.y), len(data1.x))), cmap='viridis', origin='lower', extent=extent,
+                     vmin=np.min(data1.U[..., 2]), vmax=np.max(data1.U[..., 2]))
+    ax3.set_xlabel('Position x (m)')
+    ax3.set_ylabel('Position y (m)')
+    ax3.set_title('Champ des pressions')
+    fig.colorbar(im3, ax=ax3)
+
+    kinetic = 0.5 * data1.rho * (data1.U[..., 0] ** 2 + data1.U[..., 1] ** 2)
+    potential = data1.U[..., 2] / (data1.rho * data1.c ** 2)
+    data1.E = np.sum(kinetic + potential, axis=(1, 2))
+
+    line4, = ax4.plot([], [], color='orange', lw=2)
+    ax4.set_xlim(data1.t[0], data1.t[-1])
+    ax4.set_ylim(np.min(data1.E) * 0.9, np.max(data1.E) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel('Energie (J)')
+    ax4.set_title("Evolution de l'energie (J)")
+    ax4.grid(True)
+
+    im1 = ax_1.imshow(np.zeros((len(data2.y), len(data2.x))), cmap='jet', origin='lower', extent=extent,
+                     vmin=np.min(data2.U[..., 0]), vmax=np.max(data2.U[..., 0]))
+    ax_1.set_xlabel('Position x (m)')
+    ax_1.set_ylabel('Position y (m)')
+    ax_1.set_title('Champ des vitesses vx')
+    fig.colorbar(im1, ax=ax_1)
+
+    im2 = ax_2.imshow(np.zeros((len(data2.y), len(data2.x))), cmap='jet', origin='lower', extent=extent,
+                     vmin=np.min(data2.U[..., 1]), vmax=np.max(data2.U[..., 1]))
+    ax_2.set_xlabel('Position x (m)')
+    ax_2.set_ylabel('Position y (m)')
+    ax_2.set_title('Champ des vitesses vy')
+    fig.colorbar(im2, ax=ax_2)
+
+    im3 = ax_3.imshow(np.zeros((len(data2.y), len(data2.x))), cmap='viridis', origin='lower', extent=extent,
+                     vmin=np.min(data2.U[..., 2]), vmax=np.max(data2.U[..., 2]))
+    ax_3.set_xlabel('Position x (m)')
+    ax_3.set_ylabel('Position y (m)')
+    ax_3.set_title('Champ des pressions')
+    fig.colorbar(im3, ax=ax_3)
+
+    kinetic = 0.5 * data2.rho * (data2.U[..., 0] ** 2 + data2.U[..., 1] ** 2)
+    potential = data2.U[..., 2] / (data2.rho * data2.c ** 2)
+    data2.E = np.sum(kinetic + potential, axis=(1, 2))
+
+    line4, = ax_4.plot([], [], color='orange', lw=2)
+    ax_4.set_xlim(data2.t[0], data2.t[-1])
+    ax_4.set_ylim(np.min(data2.E) * 0.9, np.max(data2.E) * 1.1)
+    ax_4.set_xlabel('Temps t (s)')
+    ax_4.set_ylabel('Energie (J)')
+    ax_4.set_title("Evolution de l'energie (J)")
+    ax_4.grid(True)
+
+    title = fig.suptitle('', fontsize=14)
+
+    def init():
+        im1.set_data1(np.zeros((len(data1.y), len(data1.x))))
+        im2.set_data1(np.zeros((len(data1.y), len(data1.x))))
+        im3.set_data1(np.zeros((len(data1.y), len(data1.x))))
+        line4.set_data1([], [])
+        title.set_text(data1.label + " VS " + data2.label)
+        return im1, im2, im3, line4
+
+    def update(n):
+        im1.set_data1(data1.U[n, :, :, 0])
+        im2.set_data1(data1.U[n, :, :, 1])
+        im3.set_data1(data1.U[n, :, :, 2])
+        line4.set_data1(data1.t[:n + 1], data1.E[:n + 1])
+        return im1, im2, im3, line4
+
+    ax1.set_box_aspect(1)
+    ax2.set_box_aspect(1)
+    ax3.set_box_aspect(1)
+    ax4.set_box_aspect(1)
+
+    plt.tight_layout()
+    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=5, blit=True)
+    plt.show()
+    return anim
+
+def erreur2D_trace(eps, M_li = np.array([100, 150, 200, 250]), xc = (0,30), f = "LW"):
+    c1 = "blue"
+    c2 = "red"
+
+    dx_li = xc[1]/M_li
+    fig, (ax1, ax2) = plt.subplots(1,2)
+    title = fig.suptitle('', fontsize=14)
+
+    ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = c1, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax1.grid(True)
+    ax1.set_xlabel('log(dx) (en m)')
+    ax1.set_ylabel('log(erreur)')
+    ax1.set_title("Erreur en vitesse")
+
+    ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = c2, linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax2.grid(True)
+    ax2.set_xlabel('log(dx) (en m)')
+    ax2.set_ylabel('log(erreur)')
+    ax2.set_title("Erreur en pression")
+
+    title.set_text("Erreur avec " + f)
+    print("Degré d'erreur en vitesse",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1)[0])
+    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,1]), 1)[0])
+    plt.show()

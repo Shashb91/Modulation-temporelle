@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def pt_source(f, t):
     """
@@ -8,5 +9,11 @@ def pt_source(f, t):
     :return: np.ndarray(), ondelette tronquée totale
     """
     omega = 2 * np.pi * f
-    a = [0, 1, -21/32, 63/768, -1/152]
-    return sum([a[m] * np.sin(omega * 2**(m-1) * t) for m in range(1, len(a))])*(0 < t < 1/f)
+    a = [1, -21/32, 63/768, -1/512]
+    return (a[0]*np.sin(omega*t) + a[1]*np.sin(omega*2*t) + a[2]*np.sin(omega*4*t) + a[3]*np.sin(omega*8*t))*(0 < t < 1/f)
+
+# t = np.linspace(0, 0.1, 200)
+# s = [pt_source(20, t[i]) for i in range(200)]
+# plt.plot(t,s,'r-')
+# plt.grid(True)
+# plt.show()

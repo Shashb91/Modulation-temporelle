@@ -93,10 +93,10 @@ def ADER41D(data):
 #            Up1 = data.U[n, i+1, :]
 #            Up2 = data.U[n, i+2, :]
 #
-#            a1 = (1/12)*(Um2 - Up2) + (2/3)*(Up1 - Um1)
-#            a2 = (1/24)*(Um2 + Up2) - (2/3)*(Um1 + Up1) + (5/4)*U0
-#            a3 = (1/12)*(Up2 - Um2) - (1/6)*(Up1 - Um1)
-#            a4 = -(1/24)*(Um2 + Up2) + (1/6)*(Um1 + Up1) - (1/4)*U0
+#            D1 = (1/12)*(Um2 - Up2) + (2/3)*(Up1 - Um1)
+#            D2 = (1/24)*(Um2 + Up2) - (2/3)*(Um1 + Up1) + (5/4)*U0
+#            D3 = (1/12)*(Up2 - Um2) - (1/6)*(Up1 - Um1)
+#            D4 = -(1/24)*(Um2 + Up2) + (1/6)*(Um1 + Up1) - (1/4)*U0
 #
 #            a1 = (beta * (A @ D1) + beta**2 * (A @ A @ D2) + beta**3 * (A @ A @ A @ D3) + beta**4 * (A @ A @ A @ A @ D4))
 #            a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
@@ -126,5 +126,5 @@ def LaxWendroff2D(data):
                 b1 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
                 c1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
                 c2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - b1 + c1 + c2 + data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * ((i == 2) + (i == data.Mx -2) + (j == data.My - 2) + (j == 2)) * np.array([1,1,0]).transpose()
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - b1 + c1 + c2 + data.dt**2 /(data.dx*data.dy) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([1,0,0]).transpose()
     return data.U

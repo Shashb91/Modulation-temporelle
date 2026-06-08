@@ -47,8 +47,8 @@ data3 = Donnee1D(M = 400, label = "ADER4")                                      
 #Implémentation de la résolution 2D homogène
 #============================================================
 
-data4 = Donnee2D(label = "Lax Wendroff 2D")
-data5 = Donnee2D(label = "Analytique")
-
-U = LaxWendroff2D(data4)
-anim2D(data4)
+#data4 = Donnee2D(label = "Lax Wendroff 2D")
+#data5 = Donnee2D(label = "Analytique")
+#
+#U = LaxWendroff2D(data4)
+#anim2D(data4)

@@ -1,6 +1,7 @@
 from schemas import*
 from analytique import*
 from tracer import*
+from sauvegarde import*
 
 def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     """
@@ -41,7 +42,8 @@ def erreur2D(t, M_li = [70,100,130,160], f = "LW"):
         if f == "LW": U = LaxWendroff2D(data1)
 
         u = analytique2D(data2)
-        sauvegarde(data1)
+        sauvegarder(data1,"erreur_")
+        sauvegarder(data2,"erreur_")
         ti = int(t/data1.dt)
         print(M_li[i])
 

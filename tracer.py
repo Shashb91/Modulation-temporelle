@@ -218,23 +218,23 @@ def anim2D(data):
     ax3, ax4 = axs[1, 0], axs[1, 1]
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-
-    im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='jet', origin='lower', extent=extent,
-                     vmin=np.min(data.U[..., 0]), vmax=np.max(data.U[..., 0]))
+    correc = 0.15
+    im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
+                     vmin=correc*np.min(data.U[..., 0]), vmax=correc*np.max(data.U[..., 0]))
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Position y (m)')
     ax1.set_title('Champ des vitesses vx')
     fig.colorbar(im1, ax=ax1)
 
-    im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='jet', origin='lower', extent=extent,
-                     vmin=np.min(data.U[..., 1]), vmax=np.max(data.U[..., 1]))
+    im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
+                     vmin=correc*np.min(data.U[..., 1]), vmax=correc*np.max(data.U[..., 1]))
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Position y (m)')
     ax2.set_title('Champ des vitesses vy')
     fig.colorbar(im2, ax=ax2)
 
-    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='viridis', origin='lower', extent=extent,
-                     vmin=np.min(data.U[..., 2]), vmax=np.max(data.U[..., 2]))
+    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
+                     vmin=correc*np.min(data.U[..., 2]), vmax=correc*np.max(data.U[..., 2]))
     ax3.set_xlabel('Position x (m)')
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')
@@ -324,11 +324,13 @@ def anim2D_comparaison(data1, data2):
     ax3.legend()
     ax3.grid(True)
 
+    ec = 0.5 * data1.rho * (data1.U[..., 0] ** 2 + data1.U[..., 1] ** 2)
+    ep = data1.U[..., 2] ** 2 / (data1.rho * data1.c ** 2)
+    data1.E = np.sum(ec + ep, axis=(1, 2))
 
-    data1.E = np.sum(0.5 * data1.rho * (data1.U[:, :, :, 0] ** 2 + data1.U[:, :, :, 1] ** 2) + (data1.U[:, :, :, 2] ** 2) / (
-                    data1.rho * data1.c ** 2), axis=(1, 2))
-    data2.E = np.sum(0.5 * data1.rho * (data2.U[:, :, :, 0] ** 2 + data2.U[:, :, :, 1] ** 2) + (data2.U[:, :, :, 2] ** 2) / (
-                    data1.rho * data1.c ** 2), axis=(1, 2))
+    ec = 0.5 * data1.rho * (data1.U[..., 0] ** 2 + data1.U[..., 1] ** 2)
+    ep = data1.U[..., 2] ** 2 / (data1.rho * data1.c ** 2)
+    data2.E = np.sum(ec + ep, axis=(1, 2))
 
     line4_1, = ax4.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
     line4_2, = ax4.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
@@ -390,31 +392,33 @@ def anim2D_comparaison(data1, data2):
     plt.show()
     return anim
 
-def erreur2D_trace(eps, M_li = np.array([70,100,130,160]), xc = (0,40), f = "LW"):
-    dx_li = xc[1]/M_li
-    fig, (ax1, ax2, ax3) = plt.subplots(1,3)
-    title = fig.suptitle('', fontsize=14)
-
-    ax1.plot(np.log10(dx_li), np.log10(eps[:,0]),color = "blue", linestyle = '-', marker = ".", lw=2, ms = 8)
+def tracer2D(data,t, y):
+    """
+    Trace la vitesse et la pression selon x à un temps t fixé
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :param t: int, indice entre 0 et N
+    :return: plot
+    """
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
+    ax1.plot(data.x, data.U[t, :, y, 0], 'b-', lw=2)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
     ax1.grid(True)
-    ax1.set_xlabel('log(dx) (en m)')
-    ax1.set_ylabel('log(erreur)')
-    ax1.set_title("Erreur en vitesse")
 
-    ax2.plot(np.log10(dx_li), np.log10(eps[:,1]),color = "green", linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax2.plot(data.x, data.U[t, :, y, 1], 'g-', lw=2)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Vitesse v (m/s)')
+    ax2.set_title('Champ des vitesses en y')
     ax2.grid(True)
-    ax2.set_xlabel('log(dx) (en m)')
-    ax2.set_ylabel('log(erreur)')
-    ax2.set_title("Erreur en vitesse selon y")
 
-    ax3.plot(np.log10(dx_li), np.log10(eps[:,2]),color = "red", linestyle = '-', marker = ".", lw=2, ms = 8)
+    ax3.plot(data.x, data.U[t, :, y, 2], 'r-', lw=2)
+    ax3.set_xlabel('Position x (m)')
+    ax3.set_ylabel('Pression p (Pa)')
+    ax3.set_title('Champ des pressions')
     ax3.grid(True)
-    ax3.set_xlabel('log(dx) (en m)')
-    ax3.set_ylabel('log(erreur)')
-    ax3.set_title("Erreur en pression")
 
-    title.set_text("Erreur avec " + f)
-    print("Degré d'erreur en vitesse en x",np.polyfit(np.log10(dx_li), np.log10(eps[:,0]), 1)[0])
-    print("Degré d'erreur en vitesse en y", np.polyfit(np.log10(dx_li), np.log10(eps[:, 1]), 1)[0])
-    print("Degré d'erreur en pression", np.polyfit(np.log10(dx_li), np.log10(eps[:,2]), 1)[0])
+    ax1.set_box_aspect(1)
+    ax2.set_box_aspect(1)
+    ax3.set_box_aspect(1)
     plt.show()

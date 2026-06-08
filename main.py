@@ -2,7 +2,7 @@
 ============================================================
 Auteur : Shashankan BALASSOUPRAMANIANE
 Date : 01/06/2026
-Implementation de Lax-Wendroff 1D/2D
+Implementation de Lax-Wendroff et d'ADER4 1D/2D
 ============================================================
 """
 from tracer import *
@@ -56,8 +56,10 @@ from sauvegarde import *
 data4 = Donnee2D(label = "Lax Wendroff 2D")
 data5 = Donnee2D(label = "Analytique")
 
-U = LaxWendroff2D(data4)
-sauvegarder(data4, "data4_")
+#U = LaxWendroff2D(data4)
+#sauvegarder(data4, "data4_")
 
-#data4 = charger('.save/data4_06-08_16-12-11.pkl')
+data4 = charger('.save/data4_06-08_16-39-58.pkl')
 anim2D(data4)
+
+tracer2D(data4,250,150)

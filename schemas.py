@@ -109,6 +109,6 @@ def LaxWendroff2D(data):
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
                 # c1 = (data.dt/data.dx)*(A_p @ (data.U[n,i,j,:] - data.U[n,i-1,j,:]) + A_m @ (data.U[n,i+1,j,:] - data.U[n,i,j,:])) #correction d'ordre 1
                 # c2 = (data.dt/data.dy)*(B_p @ (data.U[n,i,j,:] - data.U[n,i,j-1,:]) + B_m @ (data.U[n,i,j+1,:] - data.U[n,i,j,:]))
-                s = data.dt**2 /(data.dx*data.dy) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([0, 0, 1]).transpose()
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+                s = data.dt/np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([0, 0, 1]).transpose()
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s # - c1 - c2
     return data.U

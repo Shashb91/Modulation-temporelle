@@ -68,7 +68,7 @@ class Donnee2D:
         self.fmax: float = self.f * 10
 
         if "S" in kwargs.keys(): self.S = kwargs["S"]                  # donnee point source
-        else: self.S = pt_source
+        else: self.S = pt_source_pression
 
         if "xs" in kwargs.keys(): self.xs: int = kwargs["xs"]          # postion point source
         else: self.xs: int = self.Mx // 2

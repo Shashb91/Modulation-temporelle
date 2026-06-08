@@ -54,12 +54,11 @@ from sauvegarde import *
 #============================================================
 
 data4 = Donnee2D(label = "Lax Wendroff 2D")
-data5 = Donnee2D(label = "Analytique")
 
-#U = LaxWendroff2D(data4)
-#sauvegarder(data4, "data4_")
+U = LaxWendroff2D(data4)
+sauvegarder(data4, "data4_")
 
-data4 = charger('.save/data4_06-08_16-39-58.pkl')
+#data4 = charger('.save/data4_06-08_16-39-58.pkl')
 anim2D(data4)
 
 tracer2D(data4,250,150)

@@ -112,19 +112,27 @@ def LaxWendroff2D(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
+    rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],
-                  [data.rho * data.c ** 2, 0, 0]])
+                  [rc2, 0, 0]])
     B = np.array([[0,0,0],
                   [0,0,1/data.rho],
-                  [0, data.rho*data.c**2, 0]])
+                  [0, rc2, 0]])
+    A_p = 0.5*np.array([[data.c, 0, 1/data.rho],[0,0,0],[rc2,0,data.c]])
+    A_m = 0.5*np.array([[-data.c, 0, 1/data.rho],[0,0,0],[rc2,0,-data.c]])
+    B_p = 0.5*np.array([[0,0,0],[0,data.c,1/data.rho],[0,rc2,data.c]])
+    B_m = 0.5*np.array([[0,0,0],[0,-data.c,1/data.rho],[0,rc2,-data.c]])
 
     for n in range(0, data.N - 1):
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
                 a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, j, :] - data.U[n, i-1,j, :])
-                b1 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
-                c1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
-                c2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - b1 + c1 + c2 + data.dt**2 /(data.dx*data.dy) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([1,0,0]).transpose()
+                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
+                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
+                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
+                d1 = (data.dt/data.dx)*(A_p @ (data.U[n,i,j,:] - data.U[n,i-1,j,:]) + A_m @ (data.U[n,i+1,j,:] - data.U[n,i,j,:])) #correction d'ordre 1
+                d2 = (data.dt/data.dy)*(B_p @ (data.U[n,i,j,:] - data.U[n,i,j-1,:]) + B_m @ (data.U[n,i,j+1,:] - data.U[n,i,j,:]))
+                s = data.dt**2 /(data.dx*data.dy) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * (j == data.ys) * np.array([1,0,0]).transpose()
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s - d1 - d2
     return data.U

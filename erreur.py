@@ -36,7 +36,7 @@ def erreur2D(t, M_li = [100, 150, 200, 250], f = "LW"):
     nM = len(M_li)
     eps = np.zeros((len(M_li),3))
     for i in range(nM):
-        data1, data2 = Donnee2D(M = int(M_li[i]), label = f ), Donnee2D(M = int(M_li[i]), label = "Analytique")
+        data1, data2 = Donnee2D(Mx = int(M_li[i]), My = int(M_li[i]), label = f ), Donnee2D(Mx = int(M_li[i]), My = int(M_li[i]), label = "Analytique")
 
         if f == "LW": U = LaxWendroff2D(data1)
 

@@ -213,28 +213,28 @@ def anim2D(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: plot
     """
-    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8))
     ax1, ax2 = axs[0, 0], axs[0, 1]
     ax3, ax4 = axs[1, 0], axs[1, 1]
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-    correc = 0.15
+    correc_v = 0.15
     im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=correc*np.min(data.U[..., 0]), vmax=correc*np.max(data.U[..., 0]))
+                     vmin=correc_v*np.min(data.U[..., 0]), vmax=correc_v*np.max(data.U[..., 0]))
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Position y (m)')
     ax1.set_title('Champ des vitesses vx')
     fig.colorbar(im1, ax=ax1)
 
     im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=correc*np.min(data.U[..., 1]), vmax=correc*np.max(data.U[..., 1]))
+                     vmin=correc_v *np.min(data.U[..., 1]), vmax=correc_v*np.max(data.U[..., 1]))
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Position y (m)')
     ax2.set_title('Champ des vitesses vy')
     fig.colorbar(im2, ax=ax2)
 
     im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=correc*np.min(data.U[..., 2]), vmax=correc*np.max(data.U[..., 2]))
+                     vmin=0.35*np.min(data.U[..., 2]), vmax=0.03*np.max(data.U[..., 2]))
     ax3.set_xlabel('Position x (m)')
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')
@@ -263,9 +263,9 @@ def anim2D(data):
         return im1, im2, im3, line4
 
     def update(n):
-        im1.set_data(data.U[n, :, :, 0])
-        im2.set_data(data.U[n, :, :, 1])
-        im3.set_data(data.U[n, :, :, 2])
+        im1.set_data(data.U[n, :, :, 0].transpose())
+        im2.set_data(data.U[n, :, :, 1].transpose())
+        im3.set_data(data.U[n, :, :, 2].transpose())
         line4.set_data(data.t[:n + 1], data.E[:n + 1])
 
         title.set_text(f'Évolution des champs à t = {data.t[n]:.3f} s')
@@ -288,7 +288,9 @@ def anim2D_comparaison(data1, data2):
     :param data2: Donnee2D, contient la solution 2
     :return: plot animation
     """
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(16, 5))
+    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
+    ax1, ax2 = axs[0, 0], axs[0, 1]
+    ax3, ax4 = axs[1, 0], axs[1, 1]
     plt.subplots_adjust(bottom=0.25) 
 
     init_iy = data1.My // 2

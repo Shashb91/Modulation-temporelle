@@ -3,6 +3,7 @@ from analytique import*
 from tracer import*
 from tqdm import trange
 from sauvegarde import *
+ncols = 125                                                                       #largeur de la barre de chargement
 
 def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     """
@@ -13,7 +14,7 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
     """
     nM = len(M_li)
     eps = np.zeros((len(M_li),2))
-    for i in trange(nM):
+    for i in trange(nM, ncols = ncols):
         data1, data2 = Donnee1D(M = int(M_li[i]), label = f ), Donnee1D(M = int(M_li[i]), label = "Analytique")
 
         if f == "LW": U = LaxWendroff1D(data1)

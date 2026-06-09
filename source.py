@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pt_source(f, t):
+def pt_source_vitesse(f, t):
     """
     Retourne l'array de dimension N, retracant l'ondelette tronquée sur toute la durée N*dt
     :param f: float, fréquence d'oscillation

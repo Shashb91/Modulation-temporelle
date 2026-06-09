@@ -5,10 +5,9 @@ Date : 01/06/2026
 Implementation de Lax-Wendroff et d'ADER4 1D/2D
 ============================================================
 """
-from tracer import *
 from erreur import *
-from donnee import *
 from sauvegarde import *
+from schemas import*
 
 #============================================================
 #Implémentation de la résolution 1D homogène
@@ -16,7 +15,7 @@ from sauvegarde import *
 
 #data1 = Donnee1D(M = 200, label = "Lax Wendroff")                                #Lax Wendroff
 #data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
-#data3 = Donnee1D(M = 200, label = "ADER4")                                             #Solution analytique
+#data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
 
 #U_LW = LaxWendroff1D(data1)
 #anim1D(data1)
@@ -32,8 +31,8 @@ from sauvegarde import *
 #anim1D_comparaison(data1, data2)                                                       #Comparaison LaxWendroff VS Analytique
 #anim1D_comparaison(data3, data2)                                                      #Comparaison ADER4 VS Analytique
 
-#sauvegarder(data1,"data1")
-#sauvegarder(data2,"data2")
+#sauvegarder(data1,"data1_")
+#sauvegarder(data2,"data2_")
 
 #============================================================
 #Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
@@ -53,12 +52,8 @@ from sauvegarde import *
 #Implémentation de la résolution 2D homogène
 #============================================================
 
-data4 = Donnee2D(label = "Lax Wendroff 2D")
-
-U = LaxWendroff2D(data4)
-sauvegarder(data4, "data4_")
-
-#data4 = charger('.save/data4_06-08_16-39-58.pkl')
+data4 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), f = 30, tc = (0, 0.08), rho = 1000, c= 1500, CFL = 0.6)
+U = ADER42D(data4)
+#data4 = charger('.save/data4_def.pkl')
 anim2D(data4)
-
-tracer2D(data4,250,150)
+sauvegarder(data4, "data4_")

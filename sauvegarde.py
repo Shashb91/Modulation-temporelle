@@ -3,22 +3,30 @@ import os
 from datetime import datetime
 chemin = ".save/"
 
-def sauvegarder(instance, nom_fichier = "") -> None:
+def sauvegarder(instance, nom_fichier = "", opt = False) -> None:
     """
     Sauvegarde d'une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl).
     :param instance: Donnee1D ou Donnee2D à sauvegarder.
-    :param nom_fichier: Le nom ou le chemin du fichier de destination.
+    :param nom_fichier: Le nom ou le chemin du fichier de destination :
+            - le fichier sera placé automatiquement dans un dossier .save/, ou un autre dossier, nommé comme '.nom_du_dossier/'
+            - le fichier sera horodaté automatiquement si nom_fichier finit par un '_', sous le format MOIS-JOUR_HEURE-MINUTES-SECONDES
+            - le fichier sera automatiquement placé sous l'extension '.pkl'
+    :param opt: Bool, True si la sauvegarde s'effectue automatiquement, False sinon.
     """
     if not nom_fichier.startswith('.'): nom_fichier = chemin + nom_fichier
-    if nom_fichier == "" or nom_fichier.endswith('_'): nom_fichier += datetime.now().strftime('%m-%d_%H-%M-%S')
+    if nom_fichier == "": nom_fichier = input("Nom du fichier ? (finir avec '_' pour l'horodatage auto) : ")
+    if nom_fichier.endswith('_'): nom_fichier += datetime.now().strftime('%m-%d_%H-%M-%S')
     if not nom_fichier.endswith('.pkl'): nom_fichier += '.pkl'
-
-    try:
-        with open(nom_fichier, 'wb') as fichier:
-            pickle.dump(instance, fichier)
-        print(f"Instance sauvegardée avec succès sous : '{nom_fichier}'")
-    except Exception as e:
-        print(f"Impossible de sauvegarder l'objet : {e}")
+    if not opt: opt = ((input("Voulez vous sauvegarder ? O/N : ")) == "O")
+    if opt:
+        try:
+            with open(nom_fichier, 'wb') as fichier:
+                pickle.dump(instance, fichier)
+            print(f"Instance sauvegardée avec succès sous : '{nom_fichier}'")
+        except Exception as e:
+            print(f"Impossible de sauvegarder l'objet : {e}")
+    else:
+        print("Sauvegarde annulée")
 
 
 def charger(nom_fichier: str):

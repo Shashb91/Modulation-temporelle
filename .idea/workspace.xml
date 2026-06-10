@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Correction de la sauvegarde">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures (bar de chargement, CFL, ...)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source.py" beforeDir="false" afterPath="$PROJECT_DIR$/source.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -383,7 +380,39 @@
       <option name="project" value="LOCAL" />
       <updated>1780936693958</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Implémentation d'ADER4 en 2D">
+      <option name="closed" value="true" />
+      <created>1781014072120</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1781014072120</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Correction pour le tracé de Lax Wendroff en 2D">
+      <option name="closed" value="true" />
+      <created>1781014097531</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1781014097531</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Ajouts de fonctionnalités pour la sauvegarde">
+      <option name="closed" value="true" />
+      <created>1781014117004</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1781014117004</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Corrections mineures (bar de chargement, CFL, ...)">
+      <option name="closed" value="true" />
+      <created>1781014144284</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1781014144284</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -417,7 +446,11 @@
     <MESSAGE value="Implémentation de la sauvegarde des instances et LW2D" />
     <MESSAGE value="Implémentation de LW2D" />
     <MESSAGE value="Correction de la sauvegarde" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correction de la sauvegarde" />
+    <MESSAGE value="Implémentation d'ADER4 en 2D" />
+    <MESSAGE value="Correction pour le tracé de Lax Wendroff en 2D" />
+    <MESSAGE value="Ajouts de fonctionnalités pour la sauvegarde" />
+    <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures (bar de chargement, CFL, ...)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

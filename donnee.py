@@ -41,7 +41,7 @@ class Donnee1D:
         else: self.opt : bool = True
 
 class Donnee2D:
-    def __init__(self, c=2800, rho=1200, f=20, xc=(0, 1000), yc = (0, 1000), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.95, **kwargs):
+    def __init__(self, c=2800, rho=1200, f=20, xc=(0, 1000), yc = (0, 1000), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.65, **kwargs):
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
         self.f: float = f                                              # frequence max observable

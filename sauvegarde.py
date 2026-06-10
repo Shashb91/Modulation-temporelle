@@ -14,7 +14,7 @@ def sauvegarder(instance, nom_fichier = "", opt = False) -> None:
     :param opt: Bool, True si la sauvegarde s'effectue automatiquement, False sinon.
     """
     if not nom_fichier.startswith('.'): nom_fichier = chemin + nom_fichier
-    if nom_fichier == "": nom_fichier = input("Nom du fichier ? (finir avec '_' pour l'horodatage auto) : ")
+    if nom_fichier == "": nom_fichier = instance.label+"_"
     if nom_fichier.endswith('_'): nom_fichier += datetime.now().strftime('%m-%d_%H-%M-%S')
     if not nom_fichier.endswith('.pkl'): nom_fichier += '.pkl'
     if not opt: opt = ((input("Voulez vous sauvegarder ? O/N : ")) == "O")

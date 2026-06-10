@@ -52,8 +52,8 @@ from schemas import*
 #Implémentation de la résolution 2D homogène
 #============================================================
 
-data4 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), f = 30, tc = (0, 0.08), rho = 1000, c= 1500, CFL = 0.6)
+data4 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.60)
 U = ADER42D(data4)
-#data4 = charger('.save/data4_def.pkl')
+#data4 = charger('.save/LW2D_06-09_18-27-19.pkl')
+sauvegarder(data4,opt = True)
 anim2D(data4)
-sauvegarder(data4, "data4_")

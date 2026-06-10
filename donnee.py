@@ -41,7 +41,7 @@ class Donnee1D:
         else: self.opt : bool = True
 
 class Donnee2D:
-    def __init__(self, c=2800, rho=1200, f=20, xc=(0, 1000), yc = (0, 1000), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.65, **kwargs):
+    def __init__(self, c=1500, rho=1000, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
         self.f: float = f                                              # frequence max observable
@@ -75,10 +75,8 @@ class Donnee2D:
             if opt : self.S = pt_source_vitesse
             else: self.S = pt_source_pression
 
-        if "xs" in kwargs.keys(): self.xs: int = kwargs["xs"]          # postion point source
-        else: self.xs: int = self.Mx // 2
-        if "ys" in kwargs.keys(): self.ys: int = kwargs["ys"]
-        else: self.ys: int = self.My // 2
+        if "ps" in kwargs.keys(): self.ps = kwargs["ps"]               # postion point source
+        else: self.ps : [(int,int)] = [(self.Mx//2, self.My//2)]
 
         if "E" in kwargs.keys():self.E: np.ndarray() = kwargs["E"]     # energie
         else: self.E: np.ndarray() = np.zeros(self.N)

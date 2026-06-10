@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections d'ADER4 2D">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentations des résolutions en front d'onde">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -420,7 +421,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781079777152</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Implémentations des résolutions en front d'onde">
+      <option name="closed" value="true" />
+      <created>1781094518070</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1781094518070</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -459,7 +468,8 @@
     <MESSAGE value="Ajouts de fonctionnalités pour la sauvegarde" />
     <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
     <MESSAGE value="Corrections d'ADER4 2D" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrections d'ADER4 2D" />
+    <MESSAGE value="Implémentations des résolutions en front d'onde" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentations des résolutions en front d'onde" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

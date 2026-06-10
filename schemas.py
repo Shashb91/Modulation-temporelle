@@ -191,7 +191,7 @@ def LaxWendroff2D_BC(data):
                 data.U[n + 1, -1, j, :] = a
     return data.U
 
-def ADER42D(data):
+def ADER42D_BC(data):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 2D pour un front d'onde
     :param data: Donnee2D, regroupe l'ensemble des données du probleme

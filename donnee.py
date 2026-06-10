@@ -40,6 +40,25 @@ class Donnee1D:
         if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
         else: self.opt : bool = True
 
+    def copy(self, instance : Donnee1D):                                   #constructeur de recopie
+        self.c : float = instance.c
+        self.rho: float = instance.rho
+        self.f: float = instance.f
+        self.xc: tuple = instance.xc
+        self.tc: tuple = instance.tc
+        self.M: int = instance.M
+        self.dx: float = instance.dx
+        self.CFL: float = instance.CFL
+        self.dt: float = instance.dt
+        self.N : int = instance.N
+        self.U : np.ndarray = instance.U
+        self.fmax: float = self.f * 10
+        self.opt: bool = instance.opt
+        self.label: str = instance.label
+        self.S = instance.S
+        self.xs : list[tuple] = instance.xs
+        self.E = instance.E
+
 class Donnee2D:
     def __init__(self, c=1500, rho=1000, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
         self.c: float = c                                              # célérité en m/s
@@ -80,3 +99,25 @@ class Donnee2D:
 
         if "E" in kwargs.keys():self.E: np.ndarray() = kwargs["E"]     # energie
         else: self.E: np.ndarray() = np.zeros(self.N)
+
+    def copy(self, instance : Donnee2D):                               #constructeur de recopie
+        self.c : float = instance.c
+        self.rho: float = instance.rho
+        self.f: float = instance.f
+        self.xc: tuple = instance.xc
+        self.yc: tuple = instance.yc
+        self.tc: tuple = instance.tc
+        self.Mx: int = instance.Mx
+        self.My: int = instance.My
+        self.dx: float = instance.dx
+        self.dy: float = instance.dy
+        self.CFL: float = instance.CFL
+        self.dt: float = instance.dt
+        self.N : int = instance.N
+        self.U : np.ndarray = instance.U
+        self.fmax: float = self.f * 10
+        self.opt: bool = instance.opt
+        self.label: str = instance.label
+        self.S = instance.S
+        self.ps : list[tuple] = instance.ps
+        self.E = instance.E

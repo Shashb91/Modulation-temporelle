@@ -1,9 +1,11 @@
 import pickle
 import os
+import numpy as np
 from datetime import datetime
+from donnee import Donnee2D, Donnee1D
 chemin = ".save/"
 
-def sauvegarder(instance, nom_fichier = "", opt = False) -> None:
+def sauvegarder(instance, nom_fichier = "", opt = False):
     """
     Sauvegarde d'une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl).
     :param instance: Donnee1D ou Donnee2D à sauvegarder.
@@ -50,3 +52,23 @@ def charger(nom_fichier: str):
     except Exception as e:
         print(f"Impossible de charger le fichier : {e}")
         return None
+
+def compresser(instance):
+    """
+    Compresse une instance de Donnee1D ou Donnee2D, afin de ne pouvoir uniquement tracer les courbes en animations (conservant les données sur tous les 30 pts temporels)
+    :param instance: Donnee1D ou Donnee2D, à compresser
+    :return: instance_lite: Donnee1D ou Donnee2D, compressée
+    """
+    instance_lite = None
+    if type(instance) == Donnee2D:
+        instance_lite = Donnee2D()
+    elif type(instance) == Donnee1D:
+        instance_lite = Donnee1D()
+
+    instance_lite.copy(instance)
+    instance_lite.N = instance_lite.N//30 + 1
+    instance_lite.U = np.concatenate((instance_lite.U[::30,...], instance_lite.U[-1,...]), axis = 0)
+    instance_lite.t = np.linspace(instance_lite.t[0], instance_lite.t[-1], instance_lite.N)
+    instance_lite.dt *= 30
+    instance_lite.E = np.concatenate((instance_lite.E[::30,...],instance_lite.E[-1,...]), axis = 0)
+    return instance_lite

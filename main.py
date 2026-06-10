@@ -52,11 +52,14 @@ from schemas import*
 #Implémentation de la résolution 2D homogène
 #============================================================
 
-#data4 = Donnee2D(label = "Lax Wendroff 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 70)
-#U = LaxWendroff2D(data4)
-data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 70)
-#sauvegarder(data4,opt = True)
-u = ADER42D(data5)
+data4 = Donnee2D(label = "Lax Wendroff 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
+data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
+
+U = LaxWendroff2D_BC(data4)
+sauvegarder(data4,opt = True)
+
+u = ADER42D_BC(data5)
 sauvegarder(data5,opt = True)
-#anim2D(data4)
+
+anim2D(data4)
 anim2D(data5)

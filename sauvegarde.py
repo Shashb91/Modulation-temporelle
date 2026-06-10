@@ -7,7 +7,7 @@ chemin = ".save/"
 
 def sauvegarder(instance, nom_fichier = "", opt = False):
     """
-    Sauvegarde d'une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl).
+    Sauvegarde une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl).
     :param instance: Donnee1D ou Donnee2D à sauvegarder.
     :param nom_fichier: Le nom ou le chemin du fichier de destination :
             - le fichier sera placé automatiquement dans un dossier .save/, ou un autre dossier, nommé comme '.nom_du_dossier/'
@@ -72,3 +72,15 @@ def compresser(instance):
     instance_lite.dt *= 30
     instance_lite.E = np.concatenate((instance_lite.E[::30,...],instance_lite.E[-1,...]), axis = 0)
     return instance_lite
+
+def sauvegarder_lite(instance, nom_fichier = "", opt = False):
+    """
+    Sauvegarde une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl) en version lite
+    :param instance: Donnee1D ou Donnee2D à sauvegarder.
+    :param nom_fichier: Le nom ou le chemin du fichier de destination :
+            - le fichier sera placé automatiquement dans un dossier .save/, ou un autre dossier, nommé comme '.nom_du_dossier/'
+            - le fichier sera horodaté automatiquement si nom_fichier finit par un '_', sous le format MOIS-JOUR_HEURE-MINUTES-SECONDES
+            - le fichier sera automatiquement placé sous l'extension '.pkl'
+    :param opt: Bool, True si la sauvegarde s'effectue automatiquement, False sinon.
+    """
+    sauvegarder(compresser(instance), nom_fichier, opt)

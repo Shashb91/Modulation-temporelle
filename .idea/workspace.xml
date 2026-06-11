@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentations des résolutions en front d'onde">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentations de la compression des fichiers">
+      <change afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
@@ -429,7 +430,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781094518070</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Implémentations de la compression des fichiers">
+      <option name="closed" value="true" />
+      <created>1781098259053</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1781098259053</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Implémentations de la compression des fichiers">
+      <option name="closed" value="true" />
+      <created>1781098385008</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1781098385008</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -444,7 +461,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Depot des premiers fichiers" />
     <MESSAGE value="Implementataion du calcul d'erreur" />
     <MESSAGE value="Séparation des fichiers" />
     <MESSAGE value="Implementation d'ADER4" />
@@ -469,7 +485,8 @@
     <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
     <MESSAGE value="Corrections d'ADER4 2D" />
     <MESSAGE value="Implémentations des résolutions en front d'onde" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implémentations des résolutions en front d'onde" />
+    <MESSAGE value="Implémentations de la compression des fichiers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentations de la compression des fichiers" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

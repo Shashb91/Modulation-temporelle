@@ -197,7 +197,7 @@ def ADER42D_BC(data):
     :param data: Donnee2D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+    data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],
@@ -211,8 +211,12 @@ def ADER42D_BC(data):
 
     c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(2, data.Mx - 2):
-            for j in range(2, data.My - 2):
+        for i in range(2,data.Mx+1):
+            for j in range(2,data.My-2):
+                #condition periodique
+                data.U[n, 1, j, :] = data.U[n, -1, j, :]
+                data.U[n, 0, j, :] = data.U[n, -2, j, :]
+
                 a1 = data.dt * (c[0] * A @ (data.U[n,i-2,j,:] - 8*data.U[n,i-1,j,:] + 8*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
                                 c[0] * B @ (data.U[n,i,j-2,:] - 8*data.U[n,i,j-1,:] + 8*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
                 a2 = b2 * (c[1] * (- data.U[n,i-2,j,:] + 16*data.U[n,i-1,j,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
@@ -240,8 +244,5 @@ def ADER42D_BC(data):
                      (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
 
-                #condition periodique
-                a = data.U[n + 1, 2, j, :]
-                data.U[n + 1, 0:2, j, :] = a
-                data.U[n + 1, -1:-3, j, :] = a
+    data.U = data.U[:,2:data.Mx,:,:]
     return data.U

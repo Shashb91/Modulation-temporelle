@@ -1,5 +1,7 @@
 import pickle
 import os
+from typing import Any
+
 import numpy as np
 from datetime import datetime
 from donnee import Donnee2D, Donnee1D
@@ -31,7 +33,7 @@ def sauvegarder(instance, nom_fichier = "", opt = False):
         print("Sauvegarde annulée")
 
 
-def charger(nom_fichier: str):
+def charger(nom_fichier: str) -> Donnee2D/Donnee1D :
     """
     Charge une instance de Donnee1D ou Donnee2D depuis un fichier binaire (.pkl).
     :param nom_fichier: Le nom ou le chemin du fichier à charger.
@@ -71,6 +73,7 @@ def compresser(instance):
     instance_lite.t = np.linspace(instance_lite.t[0], instance_lite.t[-1], instance_lite.N)
     instance_lite.dt *= 30
     instance_lite.E = np.concatenate((instance_lite.E[::30,...],instance_lite.E[-1,...]), axis = 0)
+    instance_lite.label += " compressé"
     return instance_lite
 
 def sauvegarder_lite(instance, nom_fichier = "", opt = False):

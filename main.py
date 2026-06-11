@@ -44,8 +44,8 @@ from schemas import*
 #epsADER2 = erreur1D(0.05, f = "ADER2")
 #erreur1D_trace(epsADER2, f = "ADER2")
 
-#epsADER4 = erreur1D(0.05, f = "ADER4")
-#erreur1D_trace(epsADER4, f = "ADER4")
+#epsADER4 = erreur1D(0.05, M_li = [150,200,250], f = "ADER4")
+#erreur1D_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
 
 
 #============================================================
@@ -55,11 +55,11 @@ from schemas import*
 data4 = Donnee2D(label = "Lax Wendroff 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
 data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
 
-U = LaxWendroff2D_BC(data4)
-sauvegarder(data4,opt = True)
+#U = LaxWendroff2D_BC(data4)
+#sauvegarder(data4,opt = True)
 
 u = ADER42D_BC(data5)
 sauvegarder(data5,opt = True)
-
+data4 = charger('.save/Lax Wendroff 2D_06-10_15-55-20.pkl')
 anim2D(data4)
 anim2D(data5)

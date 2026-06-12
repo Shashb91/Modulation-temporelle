@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Création des fichiers pour la résolution temporelle">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source.py" beforeDir="false" afterPath="$PROJECT_DIR$/source.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -499,7 +497,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781169163000</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Implémentation de la résolution en milieu modulé en temps">
+      <option name="closed" value="true" />
+      <created>1781248037460</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1781248037460</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781248050601</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1781248050601</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -514,13 +528,11 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Séparation des fichiers" />
     <MESSAGE value="Implementation d'ADER4" />
     <MESSAGE value="Implementation de la variable label" />
     <MESSAGE value="Implementation du schema numerique ADER4" />
     <MESSAGE value="Corrections des paramètres d'erreur" />
     <MESSAGE value="Implementation de l'erreur en ADER4" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Implémentation de la résolution 2D LW" />
     <MESSAGE value="Correction d'ADER4" />
     <MESSAGE value="Correction d'ADER4 terminée" />
@@ -539,7 +551,9 @@
     <MESSAGE value="Implémentations des résolutions en front d'onde" />
     <MESSAGE value="Implémentations de la compression des fichiers" />
     <MESSAGE value="Création des fichiers pour la résolution temporelle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Création des fichiers pour la résolution temporelle" />
+    <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
+    <MESSAGE value="Corrections mineures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

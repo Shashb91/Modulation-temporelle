@@ -1,7 +1,5 @@
 import pickle
 import os
-from typing import Any
-
 import numpy as np
 from datetime import datetime
 from donnee import Donnee2D, Donnee1D

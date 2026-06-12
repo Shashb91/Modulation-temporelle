@@ -41,12 +41,12 @@ class Donnee1D:
         else: self.opt : bool = True
 
         if "e" in kwargs.keys(): self.e = kwargs["e"]                      #MODULE D'YOUNG !!!
-        else: self.e = None
+        else: self.e = 9.4e9
 
         if "eps" in kwargs.keys(): self.eps = kwargs["eps"]                #Modulation temporelle
-        else: self.eps = None
+        else: self.eps = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
-        else: self.omega = None
+        else: self.omega = 0
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c

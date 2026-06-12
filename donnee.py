@@ -29,7 +29,7 @@ class Donnee1D:
         self.fmax : float = self.f*10
         
         if "S" in kwargs.keys(): self.S = kwargs["S"]                      #donnee point source
-        else: self.S = pt_source_vitesse
+        else: self.S = pt_source_1D
 
         if "xs" in kwargs.keys(): self.xs : int = kwargs["xs"]             #postion point source
         else: self.xs : int = self.M // 2
@@ -39,6 +39,14 @@ class Donnee1D:
 
         if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
         else: self.opt : bool = True
+
+        if "e" in kwargs.keys(): self.e = kwargs["e"]                      #MODULE D'YOUNG !!!
+        else: self.e = None
+
+        if "eps" in kwargs.keys(): self.eps = kwargs["eps"]                #Modulation temporelle
+        else: self.eps = None
+        if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
+        else: self.omega = None
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -90,9 +98,7 @@ class Donnee2D:
         self.fmax: float = self.f * 10
 
         if "S" in kwargs.keys(): self.S = kwargs["S"]                  # donnee point source
-        else:
-            if opt : self.S = pt_source_vitesse
-            else: self.S = pt_source_pression
+        else: self.S = pt_source_2D
 
         if "ps" in kwargs.keys(): self.ps = kwargs["ps"]               # postion point source
         else: self.ps : [(int,int)] = [(self.Mx//2, self.My//2)]

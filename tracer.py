@@ -54,7 +54,7 @@ def anim1D(data):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
-    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=20, blit=True)
+    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=5, blit=True)
     plt.show()
     return anim
 

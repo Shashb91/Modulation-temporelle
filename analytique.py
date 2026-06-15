@@ -17,18 +17,3 @@ def analytique1D(data):
             b = signe(i - data.M//2) * data.rho/2 * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])
     return data.U
-
-def analytique1D_mt(data):
-    """
-    Solution analytique pour le problème de propagation
-    :param data: Donnee1D, regroupe l'ensemble des données du problème
-    :return: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
-    """
-    data.U = np.zeros((data.N, data.M, 2))
-    for n in range(0, data.N-1):
-        for i in range(2, data.M-2):
-            ind = n*data.dt - np.abs(i-data.xs)*data.dx/(np.sqrt(data.e/data.rho * (1 - (data.eps*np.sin(data.omega*data.dt*n))**2)))
-            a = 1/(2*data.c) * data.S(data.f, ind)
-            b = signe(i - data.M//2) * data.rho * (1 - data.eps*np.sin(data.omega*data.dt*n))/2 * data.S(data.f, ind)
-            data.U[n, i, :] = np.array([a,b])
-    return data.U

@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation fonctionnelle de la modulation temporelle">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
+      <change afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analytique.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytique.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -519,7 +522,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781254204759</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781256708418</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1781256708418</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -557,9 +568,9 @@
     <MESSAGE value="Implémentations de la compression des fichiers" />
     <MESSAGE value="Création des fichiers pour la résolution temporelle" />
     <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Implémentation fonctionnelle de la modulation temporelle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implémentation fonctionnelle de la modulation temporelle" />
+    <MESSAGE value="Corrections mineures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

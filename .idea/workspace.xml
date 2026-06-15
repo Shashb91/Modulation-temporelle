@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
-      <change afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytique.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytique.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -145,22 +143,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Depot des premiers fichiers">
-      <option name="closed" value="true" />
-      <created>1780489263202</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1780489263202</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Depot des premiers fichiers">
-      <option name="closed" value="true" />
-      <created>1780492129371</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1780492129371</updated>
     </task>
     <task id="LOCAL-00003" summary="Implementataion du calcul d'erreur">
       <option name="closed" value="true" />
@@ -530,7 +512,31 @@
       <option name="project" value="LOCAL" />
       <updated>1781256708418</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Ajout de la diversification en modulation temporelle">
+      <option name="closed" value="true" />
+      <created>1781511732043</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1781511732043</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781511738879</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1781511738879</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781516851491</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1781516851491</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -545,7 +551,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implementation de la variable label" />
     <MESSAGE value="Implementation du schema numerique ADER4" />
     <MESSAGE value="Corrections des paramètres d'erreur" />
     <MESSAGE value="Implementation de l'erreur en ADER4" />
@@ -569,6 +574,7 @@
     <MESSAGE value="Création des fichiers pour la résolution temporelle" />
     <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
     <MESSAGE value="Implémentation fonctionnelle de la modulation temporelle" />
+    <MESSAGE value="Ajout de la diversification en modulation temporelle" />
     <MESSAGE value="Corrections mineures" />
     <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>

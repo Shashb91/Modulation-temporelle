@@ -5,22 +5,6 @@ from tqdm import trange
 from math import factorial
 ncols = 125                                                                       #largeur de la barre de chargement
 
-def A_mt(data):
-    """
-    Retourne une fonction mathématique retournant une liste des 3 dérivées premières dans le cas modulé choisi !
-    :param data: Donnee1D, regroupe l'ensemble des données du problème
-    :return: f, fonction à évaluer
-    """
-    def f(t):
-        rE, eps, w = data.rho*data.e, data.eps, data.omega
-        elmt = np.array([[0,0],[1,0]])
-        A = np.array([[0, 1],[1/rE * (1 + eps*np.sin(w*t))/(1-eps*np.sin(w*t)), 0]])
-        B = 1/rE * (2*eps*w*np.cos(w*t))/(1-eps*np.sin(w*t))**2 * elmt
-        C = 1/rE * (2*eps*w**2*(2*eps-np.sin(w*t)*(1+eps**2)+eps*np.sin(w*t)**2))/(1-eps*np.sin(w*t))**3 * elmt
-        D = 1/rE * (-2*eps*w**2*np.cos(w*t)*(5*eps**2*np.sin(w*t)**2+4*eps*(1+eps**2)*np.sin(w*t)-(1+8*eps**2)))/(1-eps*np.sin(w*t))**4 * elmt
-        return [A, B, C, D]
-    return f
-
 def ADER41D_mt(data):
     """
     Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
@@ -49,7 +33,8 @@ def ADER41D_mt(data):
                             1/(24*data.dx**4) * (-data.U[n, i-2,:] + 4*data.U[n,i-1,:] - 6*data.U[n,i,:] + 4*data.U[n,i+1,:] - data.U[n,i+2,:])])
 
             dtU = np.array([a @ dxU[0], b1 @ dxU[0] + b2 @ dxU[1], c1 @ dxU[0] + c2 @ dxU[1] + c3 @ dxU[2], d1 @ dxU[0] + d2 @ dxU[1] + d3 @ dxU[2] + d4 @ dxU[3]])
-            s = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+            s = (data.dt / data.dx) * (data.rho*(1 - data.eps*np.sin(data.omega*n*data.dt))) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+            S = np.array([-data.rhomt])
             data.U[n + 1, i, :] = data.U[n, i, :] + sum([data.dt**(j + 1)/factorial(j + 1)*dtU[j, :] for j in range(4)]) + s
 
     for n in range(data.N):

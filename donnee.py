@@ -1,5 +1,6 @@
 from source import*
 from math import sqrt
+from modulation import*
 
 def norme(a,b):
     return sqrt(a**2 + b**2)/sqrt(2)
@@ -47,6 +48,11 @@ class Donnee1D:
         else: self.eps = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
+
+        if "rho_mt" in kwargs.keys(): self.rho_mt = kwargs["rho_mt"]
+        else: self.rho_mt = rho_sinus
+        if "E_mt" in kwargs.keys(): self.E_mt = kwargs["E_mt"]
+        else: self.E_mt = E_sinus
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c

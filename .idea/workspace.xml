@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,22 +144,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Implementataion du calcul d'erreur">
-      <option name="closed" value="true" />
-      <created>1780500425284</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1780500425284</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Implementataion du calcul d'erreur">
-      <option name="closed" value="true" />
-      <created>1780502009056</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1780502009056</updated>
     </task>
     <task id="LOCAL-00005" summary="Implementataion du calcul d'erreur">
       <option name="closed" value="true" />
@@ -536,7 +521,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781516851491</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Implémentation de la modulation temporelle">
+      <option name="closed" value="true" />
+      <created>1781517912722</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1781517912722</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781517924010</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1781517924010</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -551,7 +552,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implementation du schema numerique ADER4" />
     <MESSAGE value="Corrections des paramètres d'erreur" />
     <MESSAGE value="Implementation de l'erreur en ADER4" />
     <MESSAGE value="Implémentation de la résolution 2D LW" />
@@ -575,6 +575,7 @@
     <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
     <MESSAGE value="Implémentation fonctionnelle de la modulation temporelle" />
     <MESSAGE value="Ajout de la diversification en modulation temporelle" />
+    <MESSAGE value="Implémentation de la modulation temporelle" />
     <MESSAGE value="Corrections mineures" />
     <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>

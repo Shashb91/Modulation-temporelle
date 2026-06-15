@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.widgets import Slider
 
-def anim1D(data):
+def anim1D(data, **kwargs):
     """
     Trace l'évolution de la vitesse, la pression et l'énergie des données de data
     :param data: Donnee1D, regroupe l'ensemble des données du problème
@@ -54,7 +54,10 @@ def anim1D(data):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
-    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=5, blit=True)
+
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 5
+    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
     plt.show()
     return anim
 

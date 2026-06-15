@@ -7,6 +7,9 @@ def norme(a,b):
 
 class Donnee1D:
     def __init__(self, c = 2800, rho = 1200, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
+        """
+        Initialisation d'une instance de Donnee1D, permettant à la résolution du problème 1D de proagation en milieu homogène ou modulée en temps
+        """
         self.c : float = c                                                 #célérité en m/s
         self.rho : float = rho                                             #masse volumique en g/m^3
         self.f : float = f                                                 #frequence max observable
@@ -75,6 +78,9 @@ class Donnee1D:
 
 class Donnee2D:
     def __init__(self, c=1500, rho=1000, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
+        """
+        Initialisation d'une instance de Donnee2D, permettant à la résolution du problème 2D de proagation en milieu homogène ou modulée en temps
+        """
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
         self.f: float = f                                              # frequence max observable

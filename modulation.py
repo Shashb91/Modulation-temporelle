@@ -1,4 +1,3 @@
-import numpy as np
 """
 ============================================================
 Ces fonctions permettent de réaliser différentes modulations
@@ -9,10 +8,12 @@ les 3 premières dérivées correspondant aux profils suivants :
 
 !!
 - eps doit être petit devant 1
-- alpha doit être compris entre 0 et 1 
-============================================================ 
+- alpha doit être compris entre 0 et 1
+============================================================
 """
 
+import numpy as np
+import matplotlib.pyplot as plt
 
 def modulo(t,T):
     while T < t:
@@ -37,11 +38,11 @@ def E_sinus(data):
 def rho_echelon(data, alpha):
     def f(t):
         eps, T = data.eps, (2*np.pi)/data.omega
-        return [data.rho * (1 + eps*(0 < modulo(t,T) < alpha*T)), 0,0,0]
+        return [data.rho * (1 + eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
     return f
 
 def E_echelon(data, alpha):
     def f(t):
-        eps, T = data.eps, (2*np.pi)/data.omega
-        return [data.e * (1 + eps*(alpha*T < modulo(t,T) < T)), 0,0,0]
+        eps, T = 0, (2*np.pi)/data.omega
+        return [data.e * (1 + eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
     return f

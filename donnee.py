@@ -6,12 +6,13 @@ def norme(a,b):
     return sqrt(a**2 + b**2)/sqrt(2)
 
 class Donnee1D:
-    def __init__(self, c = 2800, rho = 1200, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
+    def __init__(self, c = 2800, rho = 1200,  e = 9.4e9, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
         """
         Initialisation d'une instance de Donnee1D, permettant à la résolution du problème 1D de proagation en milieu homogène ou modulée en temps
         """
         self.c : float = c                                                 #célérité en m/s
         self.rho : float = rho                                             #masse volumique en g/m^3
+        self.e : float = e                                                 #module d'Young en Pa
         self.f : float = f                                                 #frequence max observable
         self.xc : tuple = xc                                               #couple position min, max
         self.tc : tuple = tc                                               #couple temps init, final
@@ -43,9 +44,6 @@ class Donnee1D:
 
         if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
         else: self.opt : bool = True
-
-        if "e" in kwargs.keys(): self.e = kwargs["e"]                      #MODULE D'YOUNG !!!
-        else: self.e = 9.4e9
 
         if "eps" in kwargs.keys(): self.eps = kwargs["eps"]                #Modulation temporelle
         else: self.eps = 0

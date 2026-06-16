@@ -46,12 +46,13 @@ def ADER41D_mt(data, **kwargs):
                 E = data.E_mt(data)
                 g = A_mt(data)(t)
             S_n = np.array([[-rho(t)[1] / rho(t)[0], 0], [0, E(t)[1] / E(t)[0]]])
+            U_temp = data.U[n, :, :]
             U_temp[i,:] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ data.U[n, i, :]
 
-            dxU = np.array([1/(12*data.dx) * (U_temp[ i-2,:] - 8*U_temp[i-1,:] + 8*U_temp[i+1,:] - U_temp[i+2,:]),
-                            1/(12*data.dx**2) * (-U_temp[ i-2,:] + 16*U_temp[i-1,:] - 30*U_temp[i,:] + 16*U_temp[i+1,:] - U_temp[i+2,:]),
-                            1/(12*data.dx**3) * (-U_temp[ i-2,:] + 2*U_temp[i-1,:] - 2*U_temp[i+1,:] + U_temp[i+2,:]),
-                            1/(24*data.dx**4) * (-U_temp[ i-2,:] + 4*U_temp[i-1,:] - 6*U_temp[i,:] + 4*U_temp[i+1,:] - U_temp[i+2,:])])
+            dxU = np.array([1/(12*data.dx) * (U_temp[i-2,:] - 8*U_temp[i-1,:] + 8*U_temp[i+1,:] - U_temp[i+2,:]),
+                            1/(12*data.dx**2) * (-U_temp[i-2,:] + 16*U_temp[i-1,:] - 30*U_temp[i,:] + 16*U_temp[i+1,:] - U_temp[i+2,:]),
+                            1/(12*data.dx**3) * (-U_temp[i-2,:] + 2*U_temp[i-1,:] - 2*U_temp[i+1,:] + U_temp[i+2,:]),
+                            1/(24*data.dx**4) * (-U_temp[i-2,:] + 4*U_temp[i-1,:] - 6*U_temp[i,:] + 4*U_temp[i+1,:] - U_temp[i+2,:])])
 
             a = -g[0]
             b1, b2 = - g[1], g[0] @ g[0]
@@ -60,7 +61,7 @@ def ADER41D_mt(data, **kwargs):
             dtU = np.array([a @ dxU[0], b1 @ dxU[0] + b2 @ dxU[1], c1 @ dxU[0] + c2 @ dxU[1] + c3 @ dxU[2], d1 @ dxU[0] + d2 @ dxU[1] + d3 @ dxU[2] + d4 @ dxU[3]])
             etape2 = U_temp[i, :] + sum([data.dt**(j + 1)/factorial(j + 1)*dtU[j, :] for j in range(4)])
 
-            s = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+            s = (data.dt * data.rho / (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ etape2 + s
     return data.U

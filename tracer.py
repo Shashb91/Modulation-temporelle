@@ -434,3 +434,31 @@ def tracer2D(data,t, y):
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
     plt.show()
+
+def tracer_mt(data, **kwargs):
+    """
+    Trace la masse volumique et le module d'Young modulés en temps
+    :param data: Donnee1D
+    :return: plot
+    """
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    r, e = [], []
+    for i in range(data.N):
+        if "alpha" in kwargs.keys():
+            alpha = kwargs["alpha"]
+            r.append(data.rho_mt(data1, alpha)(data.dt * i)[0])
+            e.append(data.E_mt(data1, alpha)(data.dt * i)[0])
+        else:
+            r.append(data.rho_mt(data1)(data.dt * i)[0])
+            e.append(data.E_mt(data1)(data.dt * i)[0])
+
+    ax1.plot(data1.t, r, lw=2, c='red')
+    ax1.grid(True)
+    ax1.set_ylabel('Masse volumique $\rho (g.m^{-3})$')
+
+    ax2.plot(data1.t, e, lw=2, c='blue')
+    ax2.grid(True)
+    ax2.set_xlabel('t (s)')
+    ax2.set_ylabel("Module d'Young E (Pa)")
+
+    plt.show()

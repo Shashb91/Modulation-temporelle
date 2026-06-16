@@ -10,9 +10,11 @@ from erreur import *
 from sauvegarde import *
 from schemas import*
 
-#============================================================
-#Implémentation de la résolution 1D homogène
-#============================================================
+"""
+============================================================
+Implémentation de la résolution 1D homogène
+============================================================
+"""
 
 data1 = Donnee1D(M = 200, label = "Lax Wendroff")                                #Lax Wendroff
 data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
@@ -35,9 +37,11 @@ anim1D_comparaison(data3, data2)                                                
 sauvegarder(data1,"data1_")
 sauvegarder(data2,"data2_")
 
-#============================================================
-#Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
-#============================================================
+"""
+============================================================
+Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
+============================================================
+"""
 
 epsLW = erreur1D(0.05, f = "LW")
 erreur1D_trace(epsLW, f = "LW")
@@ -48,10 +52,11 @@ erreur1D_trace(epsADER2, f = "ADER2")
 epsADER4 = erreur1D(0.05, M_li = [150,200,250], f = "ADER4")
 erreur1D_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
 
-
-#============================================================
-#Implémentation de la résolution 2D homogène
-#============================================================
+"""
+============================================================
+Implémentation de la résolution 2D homogène
+============================================================
+"""
 
 data4 = Donnee2D(label = "Lax Wendroff 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
 data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)

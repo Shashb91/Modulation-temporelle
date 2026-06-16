@@ -83,7 +83,7 @@ def tracer1D(data,t):
 
     plt.show()
     
-def anim1D_comparaison(data1, data2):
+def anim1D_comparaison(data1, data2, **kwargs):
     """
     Compare l'évolution de la vitesse, la pression et l'énergie avec deux solutions différentes
     :param data1: Donnee1D, regroupe l'ensemble des données du problème avec la solution 1
@@ -148,7 +148,10 @@ def anim1D_comparaison(data1, data2):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
-    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=20, blit=True)
+
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 20
+    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     plt.show()
     return anim
 
@@ -210,7 +213,7 @@ Pas de fonctions tracer2D ni de fonctions tracer2D_comparaison :
 tracé selon x et y en image, fixé avec un subplot ... bcp d'efforts, pas forcément utile
 """
 
-def anim2D(data):
+def anim2D(data, **kwargs):
     """
     Trace l'évolution de la vitesse (vx, vy), la pression et l'énergie des données de data en 2D
     :param data: Donnee2D, regroupe l'ensemble des données du problème
@@ -281,12 +284,13 @@ def anim2D(data):
     ax4.set_box_aspect(1)
 
     plt.tight_layout()
-    interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
     plt.show()
     return anim
 
-def anim2D_comparaison(data1, data2):
+def anim2D_comparaison(data1, data2, **kwargs):
     """
     Compare l'évolution de vx, vy, p et l'énergie totale avec une coupe dynamique en y via un Slider
     :param data1: Donnee2D, contient la solution 1
@@ -393,8 +397,9 @@ def anim2D_comparaison(data1, data2):
     ax3.set_box_aspect(1)
     ax4.set_box_aspect(1)
 
-    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=20, blit=True)
-
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 5
+    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     anim._slider = slider_y
     plt.show()
     return anim

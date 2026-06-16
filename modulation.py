@@ -13,7 +13,6 @@ les 3 premières dérivées correspondant aux profils suivants :
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 def modulo(t,T):
     while T < t:
@@ -35,14 +34,14 @@ def E_sinus(data):
                 data.e * eps * w**3 * (np.cos(w*t)*(1+2*eps**2) - 3 * eps * np.cos(w*t)*np.sin(w*t) + 2 * eps ** 2 * np.cos(w*t)*np.sin(w*t)**2)/(1 + eps*np.sin(w*t))**4]
     return f
 
-def rho_echelon(data, alpha):
+def rho_echelon(data):
     def f(t):
-        eps, T = data.eps, (2*np.pi)/data.omega
-        return [data.rho * (1 + eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
+        eps, T, alpha = data.eps, (2*np.pi)/data.omega, data.alpha
+        return [data.rho * (1 + eps*(int(0 < modulo(t,T) < alpha*T) - int(alpha*T < modulo(t,T) < T))), 0,0,0]
     return f
 
-def E_echelon(data, alpha):
+def E_echelon(data):
     def f(t):
-        eps, T = 0, (2*np.pi)/data.omega
-        return [data.e * (1 + eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
+        eps, T, alpha = data.eps, (2*np.pi)/data.omega, data.alpha
+        return [data.e * (1 + eps*(int(0 < modulo(t,T) < alpha*T) - int(alpha*T < modulo(t,T) < T))), 0,0,0]
     return f

@@ -1,6 +1,7 @@
 from source import*
 from math import sqrt
 from modulation import*
+import numpy as np
 
 def norme(a,b):
     return sqrt(a**2 + b**2)/sqrt(2)
@@ -27,12 +28,12 @@ class Donnee1D:
         self.N : int = int(self.tc[1]/self.dt)                             #discretisation temporelle
         self.x = np.linspace(self.xc[0], self.xc[1], self.M)               #axe x
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)               #axe temporel
-        
+
         if "U" in kwargs.keys(): self.U : np.ndarray() = kwargs["U"]       #vecteur [v, p] solution
         else: self.U : np.ndarray() = np.zeros((self.N, self.M, 2))
-        
+
         self.fmax : float = self.f*10
-        
+
         if "S" in kwargs.keys(): self.S = kwargs["S"]                      #donnee point source
         else: self.S = pt_source_1D
 
@@ -55,6 +56,9 @@ class Donnee1D:
         if "E_mt" in kwargs.keys(): self.E_mt = kwargs["E_mt"]
         else: self.E_mt = E_sinus
 
+        if "alpha" in kwargs.keys(): self.alpha = kwargs["alpha"]
+        else: self.alpha = 0.5
+
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
         self.rho: float = instance.rho
@@ -73,6 +77,21 @@ class Donnee1D:
         self.S = instance.S
         self.xs : list[tuple] = instance.xs
         self.E = instance.E
+
+    def CFL_maj(self):
+        """
+        Permet de corriger la CFL dans un milieu modulé en temps
+        :return: None
+        """
+        rho, E = [],[]
+        for t in self.t:
+            rho.append(self.rho_mt(self)(t)[0])
+            E.append(self.E_mt(self)(t)[0])
+        rho,E = np.array(rho),np.array(E)
+        self.c: float = np.max(np.sqrt(E/rho))
+        self.dt : float = self.CFL * self.dx / self.c
+        self.N: int = int(self.tc[1] / self.dt)
+        self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
 class Donnee2D:
     def __init__(self, c=1500, rho=1000, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):

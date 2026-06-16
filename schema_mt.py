@@ -3,15 +3,10 @@ ncols = 125                                                                     
 from math import factorial
 from modulation import *
 
-def A_mt(data, **kwargs):
+def A_mt(data):
     def f(t):
-        if "alpha" in kwargs.keys():
-            alpha = kwargs["alpha"]
-            rho = data.rho_mt(data,alpha)(t)
-            E = data.E_mt(data,alpha)(t)
-        else:
-            rho = data.rho_mt(data)(t)
-            E = data.E_mt(data)(t)
+        rho = data.rho_mt(data)(t)
+        E = data.E_mt(data)(t)
 
         A = np.array([[0, 1/rho[0]],
                       [E[0], 0]])
@@ -24,7 +19,7 @@ def A_mt(data, **kwargs):
         return [A,B,C,D]
     return f
 
-def ADER41D_mt(data, **kwargs):
+def ADER41D_mt(data):
     """
     Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
     :param data: Donnee1D, regroupe l'ensemble des données du problème
@@ -32,19 +27,15 @@ def ADER41D_mt(data, **kwargs):
     """
     data.U = np.zeros((data.N, data.M, 2))
     U_temp = np.zeros((data.M, 2))
+    data.CFL_maj()
 
     for n in trange(data.N-1, ncols = ncols):
         for i in range(2,data.M-2):
             rE, eps, w, t = data.rho/data.e, data.eps, data.omega, n*data.dt
-            if "alpha" in kwargs.keys():
-                alpha = kwargs["alpha"]
-                rho = data.rho_mt(data, alpha)
-                E = data.E_mt(data, alpha)
-                g = A_mt(data, alpha = alpha)(t)
-            else:
-                rho = data.rho_mt(data)
-                E = data.E_mt(data)
-                g = A_mt(data)(t)
+            rho = data.rho_mt(data)
+            E = data.E_mt(data)
+            g = A_mt(data)(t)
+
             S_n = np.array([[-rho(t)[1] / rho(t)[0], 0], [0, E(t)[1] / E(t)[0]]])
             U_temp = data.U[n, :, :]
             U_temp[i,:] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ data.U[n, i, :]

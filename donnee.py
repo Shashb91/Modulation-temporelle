@@ -60,7 +60,7 @@ class Donnee1D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + "\n" + ", N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + "\n)"
+        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + "\n" + ", N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c

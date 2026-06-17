@@ -36,12 +36,12 @@ def E_sinus(data):
 
 def rho_echelon(data):
     def f(t):
-        eps, T, alpha = data.eps, (2*np.pi)/data.omega, data.alpha
-        return [data.rho * (1 - eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
+        eps, T, alpha = 0, (2*np.pi)/data.omega, data.alpha
+        return [data.rho * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f
 
 def E_echelon(data):
     def f(t):
         eps, T, alpha = data.eps, (2*np.pi)/data.omega, data.alpha
-        return [data.e * 1 / (1 + eps*(int(0 < modulo(t,T) < alpha*T))), 0,0,0]
+        return [data.e * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f

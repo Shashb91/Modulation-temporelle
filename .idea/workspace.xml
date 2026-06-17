@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation de la modulation temporelle fonctionelle">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -145,22 +144,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Implementation du schema numerique ADER4">
-      <option name="closed" value="true" />
-      <created>1780564001329</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1780564001329</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Corrections mineures">
-      <option name="closed" value="true" />
-      <created>1780566412648</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1780566412648</updated>
     </task>
     <task id="LOCAL-00012" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -538,7 +521,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781621363304</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781683483471</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1781683483471</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781683548450</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1781683548450</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -576,9 +575,9 @@
     <MESSAGE value="Implémentation fonctionnelle de la modulation temporelle" />
     <MESSAGE value="Ajout de la diversification en modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implémentation de la modulation temporelle fonctionelle" />
+    <MESSAGE value="Corrections mineures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

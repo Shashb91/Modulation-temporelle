@@ -25,10 +25,10 @@ Implémentation de la résolution 1D modulée en temps
 """
 
 #Paramètres
-f_mt = 15
+f_mt = 3
 modulation = "echelon"
 alpha = 0.5
-eps = 0.5                                   #0 < eps <<1
+eps = 0.1                                   #0 < eps <<1
 CFL = 0.4              #correction de la CFL avec la modulation
 
 if modulation == "echelon":
@@ -38,13 +38,13 @@ elif modulation == "sinus":
     rho = rho_sinus
     E = E_sinus
 
-data1 = Donnee1D(M = 1500, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps = eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.185), xc = (0,600), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+data1 = Donnee1D(M = 2500, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps = eps, omega = f_mt*2*np.pi,
+                 tc = (0, 0.2), xc = (0,2000), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
 
 #Resolution
 U = ADER41D_mt(data1)
 
 
-# data1 = charger('.save/ADER4_f=5-Hz_mt=echelon_06-17_09-30-51.pkl')
-anim1D(data1, interval = 0.001 )
+# data1 = charger('.save/ADER4_f=10-Hz_mt=echelon_06-17_11-00-15.pkl')
+anim1D_mt(data1, interval = 0.00001)
 sauvegarder(data1)

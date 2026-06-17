@@ -138,6 +138,9 @@ class Donnee2D:
         if "E" in kwargs.keys():self.E: np.ndarray() = kwargs["E"]     # energie
         else: self.E: np.ndarray() = np.zeros(self.N)
 
+    def __str__(self):
+        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + "\n" + ", N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
+
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c
         self.rho: float = instance.rho

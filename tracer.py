@@ -392,11 +392,6 @@ def anim2D_comparaison(data1, data2, **kwargs):
         title.set_text(f"{data1.label} VS {data2.label} | t = {data1.t[n]:.4f} s | Coupe y = {data1.y[iy]:.2f} m")
         return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4_1, line4_2
 
-    ax1.set_box_aspect(1)
-    ax2.set_box_aspect(1)
-    ax3.set_box_aspect(1)
-    ax4.set_box_aspect(1)
-
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 5
     anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
@@ -441,23 +436,104 @@ def tracer_mt(data):
     :param data: Donnee1D
     :return: plot
     """
-    fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
-    r, e, c = [], [], []
+    fig, (axs) = plt.subplots(2, 2)
+    ax1, ax2 = axs[0,0], axs[0,1]
+    ax3, ax4 = axs[1,0], axs[1,1]
+    r, e, c, Z = [], [], [], []
     for i in range(data.N):
         r.append(data.rho_mt(data)(data.dt * i)[0])
         e.append(data.E_mt(data)(data.dt * i)[0])
         c.append(np.sqrt(data.E_mt(data)(data.dt * i)[0]/data.rho_mt(data)(data.dt * i)[0]))
+        Z.append(data.rho_mt(data)(data.dt * i)[0]*np.sqrt(data.E_mt(data)(data.dt * i)[0]/data.rho_mt(data)(data.dt * i)[0]))
 
     ax1.plot(data.t, r, lw=2, c='red')
     ax1.grid(True)
+    ax1.set_xlabel("t (s)")
     ax1.set_ylabel(f"Masse volumique $(g.m^{-3})$ ")
 
     ax2.plot(data.t, e, lw=2, c='blue')
     ax2.grid(True)
+    ax2.set_xlabel("t (s)")
     ax2.set_ylabel("Module d'Young (Pa)")
 
-    ax3.plot(data.t, c, lw=2, c='green')
+    ax3.plot(data.t, c, lw=2, c='orange')
     ax3.grid(True)
     ax3.set_xlabel('t (s)')
     ax3.set_ylabel(f'Célérité $(m.s^{-1})$')
+
+    ax4.plot(data.t, Z, lw=2, c='green')
+    ax4.grid(True)
+    ax4.set_xlabel('t (s)')
+    ax4.set_ylabel(f'Impédence $(kg.m^{-2}.s^{-1})$')
+
     plt.show()
+
+def anim1D_mt(data, **kwargs):
+    """
+    Trace l'évolution de la vitesse, la pression et l'énergie des données de data dans le cas d'un milieu modulé en temps
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
+    :return: plot
+    """
+    fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
+    ax1, ax2 = axs[0, 0], axs[0, 1]
+    ax3, ax4 = axs[1, 0], axs[1, 1]
+    rho = [data.rho_mt(data)(data.dt * i)[0] for i in range(data.N)]
+    E = [data.E_mt(data)(data.dt * i)[0] for i in range(data.N)]
+
+    line1, = ax1.plot([], [], color='blue', lw=2)
+    ax1.set_xlim(data.x[0], data.x[-1])
+    ax1.set_ylim(np.min(data.U[:, :, 0]) * 1.1, np.max(data.U[:, :, 0]) * 1.1)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
+    ax1.grid(True)
+
+    line2, = ax2.plot([], [], color='red', lw=2)
+    ax2.set_xlim(data.x[0], data.x[-1])
+    ax2.set_ylim(np.min(data.U[:, :, 1]) * 1.1, np.max(data.U[:, :, 1]) * 1.1)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Pression p (Pa)')
+    ax2.set_title('Champ des pressions')
+    ax2.grid(True)
+
+    line3, = ax3.plot([], [], color='orange', lw=2)
+    data.E = np.array([sum([0.5 * rho[i] * data.U[n, i, 0] ** 2 + data.U[n, i, 1] / E[i] for i in range(data.M)]) for n in range(0, data.N)])
+    ax3.set_xlim(data.t[0], data.t[-1])
+    ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
+    ax3.set_xlabel('Temps t (s)')
+    ax3.set_ylabel('Energie (J)')
+    ax3.set_title("Evolution de l'energie (J)")
+    ax3.grid(True)
+
+    line4, = ax4.plot([], [], color='green', lw=2)
+    Z = np.array([rho[i]*np.sqrt(rho[i]/E[i]) for i in range(data.N)])
+    ax4.set_xlim(data.t[0], data.t[-1])
+    ax4.set_ylim(np.min(Z) * 0.9, np.max(Z) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel('Impédence  $(kg.m^{-2}.s^{-1})$')
+    ax4.set_title("Evolution de l'impédence (J)")
+    ax4.grid(True)
+
+    title = fig.suptitle('', fontsize=14)
+
+    def init():
+        line1.set_data([], [])
+        line2.set_data([], [])
+        line3.set_data([], [])
+        line4.set_data([], [])
+        title.set_text("Courbe de pression, vitesse, énergie et d'impédence pour la solution " + data.label)
+        return line1, line2, line3, line4
+
+    def update(n):
+        line1.set_data(data.x, data.U[n, :, 0])
+        line2.set_data(data.x, data.U[n, :, 1])
+        line3.set_data(data.t[:n + 1], data.E[:n + 1])
+        line4.set_data(data.t[:n + 1], Z[:n + 1])
+        return line1, line2, line3, line4
+
+
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 5
+    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+    plt.show()
+    return anim

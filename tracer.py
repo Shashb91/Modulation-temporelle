@@ -477,8 +477,8 @@ def anim1D_mt(data, **kwargs):
     fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
     ax1, ax2 = axs[0, 0], axs[0, 1]
     ax3, ax4 = axs[1, 0], axs[1, 1]
-    rho = [data.rho_mt(data)(data.dt * i)[0] for i in range(data.N)]
-    E = [data.E_mt(data)(data.dt * i)[0] for i in range(data.N)]
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
 
     line1, = ax1.plot([], [], color='blue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
@@ -497,7 +497,7 @@ def anim1D_mt(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='orange', lw=2)
-    data.E = np.array([sum([0.5 * rho[i] * data.U[n, i, 0] ** 2 + data.U[n, i, 1] / E[i] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1] / E[n] for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')
@@ -506,7 +506,7 @@ def anim1D_mt(data, **kwargs):
     ax3.grid(True)
 
     line4, = ax4.plot([], [], color='green', lw=2)
-    Z = np.array([rho[i]*np.sqrt(rho[i]/E[i]) for i in range(data.N)])
+    Z = np.array([rho[n]*np.sqrt(rho[n]/E[n]) for n in range(data.N)])
     ax4.set_xlim(data.t[0], data.t[-1])
     ax4.set_ylim(np.min(Z) * 0.9, np.max(Z) * 1.1)
     ax4.set_xlabel('Temps t (s)')

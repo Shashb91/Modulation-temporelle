@@ -5,10 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -144,22 +140,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Corrections mineures">
-      <option name="closed" value="true" />
-      <created>1780566483310</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1780566483310</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Corrections des paramètres d'erreur">
-      <option name="closed" value="true" />
-      <created>1780574068640</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1780574068640</updated>
     </task>
     <task id="LOCAL-00014" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -537,7 +517,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781683548450</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Ajout de fonctions de tracer pour la mt">
+      <option name="closed" value="true" />
+      <created>1781688413064</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1781688413064</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1781688425674</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1781688425674</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -552,7 +548,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implementation de l'erreur en ADER4" />
     <MESSAGE value="Implémentation de la résolution 2D LW" />
     <MESSAGE value="Correction d'ADER4" />
     <MESSAGE value="Correction d'ADER4 terminée" />
@@ -576,6 +571,7 @@
     <MESSAGE value="Ajout de la diversification en modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
+    <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
     <MESSAGE value="Corrections mineures" />
     <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>

@@ -28,7 +28,6 @@ def ADER41D_mt(data):
     """
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
-    U_temp = np.zeros((data.M, 2))
 
     for n in trange(data.N-1, ncols = ncols):
         for i in range(2,data.M-2):
@@ -43,8 +42,8 @@ def ADER41D_mt(data):
 
             dxU = np.array([1/(12*data.dx) * (U_temp[i-2,:] - 8*U_temp[i-1,:] + 8*U_temp[i+1,:] - U_temp[i+2,:]),
                             1/(12*data.dx**2) * (-U_temp[i-2,:] + 16*U_temp[i-1,:] - 30*U_temp[i,:] + 16*U_temp[i+1,:] - U_temp[i+2,:]),
-                            1/(12*data.dx**3) * (-U_temp[i-2,:] + 2*U_temp[i-1,:] - 2*U_temp[i+1,:] + U_temp[i+2,:]),
-                            1/(24*data.dx**4) * (-U_temp[i-2,:] + 4*U_temp[i-1,:] - 6*U_temp[i,:] + 4*U_temp[i+1,:] - U_temp[i+2,:])])
+                            6/(12*data.dx**3) * (-U_temp[i-2,:] + 2*U_temp[i-1,:] - 2*U_temp[i+1,:] + U_temp[i+2,:]),
+                            - 1/(data.dx**4) * (-U_temp[i-2,:] + 4*U_temp[i-1,:] - 6*U_temp[i,:] + 4*U_temp[i+1,:] - U_temp[i+2,:])])
 
             a = -g[0]
             b1, b2 = - g[1], g[0] @ g[0]

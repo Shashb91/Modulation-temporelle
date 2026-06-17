@@ -2,6 +2,7 @@ from donnee import *
 from numpy.linalg import matrix_power
 from tqdm import trange
 ncols = 125                                                                       #largeur de la barre de chargement
+from math import factorial
 
 def LaxWendroff1D(data):
     """
@@ -38,7 +39,7 @@ def ADER21D(data):
     for s in range(0, s_max):
         a = np.zeros((2, 2))
         for m in range(0, m_max):
-            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(A, m + 1)
+            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(-A, m + 1)/factorial(m + 1)
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):
@@ -70,7 +71,7 @@ def ADER41D(data):
     for s in range(0, s_max):
         a = np.zeros((2, 2))
         for m in range(0, m_max):
-            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(A, m + 1)
+            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(- A, m + 1)/factorial(m + 1)
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):

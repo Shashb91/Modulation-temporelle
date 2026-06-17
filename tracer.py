@@ -506,7 +506,7 @@ def anim1D_mt(data, **kwargs):
     ax3.grid(True)
 
     line4, = ax4.plot([], [], color='green', lw=2)
-    Z = np.array([rho[n]*np.sqrt(rho[n]/E[n]) for n in range(data.N)])
+    Z = np.array([np.sqrt(rho[n]*E[n]) for n in range(data.N)])
     ax4.set_xlim(data.t[0], data.t[-1])
     ax4.set_ylim(np.min(Z) * 0.9, np.max(Z) * 1.1)
     ax4.set_xlabel('Temps t (s)')

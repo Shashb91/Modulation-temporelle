@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionelle de la MT">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,14 +142,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Implementation de l'erreur en ADER4">
-      <option name="closed" value="true" />
-      <created>1780592343327</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1780592343327</updated>
     </task>
     <task id="LOCAL-00017" summary="Implementation de l'erreur en ADER4">
       <option name="closed" value="true" />
@@ -537,7 +527,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781696742499</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Version fonctionelle de la MT">
+      <option name="closed" value="true" />
+      <created>1781700194822</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1781700194822</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -552,7 +550,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentation de la résolution 2D LW" />
     <MESSAGE value="Correction d'ADER4" />
     <MESSAGE value="Correction d'ADER4 terminée" />
     <MESSAGE value="Implémentation de LW2D avec une correction d'ordre 1" />
@@ -577,7 +574,8 @@
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
     <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
     <MESSAGE value="Corrections mineures" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
+    <MESSAGE value="Version fonctionelle de la MT" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionelle de la MT" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

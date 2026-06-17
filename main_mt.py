@@ -26,9 +26,9 @@ Implémentation de la résolution 1D modulée en temps
 
 #Paramètres
 f_mt = 5
-modulation = "echelon"
+modulation = "triangle"
 alpha = 0.5
-eps = 0.4                                  #0 < eps <<1
+eps = 0.25                                  #0 < eps <<1
 CFL = 0.95              #correction de la CFL avec la modulation
 
 if modulation == "echelon":
@@ -37,9 +37,12 @@ if modulation == "echelon":
 elif modulation == "sinus":
     rho = rho_sinus
     E = E_sinus
+elif modulation == "triangle":
+    rho = rho_triangle
+    E = E_triangle
 
-data1 = Donnee1D(M = 1500, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 1), xc = (0,2000), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+data1 = Donnee1D(M = 750, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
+                 tc = (0, 0.6), xc = (0,1500), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
 
 #Resolution
 U = ADER41D_mt(data1)

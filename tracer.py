@@ -28,7 +28,7 @@ def anim1D(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='orange', lw=2)
-    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1]/(data.rho*data.c**2) for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2/(data.rho*data.c**2) for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E)*1.1, np.max(data.E)*1.1)
     ax3.set_xlabel('Position x (m)')
@@ -475,8 +475,8 @@ def anim1D_mt(data, **kwargs):
     :return: plot
     """
     fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
-    ax1, ax2 = axs[0, 0], axs[0, 1]
-    ax3, ax4 = axs[1, 0], axs[1, 1]
+    ax1, ax2 = axs[0, 0], axs[1, 0]
+    ax3, ax4 = axs[0, 1], axs[1, 1]
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
 
@@ -497,7 +497,7 @@ def anim1D_mt(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='orange', lw=2)
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1] / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')

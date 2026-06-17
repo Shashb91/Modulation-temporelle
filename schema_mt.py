@@ -1,3 +1,4 @@
+import numpy as np
 from tqdm import trange
 ncols = 125                                                                       #largeur de la barre de chargement
 from math import factorial
@@ -31,7 +32,7 @@ def ADER41D_mt(data):
 
     for n in trange(data.N-1, ncols = ncols):
         for i in range(2,data.M-2):
-            rE, eps, w, t = data.rho/data.e, data.eps, data.omega, n*data.dt
+            rE, t = data.rho/data.e, n*data.dt
             rho = data.rho_mt(data)
             E = data.E_mt(data)
             g = A_mt(data)(t)

@@ -21,13 +21,17 @@ def modulo(t,T):
 
 def rho_sinus(data):
     def f(t):
-        eps, w = data.eps, data.omega
+        try : eps = data.eps
+        except : eps = data.eps_r
+        w = data.omega
         return [data.rho * (1 - eps*np.sin(w*t)), -data.rho * eps * w * np.cos(w*t), data.rho * eps * w**2 * np.sin(w*t), data.rho * eps * w**3 * np.cos(w*t)]
     return f
 
 def E_sinus(data):
     def f(t):
-        eps, w = data.eps, data.omega
+        try : eps = data.eps
+        except : eps = data.eps_E
+        w = data.omega
         return [data.e * 1/(1 + eps*np.sin(w*t)),
                 - data.e * eps * w *np.cos(w*t)/(1 + eps*np.sin(w*t))**2,
                 data.e * eps * w**2 * (2*eps + np.sin(w*t) - eps*np.sin(w*t)**2)/(1 + eps*np.sin(w*t))**3,
@@ -36,12 +40,16 @@ def E_sinus(data):
 
 def rho_echelon(data):
     def f(t):
-        eps, T, alpha = 0, (2*np.pi)/data.omega, data.alpha
+        try : eps = data.eps
+        except : eps = data.eps_r
+        T, alpha = (2*np.pi)/data.omega, data.alpha
         return [data.rho * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f
 
 def E_echelon(data):
     def f(t):
-        eps, T, alpha = data.eps, (2*np.pi)/data.omega, data.alpha
-        return [data.e * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
+        try : eps = data.eps
+        except : eps = data.eps_E
+        T, alpha = (2*np.pi)/data.omega, data.alpha
+        return [data.e / (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f

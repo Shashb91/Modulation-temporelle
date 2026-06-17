@@ -46,8 +46,10 @@ class Donnee1D:
         if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
         else: self.opt : bool = True
 
-        if "eps" in kwargs.keys(): self.eps = kwargs["eps"]                #Modulation temporelle
-        else: self.eps = 0
+        if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
+        else: self.eps_p = 0
+        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]                #Modulation temporelle
+        else: self.eps_E = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
 
@@ -60,7 +62,7 @@ class Donnee1D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + "\n" + ", N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
+        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -113,7 +115,7 @@ class Donnee2D:
         self.dx: float = self.xc[1] / self.Mx                          # infinitesimal spatial en x
         self.dy: float = self.xc[1] / self.My                          # infinitesimal spatial en y
         self.CFL = CFL
-        self.dt: float = self.CFL * max(self.dx,self.dy) / (self.c)    # infinitesimal temporel
+        self.dt: float = self.CFL * max(self.dx,self.dy) / self.c      # infinitesimal temporel
         self.opt: bool = opt                                           # True si perturb sur vitesse, False si perturb sur pression
 
         if "label" in kwargs.keys(): self.label = kwargs["label"]      # label
@@ -139,7 +141,7 @@ class Donnee2D:
         else: self.E: np.ndarray() = np.zeros(self.N)
 
     def __str__(self):
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + "\n" + ", N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
+        return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")"
 
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c

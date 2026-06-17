@@ -25,9 +25,9 @@ def ADER41D_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
     U_temp = np.zeros((data.M, 2))
-    data.CFL_maj()
 
     for n in trange(data.N-1, ncols = ncols):
         for i in range(2,data.M-2):

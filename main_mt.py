@@ -25,7 +25,7 @@ Implémentation de la résolution 1D modulée en temps
 """
 
 #Paramètres
-f_mt = 5
+f_mt = 15
 modulation = "echelon"
 alpha = 0.5
 eps = 0.5                                   #0 < eps <<1
@@ -45,8 +45,6 @@ data1 = Donnee1D(M = 1500, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulati
 U = ADER41D_mt(data1)
 
 
-#data1 = charger('.save/ADER4_mt f=20 Hz_06-15_16-27-44.pkl')
-anim1D(data1, interval = 1)
+# data1 = charger('.save/ADER4_f=5-Hz_mt=echelon_06-17_09-30-51.pkl')
+anim1D(data1, interval = 0.001 )
 sauvegarder(data1)
-
-

@@ -14,6 +14,6 @@ def analytique1D(data):
         for i in range(2, data.M-2):
             ind = n*data.dt - np.abs(i-data.xs)*data.dx/data.c
             a = 1/(2*data.c) * data.S(data.f, ind)
-            b = signe(i - data.M//2) * data.rho/2 * data.S(data.f, ind)
+            b = signe(i - data.xs) * data.rho/2 * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])
     return data.U

@@ -3,9 +3,6 @@ from math import sqrt
 from modulation import*
 import numpy as np
 
-def norme(a,b):
-    return sqrt(a**2 + b**2)/sqrt(2)
-
 class Donnee1D:
     def __init__(self, c = 2800, rho = 1200,  e = 9.4e9, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
         """
@@ -164,3 +161,25 @@ class Donnee2D:
         self.S = instance.S
         self.ps : list[tuple] = instance.ps
         self.E = instance.E
+
+    def projection(self, coupe):
+        """
+        Réalise la projection d'une variable de Donnee2D en une variable de Donnee1D
+        :param coupe: (int,int), correspond à la positon de la coupe. Attention, une des deux coordonnées doit forcément être nul !!
+        :return: Donnee1D
+        """
+        retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc,
+                          M=self.Mx, dx=self.dx, CFL=self.CFL, dt=self.dt, N=self.N,
+                          fmax=f * 10, opt=self.opt, label=self.label, S=self.S, t = self.t)
+        if coupe[0] != 0:  # coupe selon l'axe y
+            retour.xs = self.ps[1]
+            retour.U = np.concatenate(self.U[:, coupe[0], :, 1], self.U[:, coupe[0], :, 2])
+            retour.xc = self.yc
+            retour.x = self.y
+        if coupe[1] != 0:  # coupe selon l'axe x
+            retour.xs = self.ps[0]
+            retour.U = np.concatenate(self.U[:, :, coupe[1], 0], self.U[:, :, coupe[1], 2])
+            retour.xc = self.xc
+            retour.x = self.x
+
+        return retour

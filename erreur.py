@@ -23,8 +23,8 @@ def erreur1D(t, M_li = [100, 200, 400, 800, 1600], f = "LW"):
 
         u = analytique1D(data2)
         ti = int(t/data1.dt)
-        sauvegarder(data1, f + "_" + M_li[i] + "_")
-        sauvegarder(data2, "Analytique_" + M_li[i] + "_")
+        sauvegarder(data1, f + "_" + str(M_li[i]) + "_", opt=True)
+        sauvegarder(data2, "Analytique_" + str(M_li[i]) + "_", opt=True)
 
         if f == "ADER4": eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(2,data1.M-2)])/(data1.M-4)
         else: eps[i, :] = np.sum([np.abs(U[ti,n,:] - u[ti,n,:]) for n in range(data1.M)])/data1.M

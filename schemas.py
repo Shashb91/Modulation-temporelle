@@ -71,7 +71,7 @@ def ADER41D(data):
     for s in range(0, s_max):
         a = np.zeros((2, 2))
         for m in range(0, m_max):
-            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(- A, m + 1)/factorial(m + 1)
+            a += gamma[s, m] * (data.dt/data.dx)**(m + 1) * matrix_power(A, m + 1)
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):
@@ -166,7 +166,7 @@ def LaxWendroff2D_BC(data):
        :param data: Donnee2D, regroupe l'ensemble des données du problème
        :return: Donnee2D, solution en vitesse et pression du problème 2D
        """
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+    data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
     rc2 = data.rho * data.c ** 2
     A = np.array([[0, 0, 1 / data.rho],
                   [0, 0, 0],
@@ -176,21 +176,37 @@ def LaxWendroff2D_BC(data):
                   [0, rc2, 0]])
 
     for n in trange(0, data.N - 1, ncols=ncols):
-        for i in range(1,data.Mx-1):
+        for i in range(data.Mx + 1):
             for j in range(1, data.My - 1):
-                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
-                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
-                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
-                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
-                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([1, 0, 0]).transpose()) * (data.opt))
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+                #condition de periodicité gauche
+                if i == 0:
+                    a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 1, j, :] - data.U[n, - 1, j, :])
+                    a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, 0, j + 1, :] - data.U[n, 0, j - 1, :])
+                    b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 1, j, :] + data.U[n, - 1, j, :] - 2 * data.U[n, 0, j, :]) / data.dx ** 2)
+                    b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j + 1, :] + data.U[n, 0, j - 1, :] - 2 *data.U[n, 0, j, :]) / data.dy ** 2)
+                    s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
+                         (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
+                    data.U[n + 1, 0, j, :] = data.U[n, 0, j, :] - a1 - a2 + b1 + b2 + s
 
-                #condition periodique
-                a = data.U[n + 1, 1, j, :]
-                data.U[n + 1, 0, j, :] = a
-                data.U[n + 1, -1, j, :] = a
-    return data.U
+                # Lax-Wendroff 2D
+                elif i!= 0 or i!= data.Mx + 1:
+                    a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
+                    a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
+                    b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
+                    b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
+                    s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
+                         (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
+                    data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+
+                # condition de periodicité droite
+                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 0, j, :] - data.U[n, -2, j, :])
+                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, -1, j + 1, :] - data.U[n, -1, j - 1, :])
+                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j, :] + data.U[n, -2, j, :] - 2 * data.U[n, -1, j, :]) / data.dx ** 2)
+                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, -1, j + 1, :] + data.U[n, -1, j - 1, :] - 2 * data.U[n, -1, j, :]) / data.dy ** 2)
+                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
+                     (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
+                data.U[n + 1, -1, j, :] = data.U[n, -1, j, :] - a1 - a2 + b1 + b2 + s
+    return data.U[:,1:data.Mx + 1, :,:]
 
 def ADER42D_BC(data):
     """
@@ -215,8 +231,8 @@ def ADER42D_BC(data):
         for i in range(2,data.Mx+1):
             for j in range(2,data.My-2):
                 #condition periodique
-                data.U[n, 1, j, :] = data.U[n, -1, j, :]
-                data.U[n, 0, j, :] = data.U[n, -2, j, :]
+
+
 
                 a1 = data.dt * (c[0] * A @ (data.U[n,i-2,j,:] - 8*data.U[n,i-1,j,:] + 8*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
                                 c[0] * B @ (data.U[n,i,j-2,:] - 8*data.U[n,i,j-1,:] + 8*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))

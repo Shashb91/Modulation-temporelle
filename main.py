@@ -20,22 +20,22 @@ data1 = Donnee1D(M = 200, label = "Lax Wendroff")                               
 data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
 data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
 
-U_LW = LaxWendroff1D(data1)
-anim1D(data1)
+# U_LW = LaxWendroff1D(data1)
+# anim1D(data1)
 
-u = analytique1D(data2)
-anim1D(data2)
+# u = analytique1D(data2)
+# anim1D(data2)
 
-U_ADER4 = ADER41D(data3)
-anim1D(data3)
+# U_ADER4 = ADER41D(data3)
+# anim1D(data3)
 
-data1 = charger('.save/data1_06-08_15-20-38.pkl')
-data2 = charger('.save/data2_06-08_15-20-38.pkl')
-anim1D_comparaison(data1, data2)                                                      #Comparaison LaxWendroff VS Analytique
-anim1D_comparaison(data3, data2)                                                      #Comparaison ADER4 VS Analytique
+# data1 = charger('.save/data1_06-08_15-20-38.pkl')
+# data2 = charger('.save/data2_06-08_15-20-38.pkl')
+# anim1D_comparaison(data1, data2)                                                      #Comparaison LaxWendroff VS Analytique
+# anim1D_comparaison(data3, data2, interval = 30)                                                      #Comparaison ADER4 VS Analytique
 
-sauvegarder(data1,"data1_")
-sauvegarder(data2,"data2_")
+# sauvegarder(data1,"data1_")
+# sauvegarder(data2,"data2_")
 
 """
 ============================================================
@@ -43,14 +43,14 @@ Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
 ============================================================
 """
 
-epsLW = erreur1D(0.05, f = "LW")
-erreur1D_trace(epsLW, f = "LW")
+# epsLW = erreur1D(0.05, f = "LW")
+# erreur1D_trace(epsLW, f = "LW")
 
-epsADER2 = erreur1D(0.05, f = "ADER2")
-erreur1D_trace(epsADER2, f = "ADER2")
+# epsADER2 = erreur1D(0.05, f = "ADER2")
+# erreur1D_trace(epsADER2, f = "ADER2")
 
-epsADER4 = erreur1D(0.05, M_li = [150,200,250], f = "ADER4")
-erreur1D_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
+# epsADER4 = erreur1D(0.05, M_li = [150,200,250], f = "ADER4")
+# erreur1D_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
 
 """
 ============================================================
@@ -58,14 +58,20 @@ Implémentation de la résolution 2D homogène
 ============================================================
 """
 
-data4 = Donnee2D(label = "Lax Wendroff 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
-data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_pression, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 300, My = 300, f = 20)
+data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),
+                 CFL = 0.6, Mx = 150, My = 150, f = 40, ps = [(50,50),(100,50),(50,100),(100,100)])
+# data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_2D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 200, My = 200, f = 20)
 
-U = LaxWendroff2D(data4)
-sauvegarder(data4,opt = True)
-
-u = ADER42D(data5)
-sauvegarder(data5,opt = True)
-data4 = charger('.save/Lax Wendroff 2D_06-10_15-55-20.pkl')
+U = LaxWendroff2D_BC(data4)
+sauvegarder(data4)
+# data4 = charger('.save/Lax Wendroff 2D_06-18_16-14-43.pkl')
 anim2D(data4)
-anim2D(data5)
+
+data5 = Donnee1D(M = 150, label = "LW 2D OP", xc = (0,300), tc = (0, 0.12), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho)
+data5.U = data4.U[:, 75, :,1:]
+anim1D(data5, interval = 30)
+
+data2 = Donnee1D(M = 150, label = "Analytique", xs = 0)                                  #ADER4
+u = analytique1D(data2)
+anim1D(data2, interval = 30)
+anim1D_comparaison(data5, data2, interval = 30)

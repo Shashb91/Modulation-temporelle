@@ -212,7 +212,7 @@ def ADER42D_BC(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
-    rc2 = data.rho*data.c**2
+    rc2 = data.c**2
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],
                   [rc2, 0, 0]])
@@ -251,7 +251,7 @@ def ADER42D_BC(data):
                                - 16*data.U[n,1,j-2,:] +256*data.U[n,1,j-1,:]-480*data.U[n,1,j,:] + 256*data.U[n,1,j+1,:] - 16*data.U[n,1,j+2,:]
                                + data.U[n,2,j-2,:] -16*data.U[n,2,j-1,:] +30*data.U[n,2,j,:] - 16*data.U[n,2,j+1,:] + data.U[n,2,j+2,:]))
             s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, 0, j, :] = data.U[n,0,j,:] - a1 - a2 - a3 - a4 + s
 
             a1 = data.dt * (c[0] * A @ (data.U[n,-1,j,:] - 8*data.U[n,0,j,:] + 8*data.U[n,2,j,:] - data.U[n,3,j,:]) +
@@ -278,7 +278,7 @@ def ADER42D_BC(data):
                                - 16*data.U[n,2,j-2,:] +256*data.U[n,2,j-1,:]-480*data.U[n,2,j,:] + 256*data.U[n,2,j+1,:] - 16*data.U[n,2,j+2,:]
                                + data.U[n,3,j-2,:] -16*data.U[n,3,j-1,:] +30*data.U[n,3,j,:] - 16*data.U[n,3,j+1,:] + data.U[n,3,j+2,:]))
             s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, 1, j, :] = data.U[n,1,j,:] - a1 - a2 - a3 - a4 + s
 
             #conditon de periodicité droite
@@ -306,7 +306,7 @@ def ADER42D_BC(data):
                                - 16*data.U[n,0,j-2,:] +256*data.U[n,0,j-1,:]-480*data.U[n,0,j,:] + 256*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
                                + data.U[n,1,j-2,:] -16*data.U[n,1,j-1,:] +30*data.U[n,1,j,:] - 16*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]))
             s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, -1, j, :] = data.U[n,-1,j,:] - a1 - a2 - a3 - a4 + s
             
             a1 = data.dt * (c[0] * A @ (data.U[n,-4,j,:] - 8*data.U[n,-3,j,:] + 8*data.U[n,-1,j,:] - data.U[n,0,j,:]) +
@@ -333,7 +333,7 @@ def ADER42D_BC(data):
                                - 16*data.U[n,-1,j-2,:] +256*data.U[n,-1,j-1,:]-480*data.U[n,-1,j,:] + 256*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
                                + data.U[n,0,j-2,:] -16*data.U[n,0,j-1,:] +30*data.U[n,0,j,:] - 16*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]))
             s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, -2, j, :] = data.U[n,-2,j,:] - a1 - a2 - a3 - a4 + s
             
             for i in range(2, data.Mx + 2):
@@ -362,7 +362,7 @@ def ADER42D_BC(data):
                                    - 16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
                                    + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
                 s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                     (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
 
     data.U = data.U[:,2:data.Mx,:,:]

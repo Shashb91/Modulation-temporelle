@@ -96,12 +96,13 @@ class Donnee1D:
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
 class Donnee2D:
-    def __init__(self, c=1500, rho=1000, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
+    def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
         """
         Initialisation d'une instance de Donnee2D, permettant à la résolution du problème 2D de proagation en milieu homogène ou modulée en temps
         """
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
+        self.e : float = e                                             #module d'Young en Pa
         self.f: float = f                                              # frequence max observable
         self.xc: tuple = xc                                            # couple position x min, max
         self.yc: tuple = yc                                            # couple position y min, max
@@ -136,6 +137,24 @@ class Donnee2D:
 
         if "E" in kwargs.keys():self.E: np.ndarray() = kwargs["E"]     # energie
         else: self.E: np.ndarray() = np.zeros(self.N)
+
+        if "opt" in kwargs.keys(): self.opt = kwargs["opt"]                #True si perturb sur vitesse, False si perturb sur pression
+        else: self.opt : bool = True
+
+        if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
+        else: self.eps_p = 0
+        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]                #Modulation temporelle
+        else: self.eps_E = 0
+        if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
+        else: self.omega = 0
+
+        if "rho_mt" in kwargs.keys(): self.rho_mt = kwargs["rho_mt"]
+        else: self.rho_mt = rho_sinus
+        if "E_mt" in kwargs.keys(): self.E_mt = kwargs["E_mt"]
+        else: self.E_mt = E_sinus
+
+        if "alpha" in kwargs.keys(): self.alpha = kwargs["alpha"]
+        else: self.alpha = 0.5
 
     def __str__(self):
         return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")"

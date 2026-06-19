@@ -58,20 +58,28 @@ Implémentation de la résolution 2D homogène
 ============================================================
 """
 
-data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),
-                 CFL = 0.6, Mx = 150, My = 150, f = 40, ps = [(50,50),(100,50),(50,100),(100,100)])
-# data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_2D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 200, My = 200, f = 20)
+data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = 150, My = 150, f = 20)
+data5 = Donnee2D(label = "ADER4 2D",opt = False, source=pt_source_2D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.08), CFL = 0.6, Mx = 150, My = 150, f = 20)
+
+data2 = Donnee1D(M = 150, label = "Analytique", xs = 0, f = 20)
+u = analytique1D(data2)
 
 U = LaxWendroff2D_BC(data4)
 sauvegarder(data4)
 # data4 = charger('.save/Lax Wendroff 2D_06-18_16-14-43.pkl')
 anim2D(data4)
 
-data5 = Donnee1D(M = 150, label = "LW 2D OP", xc = (0,300), tc = (0, 0.12), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho)
-data5.U = data4.U[:, 75, :,1:]
-anim1D(data5, interval = 30)
+data4_ = Donnee1D(M = 150, label = "LW 2D OP", xc = (0,300), tc = (0, 0.12), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho)
+data4_.U = data4.U[:, 75, :,1:]
+anim1D(data4_, interval = 30)
+anim1D_comparaison(data4_, data2, interval = 30)
 
-data2 = Donnee1D(M = 150, label = "Analytique", xs = 0)                                  #ADER4
-u = analytique1D(data2)
-anim1D(data2, interval = 30)
-anim1D_comparaison(data5, data2, interval = 30)
+
+U = ADER42D_BC(data5)
+sauvegarder(data5)
+anim2D(data5)
+
+data5_ = Donnee1D(M = 150, label = "ADER4 2D OP", xc = (0,300), tc = (0, 0.12), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho)
+data5_.U = data5.U[:, 75, :,1:]
+anim1D(data5_, interval = 30)
+anim1D_comparaison(data5_,data2, interval=30)

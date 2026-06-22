@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 
 def pt_source_1D(f, t):
     """
-    Retourne l'array de dimension N, retracant l'ondelette tronquée sur toute la durée N*dt
+    Retourne le float de l'ondelette tronquée au temps t en 1D
     :param f: float, fréquence d'oscillation
     :param t: float, temps en seconde
-    :return: np.ndarray(), ondelette tronquée totale
+    :return: float, correspondant à l'ondelette tronquée au temps t
     """
     omega = 2 * np.pi * f
     a = [1, -21/32, 63/768, -1/512]
@@ -14,10 +14,10 @@ def pt_source_1D(f, t):
 
 def pt_source_2D(f, t):
     """
-    Retourne l'array de dimension N, retracant l'ondelette tronquée sur toute la durée N*dt
+    Retourne le float de l'ondelette tronquée au temps t en 2D
     :param f: float, fréquence d'oscillation
     :param t: float, temps en seconde
-    :return: np.ndarray(), ondelette tronquée totale
+    :return:  float, correspondant à l'ondelette tronquée au temps t
     """
     omega = 2 * np.pi * f
     b = [1, -21/(2*32), 63/(4*768), -1/(8*512)]

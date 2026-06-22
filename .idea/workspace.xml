@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionelle de la propagation en onde plane 2D nmt">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionelle de la propagation en onde tronquée lointaine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source.py" beforeDir="false" afterPath="$PROJECT_DIR$/source.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,14 +143,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00021" summary="Implémentation de la résolution 2D LW">
-      <option name="closed" value="true" />
-      <created>1780904479335</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1780904479335</updated>
     </task>
     <task id="LOCAL-00022" summary="Correction d'ADER4">
       <option name="closed" value="true" />
@@ -537,7 +528,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781857711796</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="Version fonctionelle de la propagation en onde tronquée lointaine">
+      <option name="closed" value="true" />
+      <created>1782121532039</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1782121532039</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -552,7 +551,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Correction d'ADER4 terminée" />
     <MESSAGE value="Implémentation de LW2D avec une correction d'ordre 1" />
     <MESSAGE value="Implementation de l'horodatage des fichiers" />
     <MESSAGE value="Implémentation de Lax Wendroff 2D avec des corrections" />
@@ -577,7 +575,8 @@
     <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Version fonctionelle de la MT" />
     <MESSAGE value="Version fonctionelle de la propagation en onde plane 2D nmt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionelle de la propagation en onde plane 2D nmt" />
+    <MESSAGE value="Version fonctionelle de la propagation en onde tronquée lointaine" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionelle de la propagation en onde tronquée lointaine" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

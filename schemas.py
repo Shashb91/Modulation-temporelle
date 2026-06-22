@@ -8,7 +8,6 @@ from math import factorial
 Schémas numériques pour la résolution du problème de propagation en 1D non modulé en temps, avec un point source ponctuel
 """
 
-
 def LaxWendroff1D(data):
     """
     Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 1D
@@ -51,7 +50,6 @@ def ADER21D(data):
             a1 = sum([C[s] @ data.U[n, i + s - 1, :] for s in range(0, s_max)])
             a2 = (data.dt / data.dx) * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
- 
 
 def ADER41D(data):
     """
@@ -82,7 +80,6 @@ def ADER41D(data):
             a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
             a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
- 
 
 """
 Schémas numériques pour la résolution du problème de propagation en 1D non modulé en temps, avec une initialisation en ondelette tronquée lointaine
@@ -99,7 +96,7 @@ def LaxWendroff1D_init(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = data.dt/data.dx * data.S(data.f,  data.tc[1] - data.dx*i/data.c) * np.array([1, -data.c*data.rho])
+        data.U[0,i,:] = data.dt/data.dx * data.S(data.f,  data.tc[1] - data.dx*i/data.c) * np.array([1, - data.c*data.rho])
 
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(1, data.M - 1):
@@ -242,13 +239,13 @@ def LaxWendroff2D_BC(data):
 
     for n in trange(0, data.N - 1, ncols=ncols):
         for j in range(1, data.My - 1):
+            s = ((data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
+                 (data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
             #condition de periodicité gauche
             a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 1, j, :] - data.U[n, - 1, j, :])
             a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, 0, j + 1, :] - data.U[n, 0, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 1, j, :] + data.U[n, - 1, j, :] - 2 * data.U[n, 0, j, :]) / data.dx ** 2)
-            b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j + 1, :] + data.U[n, 0, j - 1, :] - 2 *data.U[n, 0, j, :]) / data.dy ** 2)
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
+            b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j + 1, :] + data.U[n, 0, j - 1, :] - 2 * data.U[n, 0, j, :]) / data.dy ** 2)
             data.U[n + 1, 0, j, :] = data.U[n, 0, j, :] - a1 - a2 + b1 + b2 + s
 
             # condition de periodicité droite
@@ -256,8 +253,6 @@ def LaxWendroff2D_BC(data):
             a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, -1, j + 1, :] - data.U[n, -1, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j, :] + data.U[n, -2, j, :] - 2 * data.U[n, -1, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, -1, j + 1, :] + data.U[n, -1, j - 1, :] - 2 * data.U[n, -1, j, :]) / data.dy ** 2)
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
             data.U[n + 1, -1, j, :] = data.U[n, -1, j, :] - a1 - a2 + b1 + b2 + s
             for i in range(1, data.Mx + 1):
                 # Lax-Wendroff 2D
@@ -265,9 +260,8 @@ def LaxWendroff2D_BC(data):
                 a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
                 b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
-                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s [:,1:data.Mx + 1, :,:]
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+    data.U = data.U[:,1:data.Mx + 1, :,:]
 
 def ADER42D_BC(data):
     """
@@ -290,6 +284,8 @@ def ADER42D_BC(data):
     c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
     for n in trange(0, data.N - 1, ncols = ncols):
         for j in range(2,data.My-2):
+            s = ((data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
+                 (data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             #condition periodicité gauche
             a1 = data.dt * (c[0] * A @ (data.U[n,-2,j,:] - 8*data.U[n,-1,j,:] + 8*data.U[n,1,j,:] - data.U[n,2,j,:]) +
                             c[0] * B @ (data.U[n,0,j-2,:] - 8*data.U[n,0,j-1,:] + 8*data.U[n,0,j+1,:] - data.U[n,0,j+2,:]))
@@ -314,8 +310,6 @@ def ADER42D_BC(data):
                                + 30*data.U[n,0,j-2,:] -480*data.U[n,0,j-1,:] +900*data.U[n,0,j,:] -480*data.U[n,0,j+1,:] + 30*data.U[n,0,j+2,:]
                                - 16*data.U[n,1,j-2,:] +256*data.U[n,1,j-1,:]-480*data.U[n,1,j,:] + 256*data.U[n,1,j+1,:] - 16*data.U[n,1,j+2,:]
                                + data.U[n,2,j-2,:] -16*data.U[n,2,j-1,:] +30*data.U[n,2,j,:] - 16*data.U[n,2,j+1,:] + data.U[n,2,j+2,:]))
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, 0, j, :] = data.U[n,0,j,:] - a1 - a2 - a3 - a4 + s
 
             a1 = data.dt * (c[0] * A @ (data.U[n,-1,j,:] - 8*data.U[n,0,j,:] + 8*data.U[n,2,j,:] - data.U[n,3,j,:]) +
@@ -341,8 +335,6 @@ def ADER42D_BC(data):
                                + 30*data.U[n,1,j-2,:] -480*data.U[n,1,j-1,:] +900*data.U[n,1,j,:] -480*data.U[n,1,j+1,:] + 30*data.U[n,1,j+2,:]
                                - 16*data.U[n,2,j-2,:] +256*data.U[n,2,j-1,:]-480*data.U[n,2,j,:] + 256*data.U[n,2,j+1,:] - 16*data.U[n,2,j+2,:]
                                + data.U[n,3,j-2,:] -16*data.U[n,3,j-1,:] +30*data.U[n,3,j,:] - 16*data.U[n,3,j+1,:] + data.U[n,3,j+2,:]))
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, 1, j, :] = data.U[n,1,j,:] - a1 - a2 - a3 - a4 + s
 
             #conditon de periodicité droite
@@ -369,8 +361,6 @@ def ADER42D_BC(data):
                                + 30*data.U[n,-1,j-2,:] -480*data.U[n,-1,j-1,:] +900*data.U[n,-1,j,:] -480*data.U[n,-1,j+1,:] + 30*data.U[n,-1,j+2,:]
                                - 16*data.U[n,0,j-2,:] +256*data.U[n,0,j-1,:]-480*data.U[n,0,j,:] + 256*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
                                + data.U[n,1,j-2,:] -16*data.U[n,1,j-1,:] +30*data.U[n,1,j,:] - 16*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]))
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, -1, j, :] = data.U[n,-1,j,:] - a1 - a2 - a3 - a4 + s
             
             a1 = data.dt * (c[0] * A @ (data.U[n,-4,j,:] - 8*data.U[n,-3,j,:] + 8*data.U[n,-1,j,:] - data.U[n,0,j,:]) +
@@ -396,8 +386,6 @@ def ADER42D_BC(data):
                                + 30*data.U[n,-2,j-2,:] -480*data.U[n,-2,j-1,:] +900*data.U[n,-2,j,:] -480*data.U[n,-2,j+1,:] + 30*data.U[n,-2,j+2,:]
                                - 16*data.U[n,-1,j-2,:] +256*data.U[n,-1,j-1,:]-480*data.U[n,-1,j,:] + 256*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
                                + data.U[n,0,j-2,:] -16*data.U[n,0,j-1,:] +30*data.U[n,0,j,:] - 16*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]))
-            s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             data.U[n + 1, -2, j, :] = data.U[n,-2,j,:] - a1 - a2 - a3 - a4 + s
             
             for i in range(2, data.Mx + 2):
@@ -425,8 +413,5 @@ def ADER42D_BC(data):
                                    + 30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
                                    - 16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
                                    + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / ( np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
-
     data.U = data.U[:,2:data.Mx,:,:] 

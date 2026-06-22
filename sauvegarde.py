@@ -15,7 +15,7 @@ def sauvegarder(instance, nom_fichier = "", opt = False):
             - le fichier sera automatiquement placé sous l'extension '.pkl'
     :param opt: Bool, True si la sauvegarde s'effectue automatiquement, False sinon.
     """
-    if nom_fichier == "": nom_fichier = instance.label + "_"
+    if nom_fichier == "" or nom_fichier.ends_with('/'): nom_fichier = instance.label + "_"
     if not nom_fichier.startswith('.'): nom_fichier = chemin + nom_fichier
     if nom_fichier.endswith('_'): nom_fichier += datetime.now().strftime('%m-%d_%H-%M-%S')
     if not nom_fichier.endswith('.pkl'): nom_fichier += '.pkl'

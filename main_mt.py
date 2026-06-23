@@ -26,9 +26,9 @@ Implémentation de la résolution 1D modulée en temps
 
 #Paramètres
 f_mt = 3
-modulation = "echelon"
+modulation = "sinus"
 alpha = 0.5
-eps = 0.5                                  #0 < eps <<1
+eps = 0.4                                  #0 < eps <<1
 CFL = 0.95              #correction de la CFL avec la modulation
 
 if modulation == "echelon":

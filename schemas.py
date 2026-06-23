@@ -85,18 +85,23 @@ def ADER41D(data):
 Schémas numériques pour la résolution du problème de propagation en 1D non modulé en temps, avec une initialisation en ondelette tronquée lointaine
 """
 
-def LaxWendroff1D_init(data):
+def LaxWendroff1D_cauchy(data):
     """
     Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 1D en initialisation lointaine
     :param data: Donnee 1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    def fct(f,t):
+        omega = 2 * np.pi * f
+        coeff = [1, -21 / 32, 63 / 768, -1 / 512]
+        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
+
     data.U = np.zeros((data.N, data.M, 2))
     A = np.array([[0, 1/data.rho], [data.rho * data.c**2, 0]])
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = data.dt/data.dx * data.S(data.f,  data.tc[1] - data.dx*i/data.c) * np.array([1, - data.c*data.rho])
+        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
 
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(1, data.M - 1):
@@ -104,12 +109,17 @@ def LaxWendroff1D_init(data):
             a2 = (0.5 * (data.dt / data.dx)**2) * (A @ A) @ (data.U[n, i+1, :] + data.U[n, i-1, :] - 2 * data.U[n, i, :])
             data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2 
 
-def ADER41D_init(data):
+def ADER41D_cauchy(data):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 1D
     :param data: Donnee1D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
+    def fct(f,t):
+        omega = 2 * np.pi * f
+        coeff = [1, -21 / 32, 63 / 768, -1 / 512]
+        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
+
     gamma = np.array([[1 / 12, 1 / 24, -1 / 12, -1 / 24],
                       [-2 / 3, -2 / 3, 1 / 6, 1 / 6],
                       [0, 5 / 4, 0, -1 / 4],
@@ -124,7 +134,7 @@ def ADER41D_init(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = data.dt/data.dx * data.S(data.f,  data.tc[1] - data.dx*i/data.c) * np.array([1, -data.c * data.rho])
+        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
 
     for s in range(0, s_max):
         a = np.zeros((2, 2))
@@ -222,13 +232,14 @@ def ADER42D(data):
 Schémas numériques pour la résolution du problème de propagation en 2D non modulé en temps, avec un point source en onde plane
 """
 
-def LaxWendroff2D_BC(data):
+def LaxWendroff2D_OP(data):
     """
-       Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 2D pour un front d'onde
-       :param data: Donnee2D, regroupe l'ensemble des données du problème
-       :return: Donnee2D, solution en vitesse et pression du problème 2D
-       """
+    Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 2D pour un front d'onde
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
+    """
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
+    theta = 0
     rc2 = data.rho * data.c ** 2
     A = np.array([[0, 0, 1 / data.rho],
                   [0, 0, 0],
@@ -237,40 +248,50 @@ def LaxWendroff2D_BC(data):
                   [0, 0, 1 / data.rho],
                   [0, rc2, 0]])
 
+    # init
+    for i in range(0, data.Mx + 2):
+        for j in range(0, data.My):
+            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.tc[0] - data.dy * j / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
+
+
     for n in trange(0, data.N - 1, ncols=ncols):
         for j in range(1, data.My - 1):
-            s = ((data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 1) * np.array([0, 1, 0]).transpose()) * (data.opt))
             #condition de periodicité gauche
             a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 1, j, :] - data.U[n, - 1, j, :])
             a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, 0, j + 1, :] - data.U[n, 0, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 1, j, :] + data.U[n, - 1, j, :] - 2 * data.U[n, 0, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j + 1, :] + data.U[n, 0, j - 1, :] - 2 * data.U[n, 0, j, :]) / data.dy ** 2)
-            data.U[n + 1, 0, j, :] = data.U[n, 0, j, :] - a1 - a2 + b1 + b2 + s
+            data.U[n + 1, 0, j, :] = data.U[n, 0, j, :] - a1 - a2 + b1 + b2
 
             # condition de periodicité droite
             a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 0, j, :] - data.U[n, -2, j, :])
             a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, -1, j + 1, :] - data.U[n, -1, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j, :] + data.U[n, -2, j, :] - 2 * data.U[n, -1, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, -1, j + 1, :] + data.U[n, -1, j - 1, :] - 2 * data.U[n, -1, j, :]) / data.dy ** 2)
-            data.U[n + 1, -1, j, :] = data.U[n, -1, j, :] - a1 - a2 + b1 + b2 + s
+            data.U[n + 1, -1, j, :] = data.U[n, -1, j, :] - a1 - a2 + b1 + b2
             for i in range(1, data.Mx + 1):
                 # Lax-Wendroff 2D
                 a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
                 a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
                 b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2
     data.U = data.U[:,1:data.Mx + 1, :,:]
 
-def ADER42D_BC(data):
+def ADER42D_OP(data):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 2D pour un front d'onde
     :param data: Donnee2D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
+    def fct(f,t):
+        omega = 2 * np.pi * f
+        coeff = [1, -21 / 32, 63 / 768, -1 / 512]
+        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
+
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
     rc2 = data.c**2
+    theta = 0
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],
                   [rc2, 0, 0]])
@@ -280,12 +301,16 @@ def ADER42D_BC(data):
     b2 = - (data.c*data.dt)**2/24
     b3 = data.c**2*data.dt**3/6
     b4 = - (data.c*data.dt)**4/24
-
     c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
+
+    #init
+    for i in range(0, data.Mx+4):
+        for j in range(0, data.My):
+            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.tc[0] - data.dy*j/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
+
+
     for n in trange(0, data.N - 1, ncols = ncols):
         for j in range(2,data.My-2):
-            s = ((data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                 (data.dt / data.dx * data.S(data.f, (n + 1) * data.dt) * (j == 2) * np.array([1, 0, 0]).transpose()) * (data.opt))
             #condition periodicité gauche
             a1 = data.dt * (c[0] * A @ (data.U[n,-2,j,:] - 8*data.U[n,-1,j,:] + 8*data.U[n,1,j,:] - data.U[n,2,j,:]) +
                             c[0] * B @ (data.U[n,0,j-2,:] - 8*data.U[n,0,j-1,:] + 8*data.U[n,0,j+1,:] - data.U[n,0,j+2,:]))
@@ -310,7 +335,7 @@ def ADER42D_BC(data):
                                + 30*data.U[n,0,j-2,:] -480*data.U[n,0,j-1,:] +900*data.U[n,0,j,:] -480*data.U[n,0,j+1,:] + 30*data.U[n,0,j+2,:]
                                - 16*data.U[n,1,j-2,:] +256*data.U[n,1,j-1,:]-480*data.U[n,1,j,:] + 256*data.U[n,1,j+1,:] - 16*data.U[n,1,j+2,:]
                                + data.U[n,2,j-2,:] -16*data.U[n,2,j-1,:] +30*data.U[n,2,j,:] - 16*data.U[n,2,j+1,:] + data.U[n,2,j+2,:]))
-            data.U[n + 1, 0, j, :] = data.U[n,0,j,:] - a1 - a2 - a3 - a4 + s
+            data.U[n + 1, 0, j, :] = data.U[n,0,j,:] - a1 - a2 - a3 - a4
 
             a1 = data.dt * (c[0] * A @ (data.U[n,-1,j,:] - 8*data.U[n,0,j,:] + 8*data.U[n,2,j,:] - data.U[n,3,j,:]) +
                             c[0] * B @ (data.U[n,1,j-2,:] - 8*data.U[n,1,j-1,:] + 8*data.U[n,1,j+1,:] - data.U[n,1,j+2,:]))
@@ -335,7 +360,7 @@ def ADER42D_BC(data):
                                + 30*data.U[n,1,j-2,:] -480*data.U[n,1,j-1,:] +900*data.U[n,1,j,:] -480*data.U[n,1,j+1,:] + 30*data.U[n,1,j+2,:]
                                - 16*data.U[n,2,j-2,:] +256*data.U[n,2,j-1,:]-480*data.U[n,2,j,:] + 256*data.U[n,2,j+1,:] - 16*data.U[n,2,j+2,:]
                                + data.U[n,3,j-2,:] -16*data.U[n,3,j-1,:] +30*data.U[n,3,j,:] - 16*data.U[n,3,j+1,:] + data.U[n,3,j+2,:]))
-            data.U[n + 1, 1, j, :] = data.U[n,1,j,:] - a1 - a2 - a3 - a4 + s
+            data.U[n + 1, 1, j, :] = data.U[n,1,j,:] - a1 - a2 - a3 - a4
 
             #conditon de periodicité droite
             a1 = data.dt * (c[0] * A @ (data.U[n,-3,j,:] - 8*data.U[n,-2,j,:] + 8*data.U[n,0,j,:] - data.U[n,1,j,:]) +
@@ -361,7 +386,7 @@ def ADER42D_BC(data):
                                + 30*data.U[n,-1,j-2,:] -480*data.U[n,-1,j-1,:] +900*data.U[n,-1,j,:] -480*data.U[n,-1,j+1,:] + 30*data.U[n,-1,j+2,:]
                                - 16*data.U[n,0,j-2,:] +256*data.U[n,0,j-1,:]-480*data.U[n,0,j,:] + 256*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
                                + data.U[n,1,j-2,:] -16*data.U[n,1,j-1,:] +30*data.U[n,1,j,:] - 16*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]))
-            data.U[n + 1, -1, j, :] = data.U[n,-1,j,:] - a1 - a2 - a3 - a4 + s
+            data.U[n + 1, -1, j, :] = data.U[n,-1,j,:] - a1 - a2 - a3 - a4
             
             a1 = data.dt * (c[0] * A @ (data.U[n,-4,j,:] - 8*data.U[n,-3,j,:] + 8*data.U[n,-1,j,:] - data.U[n,0,j,:]) +
                             c[0] * B @ (data.U[n,-2,j-2,:] - 8*data.U[n,-2,j-1,:] + 8*data.U[n,-2,j+1,:] - data.U[n,-2,j+2,:]))
@@ -386,7 +411,7 @@ def ADER42D_BC(data):
                                + 30*data.U[n,-2,j-2,:] -480*data.U[n,-2,j-1,:] +900*data.U[n,-2,j,:] -480*data.U[n,-2,j+1,:] + 30*data.U[n,-2,j+2,:]
                                - 16*data.U[n,-1,j-2,:] +256*data.U[n,-1,j-1,:]-480*data.U[n,-1,j,:] + 256*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
                                + data.U[n,0,j-2,:] -16*data.U[n,0,j-1,:] +30*data.U[n,0,j,:] - 16*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]))
-            data.U[n + 1, -2, j, :] = data.U[n,-2,j,:] - a1 - a2 - a3 - a4 + s
+            data.U[n + 1, -2, j, :] = data.U[n,-2,j,:] - a1 - a2 - a3 - a4
             
             for i in range(2, data.Mx + 2):
                 #ADER4 2D
@@ -413,5 +438,5 @@ def ADER42D_BC(data):
                                    + 30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
                                    - 16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
                                    + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
+                data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4
     data.U = data.U[:,2:data.Mx,:,:] 

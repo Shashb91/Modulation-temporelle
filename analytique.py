@@ -12,8 +12,24 @@ def analytique1D(data):
     data.U = np.zeros((data.N, data.M, 2))
     for n in range(0, data.N-1):
         for i in range(2, data.M-2):
-            ind = n*data.dt - np.abs(i-data.xs)*data.dx/data.c
+            ind = (n*data.dt - np.abs(i-data.xs)*data.dx/data.c)
             a = 1/(2*data.c) * data.S(data.f, ind)
             b = signe(i - data.xs) * data.rho/2 * data.S(data.f, ind)
+            data.U[n, i, :] = np.array([a,b])
+    return data.U
+
+
+def analytique1D_cauchy(data):
+    """
+    Solution analytique pour le problème de propagation
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
+    :return: Donnee1D, regroupe l'ensemble des données du problème avec la solution analytique
+    """
+    data.U = np.zeros((data.N, data.M, 2))
+    for n in range(0, data.N-1):
+        for i in range(2, data.M-2):
+            ind = 1/data.f + n*data.dt - i*data.dx/data.c
+            a = 1/data.c * data.S(data.f, ind)
+            b = data.rho * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])
     return data.U

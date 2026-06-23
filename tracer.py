@@ -93,7 +93,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
     line1_1, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
-    line1_2, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
+    line1_2, = ax1.plot([], [], color='cyan', lw=2, linestyle='-', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -103,7 +103,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax1.grid(True)
 
     line2_1, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
-    line2_2, = ax2.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
+    line2_2, = ax2.plot([], [], color='pink', lw=2, linestyle='-', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -113,7 +113,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax2.grid(True)
 
     line3_1, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
-    line3_2, = ax3.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
+    line3_2, = ax3.plot([], [], color='green', lw=2, linestyle='-', label=data2.label)
     data1.E = np.array([sum([0.5 * data1.rho * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     data2.E = np.array([sum([0.5 * data1.rho * data2.U[n, i, 0] ** 2 + data2.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -165,7 +165,7 @@ def tracer1D_comparaison(t, data1, data2):
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
-    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'blue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'cyan', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
@@ -173,7 +173,7 @@ def tracer1D_comparaison(t, data1, data2):
     ax1.grid(True)
 
     ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
-    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'red', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'pink', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')

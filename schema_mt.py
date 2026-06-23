@@ -20,6 +20,30 @@ def A1D_mt(data):
         return [A,B,C,D]
     return f
 
+def LaxWendroff1D_mt(data):
+    """
+        Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
+        :param data: Donnee1D, regroupe l'ensemble des données du problème
+        :return: Donnee1D, solution en vitesse et pression du problème 1D
+        """
+    data.CFL_maj()
+    data.U = np.zeros((data.N, data.M, 2))
+
+    for n in trange(data.N - 1, ncols=ncols):
+        for i in range(2, data.M - 2):
+            rE, t = data.rho / data.e, n * data.dt
+            rho = data.rho_mt(data)
+            E = data.E_mt(data)
+            A, A_ = A1D_mt(data)(t)[0], A1D_mt(data)(t)[1]
+
+            S_n = np.array([[-rho(t)[1] / rho(t)[0], 0], [0, E(t)[1] / E(t)[0]]])
+            U_temp = data.U[n, :, :]
+            U_temp[i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ data.U[n, i, :]
+
+            a1 = (1 / (2 * data.dx)) * ( data.dt * A + data.dt**2 /2 * A_) @ (data.U[n, i + 1, :] - data.U[n, i - 1, :])
+            a2 = (0.5 * (data.dt / data.dx) ** 2) *(-1/ (A @ A) @ (data.U[n, i + 1, :] + data.U[n, i - 1, :] - 2 * data.U[n, i, :]))
+            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt / data.dx * data.S(data.f,(n + 1) * data.dt) * (i == data.xs) * np.array([1, 0]).transpose()
+
 def ADER41D_mt(data):
     """
     Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps

@@ -196,7 +196,7 @@ def ADER42D(data):
     b3 = data.c**2*data.dt**3/6
     b4 = - (data.c*data.dt)**4/24
 
-    c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
+    c = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*(data.dx*data.dy)**2)]
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(2, data.Mx - 2):
             for j in range(2, data.My - 2):
@@ -232,7 +232,7 @@ def ADER42D(data):
 Schémas numériques pour la résolution du problème de propagation en 2D non modulé en temps, avec un point source en onde plane
 """
 
-def LaxWendroff2D_OP(data):
+def LaxWendroff2D_cauchy(data):
     """
     Utilise le schéma de Lax-Wendroff pour résoudre le problème de propagation 2D pour un front d'onde
     :param data: Donnee2D, regroupe l'ensemble des données du problème
@@ -278,7 +278,7 @@ def LaxWendroff2D_OP(data):
                 data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2
     data.U = data.U[:,1:data.Mx + 1, :,:]
 
-def ADER42D_OP(data):
+def ADER42D_cauchy(data):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 2D pour un front d'onde
     :param data: Donnee2D, regroupe l'ensemble des données du probleme

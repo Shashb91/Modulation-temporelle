@@ -96,7 +96,7 @@ class Donnee1D:
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
 class Donnee2D:
-    def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 300, My = 300, opt = False, CFL = 0.6, **kwargs):
+    def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
         """
         Initialisation d'une instance de Donnee2D, permettant à la résolution du problème 2D de proagation en milieu homogène ou modulée en temps
         """
@@ -157,7 +157,10 @@ class Donnee2D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")"
+        try : return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")"
+        except:
+            self.e = None
+            return __str__(self)
 
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c

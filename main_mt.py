@@ -41,14 +41,20 @@ elif modulation == "triangle":
     rho = rho_triangle
     E = E_triangle
 
-data1 = Donnee1D(M = 750, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
+data1 = Donnee1D(M = 750, label = "LaxWendroff_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
+                 tc = (0, 0.6), xc = (0,1500), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+data2 = Donnee1D(M = 750, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
                  tc = (0, 0.6), xc = (0,1500), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
 
 #Resolution
-U = ADER41D_mt(data1)
+LaxWendroff1D_mt(data1)
 print(data1)
-
-
-# data1 = charger('.save/ADER4_f=3-Hz_mt=echelon_06-17_14-27-24.pkl')
+# data1 = charger()
 anim1D_mt(data1, interval = 0.00000001)
 sauvegarder(data1)
+
+ADER41D_mt(data2)
+print(data2)
+# data2 = charger('.save/ADER4_f=3-Hz_mt=echelon_06-17_14-27-24.pkl')
+anim1D_mt(data2, interval = 0.00000001)
+sauvegarder(data2)

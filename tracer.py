@@ -464,7 +464,7 @@ def tracer_mt(data):
     ax4.plot(data.t, Z, lw=2, c='green')
     ax4.grid(True)
     ax4.set_xlabel('t (s)')
-    ax4.set_ylabel(f'Impédence $(kg.m^{-2}.s^{-1})$')
+    ax4.set_ylabel(f'Impédance $(kg.m^{-2}.s^{-1})$')
 
     plt.show()
 

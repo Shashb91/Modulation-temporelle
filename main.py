@@ -16,9 +16,9 @@ Implémentation de la résolution 1D homogène
 ============================================================
 """
 
-data1 = Donnee1D(M = 200, label = "Lax Wendroff")                                #Lax Wendroff
-data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
-data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
+# data1 = Donnee1D(M = 200, label = "Lax Wendroff")                                #Lax Wendroff
+# data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
+# data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
 
 # LaxWendroff1D(data1)
 # anim1D(data1)
@@ -71,6 +71,11 @@ Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
 Implémentation de la résolution 2D homogène
 ============================================================
 """
+# data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D)
+# LaxWendroff2D(data1)
+# data1 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
+# sauvegarder(data1, '.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
+# anim2D(data1)
 
 data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = 200, My = 200, f = 20, e= 2.25e9)
 data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = 200, My = 200, f = 20, e = 2.25e9)
@@ -88,8 +93,8 @@ data4_.U = data4.U[:, 75, :,1:]
 anim1D(data4_, interval = 30)
 anim1D_comparaison(data4_, data2, interval = 30)
 
-
-ADER42D_OP(data5)
+print("ADER42D_cauchy()")
+ADER42D_cauchy(data5)
 sauvegarder(data5)
 anim2D(data5)
 

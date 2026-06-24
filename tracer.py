@@ -27,6 +27,7 @@ def anim1D(data, **kwargs):
     ax2.set_title('Champ des pressions')
     ax2.grid(True)
 
+    data.calcul_energie()
     line3, = ax3.plot([], [], color='gold', lw=2)
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E)*1.1, np.max(data.E)*1.1)
@@ -111,6 +112,8 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax2.legend()
     ax2.grid(True)
 
+    data1.calcul_energie()
+    data2.calcul_energie()
     line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='-', label=data2.label)
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -243,6 +246,7 @@ def anim2D(data, **kwargs):
     ax3.set_title('Champ des pressions')
     fig.colorbar(im3, ax=ax3)
 
+    data.calcul_energie()
     line4, = ax4.plot([], [], color='gold', lw=2)
     ax4.set_xlim(data.t[0], data.t[-1])
     ax4.set_ylim(np.min(data.E) * 0.9, np.max(data.E) * 1.1)
@@ -383,6 +387,7 @@ def anim1D_mt(data, **kwargs):
     ax2.set_title('Champ des pressions')
     ax2.grid(True)
 
+    data.calcul_energie()
     line3, = ax3.plot([], [], color='gold', lw=2)
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
@@ -487,7 +492,7 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
         line3_1.set_data([], [])
         line3_2.set_data([], [])
         line4.set_data([], [])
-        title.set_text(data1.label + " vs" + data2.label)
+        title.set_text(data1.label + " vs " + data2.label)
         return line1_1, line2_1, line3_1, line4
 
     def update(n):

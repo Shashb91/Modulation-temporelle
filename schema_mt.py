@@ -14,9 +14,9 @@ def A1D_mt(data):
                       [E[0], 0]])
         B = np.array([[0,-rho[1]/rho[0]**2],
                       [E[1], 0]])
-        C = np.array([[0,- (rho[2]*rho[0] - 2*rho[1])/rho[0]**3],
+        C = np.array([[0,-(rho[2]*rho[0] - 2*rho[1]**2)/rho[0]**3],
                       [E[2], 0]])
-        D = np.array([[0,-(rho[3]*rho[2]**2 - 5*rho[2]*rho[0] + 6*rho[1])/rho[0]**4],
+        D = np.array([[0,-(rho[3]*rho[2]**2 - 6*rho[2]*rho[1]*rho[0] + 6*rho[1]**3)/rho[0]**4],
                       [E[3], 0]])
         return [A,B,C,D]
     return f
@@ -31,10 +31,10 @@ def A2D_mt(data):
         B = np.array([[0,0,-rho[1]/rho[0]**2],
                       [0, 0, 0],
                       [E[1], 0, 0]])
-        C = np.array([[0, 0, (rho[2]*rho[0] - 2*rho[1])/rho[0]**3],
+        C = np.array([[0, 0, (rho[2]*rho[0] - 2*rho[1]**2)/rho[0]**3],
                       [0, 0, 0],
                       [E[2], 0, 0]])
-        D = np.array([[0, 0, -(rho[3]*rho[2]**2 - 5*rho[2]*rho[0] + 6*rho[1])/rho[0]**4],
+        D = np.array([[0, 0, -(rho[3]*rho[2]**2 - 6*rho[2]*rho[0]*rho[1] + 6*rho[1]**3)/rho[0]**4],
                       [0, 0, 0],
                       [E[3], 0, 0]])
         return [A,B,C,D]
@@ -51,10 +51,10 @@ def B2D_mt(data):
                       [0, 0, -rho[1]/rho[0]**2],
                       [0, E[1], 0]])
         C = np.array([[0, 0, 0],
-                      [0, 0, (rho[2]*rho[0] - 2*rho[1])/rho[0]**3],
+                      [0, 0, (rho[2]*rho[0] - 2*rho[1]**2)/rho[0]**3],
                       [0, E[2], 0]])
         D = np.array([[0, 0, 0],
-                      [0, 0, -(rho[3]*rho[2]**2 - 5*rho[2]*rho[0] + 6*rho[1])/rho[0]**4],
+                      [0, 0, -(rho[3]*rho[2]**2 - 6*rho[2]*rho[1]*rho[0] + 6*rho[1]**3)/rho[0]**4],
                       [0, E[3], 0]])
         return [A,B,C,D]
     return f
@@ -74,8 +74,8 @@ def LaxWendroff1D_mt(data):
     data.U = np.zeros((data.N, data.M, 2))
 
     for n in trange(data.N - 1, ncols=ncols):
-        for i in range(2, data.M - 2):
-            rE, t = data.rho / data.e, n * data.dt
+        for i in range(1, data.M - 1):
+            t = n * data.dt
             rho = data.rho_mt(data)
             E = data.E_mt(data)
             A, A_ = A1D_mt(data)(t)[0], A1D_mt(data)(t)[1]
@@ -84,9 +84,9 @@ def LaxWendroff1D_mt(data):
             S_n = np.array([[-rho(t)[1] / rho(t)[0], 0], [0, E(t)[1] / E(t)[0]]])
             U_temp[i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ data.U[n, i, :]
 
-            a1 = (1 / (2 * data.dx)) * ( data.dt * A + data.dt**2 /2 * A_) @ (data.U[n, i + 1, :] - data.U[n, i - 1, :])
-            a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (data.U[n, i + 1, :] + data.U[n, i - 1, :] - 2 * data.U[n, i, :])
-            etape2 = data.U[n, i, :] - a1 + a2 + data.dt / data.dx * data.S(data.f,(n + 1) * data.dt) * (i == data.xs) * np.array([1, 0]).transpose()
+            a1 = 0.5 / data.dx * (data.dt * A + data.dt**2 /2 * A_) @ (U_temp[i + 1, :] - U_temp[i - 1, :])
+            a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (U_temp[i + 1, :] + U_temp[i - 1, :] - 2 * U_temp[i, :])
+            etape2 = U_temp[i, :] - a1 + a2
 
             s = (data.dt * data.rho / (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])

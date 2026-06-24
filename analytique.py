@@ -16,7 +16,8 @@ def analytique1D(data):
             a = 1/(2*data.c) * data.S(data.f, ind)
             b = signe(i - data.xs) * data.rho/2 * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])
-    return data.U
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
 
 
 def analytique1D_cauchy(data):
@@ -32,4 +33,5 @@ def analytique1D_cauchy(data):
             a = 1/data.c * data.S(data.f, ind)
             b = data.rho * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])
-    return data.U
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])

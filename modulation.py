@@ -34,8 +34,8 @@ def E_sinus(data):
         w = data.omega
         return [data.e * 1/(1 + eps*np.sin(w*t)),
                 - data.e * eps * w *np.cos(w*t)/(1 + eps*np.sin(w*t))**2,
-                data.e * eps * w**2 * (2*eps + np.sin(w*t) - eps*np.sin(w*t)**2)/(1 + eps*np.sin(w*t))**3,
-                data.e * eps * w**3 * (np.cos(w*t)*(1+2*eps**2) - 3 * eps * np.cos(w*t)*np.sin(w*t) + 2 * eps ** 2 * np.cos(w*t)*np.sin(w*t)**2)/(1 + eps*np.sin(w*t))**4]
+                data.e * eps * w**2 * (np.sin(w*t)*(1+eps*np.sin(w*t))-2*eps*np.cos(w*t)**2)/(1 + eps*np.sin(w*t))**3,
+                - data.e * (eps*w**3*np.cos(w*t)*(1+eps*np.sin(w*t))**2+6*(1+eps*np.sin(w*t))*eps**2*w**3*np.cos(w*t)*np.sin(w*t)+6*eps*w**3*np.cos(w*t))/(1 + eps*np.sin(w*t))**4]
     return f
 
 def rho_echelon(data):

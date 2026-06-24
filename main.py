@@ -20,19 +20,19 @@ data1 = Donnee1D(M = 200, label = "Lax Wendroff")                               
 data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
 data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
 
-LaxWendroff1D(data1)
-anim1D(data1)
+# LaxWendroff1D(data1)
+# anim1D(data1)
 
 analytique1D(data2)
 anim1D(data2)
 
-ADER41D(data3)
-anim1D(data3)
+# ADER41D(data3)
+# anim1D(data3)
 
 # data1 = charger('.save/data1_06-08_15-20-38.pkl')
 # data2 = charger('.save/data2_06-08_15-20-38.pkl')
-anim1D_comparaison(data1, data2, interval = 30)                                                      #Comparaison LaxWendroff VS Analytique
-anim1D_comparaison(data3, data2, interval = 30)                                                      #Comparaison ADER4 VS Analytique
+# anim1D_comparaison(data1, data2, interval = 30)                                                      #Comparaison LaxWendroff VS Analytique
+# anim1D_comparaison(data3, data2, interval = 30)                                                      #Comparaison ADER4 VS Analytique
 
 # sauvegarder(data1,"data1_")
 # sauvegarder(data2,"data2_")

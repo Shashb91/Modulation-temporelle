@@ -60,8 +60,12 @@ class Donnee1D:
 
     def __str__(self):
         f = self.omega/(2*np.pi)
-        crit = self.c/(self.f*self.dx)*(self.omega == 0) + self.c/((f*5+self.f)*self.dx)*(self.omega != 0)
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + str(crit)
+        crit = self.c/((f*4+self.f)*self.dx)
+        mess = ""
+        if crit <= 20:
+            mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
+        crit = str(crit) + mess
+        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -96,6 +100,10 @@ class Donnee1D:
         self.dt : float = self.CFL * self.dx / self.c
         self.N: int = int(self.tc[1] / self.dt)
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
+
+    def calcul_energie(self):
+        if np.all(self.E == 0):
+            self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
 
 class Donnee2D:
     def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
@@ -207,3 +215,9 @@ class Donnee2D:
             retour.x = self.x
 
         return retour
+
+    def calcul_energie(self):
+        if np.all(self.E == 0):
+            ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
+            ep = self.U[..., 2] ** 2 / (self.rho * self.c ** 2)
+            self.E = np.sum(ec + ep, axis=(1, 2))

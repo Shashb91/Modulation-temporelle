@@ -28,7 +28,6 @@ def anim1D(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='gold', lw=2)
-    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2/(data.rho*data.c**2) for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E)*1.1, np.max(data.E)*1.1)
     ax3.set_xlabel('Position x (m)')
@@ -114,8 +113,6 @@ def anim1D_comparaison(data1, data2, **kwargs):
 
     line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='-', label=data2.label)
-    data1.E = np.array([sum([0.5 * data1.rho * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
-    data2.E = np.array([sum([0.5 * data1.rho * data2.U[n, i, 0] ** 2 + data2.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     ax3.set_xlim(data1.t[0], data1.t[-1])
     ax3.set_ylim(np.min(data1.E)*0.9, np.max(data1.E)*1.1)
     ax3.set_xlabel('Temps t (s)')
@@ -245,11 +242,6 @@ def anim2D(data, **kwargs):
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')
     fig.colorbar(im3, ax=ax3)
-
-    if all(data.E == np.zeros(data.N)):
-        ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
-        ep = data.U[..., 2]**2 / (data.rho * data.c ** 2)
-        data.E = np.sum(ec + ep, axis=(1, 2))
 
     line4, = ax4.plot([], [], color='gold', lw=2)
     ax4.set_xlim(data.t[0], data.t[-1])
@@ -392,7 +384,6 @@ def anim1D_mt(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='gold', lw=2)
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')
@@ -469,8 +460,6 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
 
     line3_1, = ax3.plot([], [], color='gold', lw=2, label = data1.label)
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, label = data2.label)
-    data1.E = np.array([sum([0.5 * rho[n] * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1]**2 / E[n] for i in range(data1.M)]) for n in range(0, data1.N)])
-    data2.E = np.array([])
     ax3.set_xlim(data1.t[0], data1.t[-1])
     ax3.set_ylim(np.min(data1.E) * 1.1, np.max(data1.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')

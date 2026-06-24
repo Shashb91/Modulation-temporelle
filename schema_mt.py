@@ -92,6 +92,10 @@ def LaxWendroff1D_mt(data):
             S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ etape2 + s
 
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+
 def ADER41D_mt(data):
     """
     Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
@@ -128,6 +132,10 @@ def ADER41D_mt(data):
             s = (data.dt * data.rho / (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ etape2 + s
+
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
 
 """
 Modulation temporelle dans un problème de propagation 2D

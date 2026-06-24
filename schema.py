@@ -22,7 +22,10 @@ def LaxWendroff1D(data):
         for i in range(1, data.M - 1):
             a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, :] - data.U[n, i-1, :])
             a2 = (0.5 * (data.dt / data.dx)**2) * (A @ A) @ (data.U[n, i+1, :] + data.U[n, i-1, :] - 2 * data.U[n, i, :])
-            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt/data.dx * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([1,0]).transpose() 
+            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt/data.dx * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([1,0]).transpose()
+
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER21D(data):
     """
@@ -52,6 +55,9 @@ def ADER21D(data):
             a1 = sum([C[s] @ data.U[n, i + s - 1, :] for s in range(0, s_max)])
             a2 = (data.dt / data.dx) * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
+
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D(data):
     """
@@ -84,6 +90,9 @@ def ADER41D(data):
             a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
 
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
+
 """
 Schémas numériques pour la résolution du problème de propagation en 1D non modulé en temps, avec une initialisation en ondelette tronquée lointaine
 """
@@ -111,7 +120,10 @@ def LaxWendroff1D_cauchy(data):
         for i in range(1, data.M - 1):
             a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, :] - data.U[n, i-1, :])
             a2 = (0.5 * (data.dt / data.dx)**2) * (A @ A) @ (data.U[n, i+1, :] + data.U[n, i-1, :] - 2 * data.U[n, i, :])
-            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2 
+            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2
+
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_cauchy(data):
     """
@@ -150,7 +162,10 @@ def ADER41D_cauchy(data):
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(2, data.M - 2):
             a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1 
+            data.U[n + 1, i, :] = data.U[n, i, :] - a1
+
+    data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2) for
+                            i in range(data.M)]) for n in range(0, data.N)])
  
 
 """
@@ -182,7 +197,10 @@ def LaxWendroff2D(data):
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
                 s = ((data.dt/np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
                      (data.dt/(data.rho*np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([1, 0, 0]).transpose()) * (data.opt))
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s 
+                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+    ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
+    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    data.E = np.sum(ec + ep, axis=(1, 2))
 
 def ADER42D(data):
     """
@@ -233,7 +251,9 @@ def ADER42D(data):
                 s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
                      (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([1, 0, 0]).transpose()) * (data.opt))
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
- 
+    ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
+    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    data.E = np.sum(ec + ep, axis=(1, 2))
 
 """
 Schémas numériques pour la résolution du problème de propagation en 2D non modulé en temps, avec un point source en onde plane
@@ -285,6 +305,10 @@ def LaxWendroff2D_cauchy(data):
                 b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
                 data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2
     data.U = data.U[:,1:data.Mx + 1, :,:]
+
+    ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
+    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    data.E = np.sum(ec + ep, axis=(1, 2))
 
 def ADER42D_cauchy(data):
     """
@@ -448,4 +472,9 @@ def ADER42D_cauchy(data):
                                    - 16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
                                    + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4
-    data.U = data.U[:,2:data.Mx,:,:] 
+    data.U = data.U[:,2:data.Mx,:,:]
+    data.U[...,0] = np.round(data.U[...,0], 16)
+
+    ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
+    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    data.E = np.sum(ec + ep, axis=(1, 2))

@@ -86,7 +86,7 @@ def LaxWendroff1D_mt(data):
             U_temp[i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ data.U[n, i, :]
 
         for i in range(1, data.M - 1):
-            s = (data.dt / (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+            s = (data.dt * data.rho/ (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
             a1 = 0.5 / data.dx * (data.dt * A + data.dt**2 /2 * A_) @ (U_temp[i + 1, :] - U_temp[i - 1, :])
             a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (U_temp[i + 1, :] + U_temp[i - 1, :] - 2 * U_temp[i, :])
             U_temp_[i, :] = U_temp[i, :] - a1 + a2 + s

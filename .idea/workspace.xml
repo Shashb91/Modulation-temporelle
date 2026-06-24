@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,14 +146,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Implémentation de Lax Wendroff 2D avec des corrections">
-      <option name="closed" value="true" />
-      <created>1780918732558</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1780918732558</updated>
     </task>
     <task id="LOCAL-00027" summary="Implementation de l'horodatage des fichiers">
       <option name="closed" value="true" />
@@ -536,7 +531,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782285253787</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1782286062355</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1782286062355</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -570,13 +573,13 @@
     <MESSAGE value="Implémentation de la modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
     <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Version fonctionelle de la MT" />
     <MESSAGE value="Version fonctionelle de la propagation en onde plane 2D nmt" />
     <MESSAGE value="Version fonctionelle de la propagation en onde tronquée lointaine" />
     <MESSAGE value="Version fonctionelle de la propagation avec un problème de cauchy" />
     <MESSAGE value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
+    <MESSAGE value="Corrections mineures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

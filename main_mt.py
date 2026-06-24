@@ -26,9 +26,9 @@ Implémentation de la résolution 1D modulée en temps
 
 #Paramètres
 f_mt = 3
-modulation = "sinus"
+modulation = "echelon"
 alpha = 0.5
-eps = 0.4                                  #0 < eps <<1
+eps = 0                                  #0 < eps <<1
 CFL = 0.95              #correction de la CFL avec la modulation
 
 if modulation == "echelon":
@@ -41,20 +41,23 @@ elif modulation == "triangle":
     rho = rho_triangle
     E = E_triangle
 
-data1 = Donnee1D(M = 750, label = "LaxWendroff_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
+data1 = Donnee1D(M = 250, label = "LaxWendrof_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
                  tc = (0, 0.6), xc = (0,1500), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
-data2 = Donnee1D(M = 750, label = "ADER4_f=" + str(f_mt) + "-Hz_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
+data2 = Donnee1D(M = 250, label = "ADER4_mt=" + modulation, eps_r = - eps, eps_E=eps, omega = f_mt*2*np.pi,
                  tc = (0, 0.6), xc = (0,1500), CFL = CFL, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
 
 #Resolution
 LaxWendroff1D_mt(data1)
-print(data1)
-# data1 = charger()
-anim1D_mt(data1, interval = 0.00000001)
 sauvegarder(data1)
+print(data1)
+# data1 = charger('.save/LaxWendroff_f=3-Hz_mt=echelon_06-24_11-28-42.pkl')
+anim1D_mt(data1, interval = 10)
 
 ADER41D_mt(data2)
-print(data2)
-# data2 = charger('.save/ADER4_f=3-Hz_mt=echelon_06-17_14-27-24.pkl')
-anim1D_mt(data2, interval = 0.00000001)
 sauvegarder(data2)
+print(data2)
+# data2 = charger('.save/ADER4_f=3-Hz_mt=echelon_06-24_11-29-20.pkl')
+anim1D_mt(data2, interval = 10)
+
+
+anim1D_mt_comparaison(data1, data2, interval = 10)

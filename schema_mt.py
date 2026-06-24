@@ -4,6 +4,7 @@ ncols = 125                                                                     
 from math import factorial
 from modulation import *
 
+#dérivées temporelles des matrices du probleme
 def A1D_mt(data):
     def f(t):
         rho = data.rho_mt(data)(t)
@@ -20,13 +21,51 @@ def A1D_mt(data):
         return [A,B,C,D]
     return f
 
+def A2D_mt(data):
+    def f(t):
+        rho = data.rho_mt(data)(t)
+        E = data.E_mt(data)(t)
+        A = np.array([[0, 0, 1/rho[0]],
+                      [0, 0, 0],
+                      [E[0], 0, 0]])
+        B = np.array([[0,0,-rho[1]/rho[0]**2],
+                      [0, 0, 0],
+                      [E[1], 0, 0]])
+        C = np.array([[0, 0, (rho[2]*rho[0] - 2*rho[1])/rho[0]**3],
+                      [0, 0, 0],
+                      [E[2], 0, 0]])
+        D = np.array([[0, 0, -(rho[3]*rho[2]**2 - 5*rho[2]*rho[0] + 6*rho[1])/rho[0]**4],
+                      [0, 0, 0],
+                      [E[3], 0, 0]])
+        return [A,B,C,D]
+    return f
+
+def B2D_mt(data):
+    def f(t):
+        rho = data.rho_mt(data)(t)
+        E = data.E_mt(data)(t)
+        A = np.array([[0, 0, 0],
+                      [0, 0, 1/rho[0]],
+                      [0, E[0], 0]])
+        B = np.array([[0,0, 0],
+                      [0, 0, -rho[1]/rho[0]**2],
+                      [0, E[1], 0]])
+        C = np.array([[0, 0, 0],
+                      [0, 0, (rho[2]*rho[0] - 2*rho[1])/rho[0]**3],
+                      [0, E[2], 0]])
+        D = np.array([[0, 0, 0],
+                      [0, 0, -(rho[3]*rho[2]**2 - 5*rho[2]*rho[0] + 6*rho[1])/rho[0]**4],
+                      [0, E[3], 0]])
+        return [A,B,C,D]
+    return f
+
 """
 Modulation temporelle dans un problème de propagation 1D 
 """
 
 def LaxWendroff1D_mt(data):
     """
-    Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
+    Utilise le schéma de LaxWendroff en 1D dans un mileu modulé en temps
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
@@ -40,14 +79,18 @@ def LaxWendroff1D_mt(data):
             rho = data.rho_mt(data)
             E = data.E_mt(data)
             A, A_ = A1D_mt(data)(t)[0], A1D_mt(data)(t)[1]
+            U_temp = data.U[n, :, :]
 
             S_n = np.array([[-rho(t)[1] / rho(t)[0], 0], [0, E(t)[1] / E(t)[0]]])
-            U_temp = data.U[n, :, :]
             U_temp[i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ data.U[n, i, :]
 
             a1 = (1 / (2 * data.dx)) * ( data.dt * A + data.dt**2 /2 * A_) @ (data.U[n, i + 1, :] - data.U[n, i - 1, :])
-            a2 = (0.5 * (data.dt / data.dx) ** 2) *(-1/ (A @ A) @ (data.U[n, i + 1, :] + data.U[n, i - 1, :] - 2 * data.U[n, i, :]))
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt / data.dx * data.S(data.f,(n + 1) * data.dt) * (i == data.xs) * np.array([1, 0]).transpose()
+            a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (data.U[n, i + 1, :] + data.U[n, i - 1, :] - 2 * data.U[n, i, :])
+            etape2 = data.U[n, i, :] - a1 + a2 + data.dt / data.dx * data.S(data.f,(n + 1) * data.dt) * (i == data.xs) * np.array([1, 0]).transpose()
+
+            s = (data.dt * data.rho / (data.dx * rho(t)[0]) ) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
+            S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])
+            data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ etape2 + s
 
 def ADER41D_mt(data):
     """
@@ -89,6 +132,33 @@ def ADER41D_mt(data):
 """
 Modulation temporelle dans un problème de propagation 2D
 """
+def LaxWendroff2D_mt(data):
+    """
+    Utilise le schéma de Lax Wendroff en 2D dans un mileu modulé en temps
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
+    """
+    print("LaxWendroff 2D mt()")
+    data.CFL_maj()
+    data.U = np.zeros((data.N, data.M, 2))
+
+    for n in trange(data.N - 1, ncols=ncols):
+        for i in range(2, data.M - 2):
+            rE, t = data.rho / data.e, n * data.dt
+            rho = data.rho_mt(data)
+            E = data.E_mt(data)
+            A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
+            B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
+
+            S_n = np.array([[-rho(t)[1] / rho(t)[0], 0, 0], [0, E(t)[1] / E(t)[0]]])
+            U_temp = data.U[n, :, :]
+            U_temp[i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ data.U[n, i, :]
+
+            a1 = (1 / (2 * data.dx)) * ( data.dt * A + data.dt**2 /2 * A_) @ (data.U[n, i + 1, :] - data.U[n, i - 1, :])
+            a2 = (0.5 * (data.dt / data.dx) ** 2) *(-1/ (A @ A) @ (data.U[n, i + 1, :] + data.U[n, i - 1, :] - 2 * data.U[n, i, :]))
+            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt / data.dx * data.S(data.f,(n + 1) * data.dt) * (i == data.xs) * np.array([1, 0]).transpose()
+
+
 
 def ADER42D_mt(data):
     """

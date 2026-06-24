@@ -203,7 +203,7 @@ def ADER42D(data):
     b3 = data.c**2*data.dt**3/6
     b4 = - (data.c*data.dt)**4/24
 
-    c = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*(data.dx*data.dy)**2)]
+    c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*(data.dx*data.dy)**2)]
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(2, data.Mx - 2):
             for j in range(2, data.My - 2):
@@ -310,7 +310,7 @@ def ADER42D_cauchy(data):
     b2 = - (data.c*data.dt)**2/24
     b3 = data.c**2*data.dt**3/6
     b4 = - (data.c*data.dt)**4/24
-    c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
+    c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*(data.dx*data.dy)**2)]
 
     #init
     for i in range(0, data.Mx+4):

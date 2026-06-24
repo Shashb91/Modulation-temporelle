@@ -45,7 +45,7 @@ class Donnee1D:
 
         if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
         else: self.eps_p = 0
-        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]                #Modulation temporelle
+        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]
         else: self.eps_E = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
@@ -59,7 +59,9 @@ class Donnee1D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")"
+        f = self.omega/(2*np.pi)
+        crit = self.c/(self.f*self.dx)*(self.omega == 0) + self.c/((f*5+self.f)*self.dx)*(self.omega != 0)
+        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + str(crit)
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -157,7 +159,7 @@ class Donnee2D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        try : return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")"
+        try : return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + str(self.c/(self.f*self.dx))
         except:
             self.e = None
             return __str__(self)

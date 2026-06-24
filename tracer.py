@@ -11,7 +11,7 @@ def anim1D(data, **kwargs):
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
-    line1, = ax1.plot([], [], color='blue', lw=2)
+    line1, = ax1.plot([], [], color='darkblue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
     ax1.set_ylim(np.min(data.U[:, :, 0]) * 1.1, np.max(data.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -27,7 +27,7 @@ def anim1D(data, **kwargs):
     ax2.set_title('Champ des pressions')
     ax2.grid(True)
 
-    line3, = ax3.plot([], [], color='orange', lw=2)
+    line3, = ax3.plot([], [], color='gold', lw=2)
     data.E = np.array([sum([0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2/(data.rho*data.c**2) for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E)*1.1, np.max(data.E)*1.1)
@@ -92,8 +92,8 @@ def anim1D_comparaison(data1, data2, **kwargs):
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
-    line1_1, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
-    line1_2, = ax1.plot([], [], color='cyan', lw=2, linestyle='-', label=data2.label)
+    line1_1, = ax1.plot([], [], color='darkblue', lw=2, linestyle='-', label=data1.label)
+    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, linestyle='-', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -103,7 +103,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax1.grid(True)
 
     line2_1, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
-    line2_2, = ax2.plot([], [], color='pink', lw=2, linestyle='-', label=data2.label)
+    line2_2, = ax2.plot([], [], color='deeppink', lw=2, linestyle='-', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -112,8 +112,8 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax2.legend()
     ax2.grid(True)
 
-    line3_1, = ax3.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
-    line3_2, = ax3.plot([], [], color='green', lw=2, linestyle='-', label=data2.label)
+    line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
+    line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='-', label=data2.label)
     data1.E = np.array([sum([0.5 * data1.rho * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     data2.E = np.array([sum([0.5 * data1.rho * data2.U[n, i, 0] ** 2 + data2.U[n, i, 1]**2 / (data1.rho * data1.c ** 2) for i in range(data1.M)]) for n in range(data1.N)])
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -165,7 +165,7 @@ def tracer1D_comparaison(t, data1, data2):
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
-    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'cyan', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'dodgerblue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
@@ -173,7 +173,7 @@ def tracer1D_comparaison(t, data1, data2):
     ax1.grid(True)
 
     ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
-    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'pink', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'deeppink', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')
@@ -183,7 +183,7 @@ def tracer1D_comparaison(t, data1, data2):
     plt.show()
 
 def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,30), f = "LW"):
-    c1 = "blue"
+    c1 = "darkblue"
     c2 = "red"
 
     dx_li = xc[1]/M_li
@@ -251,7 +251,7 @@ def anim2D(data, **kwargs):
         ep = data.U[..., 2]**2 / (data.rho * data.c ** 2)
         data.E = np.sum(ec + ep, axis=(1, 2))
 
-    line4, = ax4.plot([], [], color='orange', lw=2)
+    line4, = ax4.plot([], [], color='gold', lw=2)
     ax4.set_xlim(data.t[0], data.t[-1])
     ax4.set_ylim(np.min(data.E) * 0.9, np.max(data.E) * 1.1)
     ax4.set_xlabel('Temps t (s)')
@@ -290,115 +290,6 @@ def anim2D(data, **kwargs):
     plt.show()
     return anim
 
-def anim2D_comparaison(data1, data2, **kwargs):
-    """
-    Compare l'évolution de vx, vy, p et l'énergie totale avec une coupe dynamique en y via un Slider
-    :param data1: Donnee2D, contient la solution 1
-    :param data2: Donnee2D, contient la solution 2
-    :return: plot animation
-    """
-    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
-    ax1, ax2 = axs[0, 0], axs[0, 1]
-    ax3, ax4 = axs[1, 0], axs[1, 1]
-    plt.subplots_adjust(bottom=0.25) 
-
-    init_iy = data1.My // 2
-    slice_idx = [init_iy] 
-
-    line1_1, = ax1.plot([], [], color='blue', lw=2, linestyle='-', label=data1.label)
-    line1_2, = ax1.plot([], [], color='blue', lw=2, linestyle='--', label=data2.label)
-    ax1.set_xlim(data1.x[0], data1.x[-1])
-    ax1.set_ylim(np.min(data1.U[:, :, :, 0]) * 1.1, np.max(data1.U[:, :, :, 0]) * 1.1)
-    ax1.set_xlabel('Position x (m)')
-    ax1.set_ylabel('Vitesse v en x (m/s)')
-    ax1.set_title('Vitesse vx')
-    ax1.legend()
-    ax1.grid(True)
-
-    line2_1, = ax2.plot([], [], color='green', lw=2, linestyle='-', label=data1.label)
-    line2_2, = ax2.plot([], [], color='green', lw=2, linestyle='--', label=data2.label)
-    ax2.set_xlim(data1.x[0], data1.x[-1])
-    ax2.set_ylim(np.min(data1.U[:, :, :, 1]) * 1.1, np.max(data1.U[:, :, :, 1]) * 1.1)
-    ax2.set_xlabel('Position x (m)')
-    ax2.set_ylabel('Vitesse vy (m/s)')
-    ax2.set_title('Vitesse vy')
-    ax2.legend()
-    ax2.grid(True)
-
-    line3_1, = ax3.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
-    line3_2, = ax3.plot([], [], color='red', lw=2, linestyle='--', label=data2.label)
-    ax3.set_xlim(data1.x[0], data1.x[-1])
-    ax3.set_ylim(np.min(data1.U[:, :, :, 2]) * 1.1, np.max(data1.U[:, :, :, 2]) * 1.1)
-    ax3.set_xlabel('Position x (m)')
-    ax3.set_ylabel('Pression p (Pa)')
-    ax3.set_title('Champ des pressions')
-    ax3.legend()
-    ax3.grid(True)
-
-    ec = 0.5 * data1.rho * (data1.U[..., 0] ** 2 + data1.U[..., 1] ** 2)
-    ep = data1.U[..., 2] ** 2 / (data1.rho * data1.c ** 2)
-    data1.E = np.sum(ec + ep, axis=(1, 2))
-
-    ec = 0.5 * data1.rho * (data1.U[..., 0] ** 2 + data1.U[..., 1] ** 2)
-    ep = data1.U[..., 2] ** 2 / (data1.rho * data1.c ** 2)
-    data2.E = np.sum(ec + ep, axis=(1, 2))
-
-    line4_1, = ax4.plot([], [], color='orange', lw=2, linestyle='-', label=data1.label)
-    line4_2, = ax4.plot([], [], color='orange', lw=2, linestyle='--', label=data2.label)
-    ax4.set_xlim(data1.t[0], data1.t[-1])
-    ax4.set_ylim(min(np.min(data1.E), np.min(data2.E)) * 0.9, max(np.max(data1.E), np.max(data2.E)) * 1.1)
-    ax4.set_xlabel('Temps t (s)')
-    ax4.set_ylabel('Energie (J)')
-    ax4.set_title("Evolution de l'énergie")
-    ax4.legend()
-    ax4.grid(True)
-
-    title = fig.suptitle('', fontsize=14)
-
-    ax_slider = plt.axes([0.25, 0.05, 0.5, 0.03])
-    slider_y = Slider(ax_slider, 'Coupe coordonnée y (index)', 0, data1.My - 1, valinit=init_iy, valfmt='%d')
-
-    def update_slider(val):
-        slice_idx[0] = int(slider_y.val)
-        fig.canvas.draw_idle()
-
-    slider_y.on_changed(update_slider)
-
-    def init():
-        line1_1.set_data([], [])
-        line1_2.set_data([], [])
-        line2_1.set_data([], [])
-        line2_2.set_data([], [])
-        line3_1.set_data([], [])
-        line3_2.set_data([], [])
-        line4_1.set_data([], [])
-        line4_2.set_data([], [])
-        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4_1, line4_2
-
-    def update(n):
-        iy = slice_idx[0] 
-        line1_1.set_data(data1.x, data1.U[n, :, iy, 0])
-        line1_2.set_data(data1.x, data2.U[n, :, iy, 0])
-
-        line2_1.set_data(data1.x, data1.U[n, :, iy, 1])
-        line2_2.set_data(data1.x, data2.U[n, :, iy, 1])
-
-        line3_1.set_data(data1.x, data1.U[n, :, iy, 2])
-        line3_2.set_data(data1.x, data2.U[n, :, iy, 2])
-
-        line4_1.set_data(data1.t[:n + 1], data1.E[:n + 1])
-        line4_2.set_data(data1.t[:n + 1], data2.E[:n + 1])
-
-        title.set_text(f"{data1.label} VS {data2.label} | t = {data1.t[n]:.4f} s | Coupe y = {data1.y[iy]:.2f} m")
-        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4_1, line4_2
-
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 5
-    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
-    anim._slider = slider_y
-    plt.show()
-    return anim
-
 def tracer2D(data,t, y):
     """
     Trace la vitesse et la pression selon x à un temps t fixé
@@ -430,6 +321,10 @@ def tracer2D(data,t, y):
     ax3.set_box_aspect(1)
     plt.show()
 
+"""
+Fonctions de tracer pour la modulation temporelle, avec l'impédance
+"""
+
 def tracer_mt(data):
     """
     Trace la masse volumique et le module d'Young modulés en temps
@@ -451,17 +346,17 @@ def tracer_mt(data):
     ax1.set_xlabel("t (s)")
     ax1.set_ylabel(f"Masse volumique $(g.m^{-3})$ ")
 
-    ax2.plot(data.t, e, lw=2, c='blue')
+    ax2.plot(data.t, e, lw=2, c='darkblue')
     ax2.grid(True)
     ax2.set_xlabel("t (s)")
     ax2.set_ylabel("Module d'Young (Pa)")
 
-    ax3.plot(data.t, c, lw=2, c='orange')
+    ax3.plot(data.t, c, lw=2, c='gold')
     ax3.grid(True)
     ax3.set_xlabel('t (s)')
     ax3.set_ylabel(f'Célérité $(m.s^{-1})$')
 
-    ax4.plot(data.t, Z, lw=2, c='green')
+    ax4.plot(data.t, Z, lw=2, c='darkorange')
     ax4.grid(True)
     ax4.set_xlabel('t (s)')
     ax4.set_ylabel(f'Impédance $(kg.m^{-2}.s^{-1})$')
@@ -480,7 +375,7 @@ def anim1D_mt(data, **kwargs):
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
 
-    line1, = ax1.plot([], [], color='blue', lw=2)
+    line1, = ax1.plot([], [], color='darkblue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
     ax1.set_ylim(np.min(data.U[:, :, 0]) * 1.1, np.max(data.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -496,7 +391,7 @@ def anim1D_mt(data, **kwargs):
     ax2.set_title('Champ des pressions')
     ax2.grid(True)
 
-    line3, = ax3.plot([], [], color='orange', lw=2)
+    line3, = ax3.plot([], [], color='gold', lw=2)
     data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
     ax3.set_xlim(data.t[0], data.t[-1])
     ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
@@ -510,8 +405,8 @@ def anim1D_mt(data, **kwargs):
     ax4.set_xlim(data.t[0], data.t[-1])
     ax4.set_ylim(np.min(Z) * 0.9, np.max(Z) * 1.1)
     ax4.set_xlabel('Temps t (s)')
-    ax4.set_ylabel('Impédence  $(kg.m^{-2}.s^{-1})$')
-    ax4.set_title("Evolution de l'impédence (J)")
+    ax4.set_ylabel('Impédance  $(kg.m^{-2}.s^{-1})$')
+    ax4.set_title("Evolution de l'impédance (J)")
     ax4.grid(True)
 
     title = fig.suptitle('', fontsize=14)
@@ -521,7 +416,7 @@ def anim1D_mt(data, **kwargs):
         line2.set_data([], [])
         line3.set_data([], [])
         line4.set_data([], [])
-        title.set_text("Courbe de pression, vitesse, énergie et d'impédence pour la solution " + data.label)
+        title.set_text("Courbe de pression, vitesse, énergie et d'impédance pour la solution " + data.label)
         return line1, line2, line3, line4
 
     def update(n):
@@ -535,5 +430,90 @@ def anim1D_mt(data, **kwargs):
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 5
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+    plt.show()
+    return anim
+
+def anim1D_mt_comparaison(data1, data2, **kwargs):
+    """
+    Trace la comparaison entre deux Donnee2D, l'évolution de la vitesse, la pression et l'énergie des données de data1 et data2 dans le cas d'un milieu modulé en temps
+    ATTENTION : LA MODULATION DOIT ÊTRE IDENTIQUE !!!
+    :param data1: Donnee2D, regroupe l'ensemble des données du problème
+    :param data2: Donnee2D, regroupe l'ensemble des données du problème
+    :return: plot
+    """
+    fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
+    ax1, ax2 = axs[0, 0], axs[1, 0]
+    ax3, ax4 = axs[0, 1], axs[1, 1]
+    rho = [data1.rho_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
+    E = [data1.E_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
+
+    line1_1, = ax1.plot([], [], color='darkblue', lw=2  , label = data1.label)
+    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, label = data2.label)
+    ax1.set_xlim(data1.x[0], data1.x[-1])
+    ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
+    ax1.legend()
+    ax1.grid(True)
+
+    line2_1, = ax2.plot([], [], color='red', lw=2, label = data1.label)
+    line2_2, = ax2.plot([], [], color='deeppink', lw=2, label = data2.label)
+    ax2.set_xlim(data1.x[0], data1.x[-1])
+    ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Pression p (Pa)')
+    ax2.set_title('Champ des pressions')
+    ax2.legend()
+    ax2.grid(True)
+
+    line3_1, = ax3.plot([], [], color='gold', lw=2, label = data1.label)
+    line3_2, = ax3.plot([], [], color='darkorange', lw=2, label = data2.label)
+    data1.E = np.array([sum([0.5 * rho[n] * data1.U[n, i, 0] ** 2 + data1.U[n, i, 1]**2 / E[n] for i in range(data1.M)]) for n in range(0, data1.N)])
+    data2.E = np.array([])
+    ax3.set_xlim(data1.t[0], data1.t[-1])
+    ax3.set_ylim(np.min(data1.E) * 1.1, np.max(data1.E) * 1.1)
+    ax3.set_xlabel('Temps t (s)')
+    ax3.set_ylabel('Energie (J)')
+    ax3.set_title("Evolution de l'energie (J)")
+    ax3.legend()
+    ax3.grid(True)
+
+    line4, = ax4.plot([], [], color='green', lw=2)
+    Z = np.array([np.sqrt(rho[n]*E[n]) for n in range(data1.N)])
+    ax4.set_xlim(data1.t[0], data1.t[-1])
+    ax4.set_ylim(np.min(Z) * 0.9, np.max(Z) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel('Impédance  $(kg.m^{-2}.s^{-1})$')
+    ax4.set_title("Evolution de l'impédance (J)")
+    ax4.grid(True)
+
+    title = fig.suptitle('', fontsize=14)
+
+    def init():
+        line1_1.set_data([], [])
+        line1_2.set_data([], [])
+        line2_1.set_data([], [])
+        line2_2.set_data([], [])
+        line3_1.set_data([], [])
+        line3_2.set_data([], [])
+        line4.set_data([], [])
+        title.set_text(data1.label + " vs" + data2.label)
+        return line1_1, line2_1, line3_1, line4
+
+    def update(n):
+        line1_1.set_data(data1.x, data1.U[n, :, 0])
+        line1_2.set_data(data1.x, data2.U[n, :, 0])
+        line2_1.set_data(data1.x, data1.U[n, :, 1])
+        line2_2.set_data(data1.x, data2.U[n, :, 1])
+        line3_1.set_data(data1.t[:n + 1], data1.E[:n + 1])
+        line3_2.set_data(data1.t[:n + 1], data2.E[:n + 1])
+        line4.set_data(data1.t[:n + 1], Z[:n + 1])
+        return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4
+
+
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 5
+    anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     plt.show()
     return anim

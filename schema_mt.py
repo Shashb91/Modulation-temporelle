@@ -20,12 +20,17 @@ def A1D_mt(data):
         return [A,B,C,D]
     return f
 
+"""
+Modulation temporelle dans un problème de propagation 1D 
+"""
+
 def LaxWendroff1D_mt(data):
     """
-        Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
-        :param data: Donnee1D, regroupe l'ensemble des données du problème
-        :return: Donnee1D, solution en vitesse et pression du problème 1D
-        """
+    Utilise le schéma d'ADER4 en 1D dans un mileu modulé en temps
+    :param data: Donnee1D, regroupe l'ensemble des données du problème
+    :return: Donnee1D, solution en vitesse et pression du problème 1D
+    """
+    print("LaxWendroff 1D mt()")
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -50,6 +55,7 @@ def ADER41D_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    print("ADER4 1D mt()")
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -80,6 +86,9 @@ def ADER41D_mt(data):
             S_n = np.array([[-rho(t+data.dt)[1] / rho(t+data.dt)[0], 0], [0, E(t+data.dt)[1] / E(t+data.dt)[0]]])
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ etape2 + s
 
+"""
+Modulation temporelle dans un problème de propagation 2D
+"""
 
 def ADER42D_mt(data):
     """
@@ -87,6 +96,7 @@ def ADER42D_mt(data):
     :param data: Donnee2D, regroupe l'ensemble des données du probleme 2D
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
+    print("ADER4 2D mt()")
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],

@@ -14,6 +14,7 @@ def LaxWendroff1D(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    print("LaxWendroff1D()")
     data.U = np.zeros((data.N, data.M, 2))
     A = np.array([[0, 1/data.rho], [data.rho * data.c**2, 0]])
 
@@ -29,6 +30,7 @@ def ADER21D(data):
     :param data: Donnee1D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
+    print("ADER2 1D()")
     gamma = np.array([[-1/2,-1/2],
                        [0, 1],
                        [1/2,-1/2]])
@@ -57,6 +59,7 @@ def ADER41D(data):
     :param data: Donnee1D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
+    print("ADER4 1D()")
     gamma = np.array([[1 / 12, 1 / 24, -1 / 12, -1 / 24],
                       [-2 / 3, -2 / 3, 1 / 6, 1 / 6],
                       [0, 5 / 4, 0, -1 / 4],
@@ -91,6 +94,7 @@ def LaxWendroff1D_cauchy(data):
     :param data: Donnee 1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    print("LaxWendroff 1D Cauchy()")
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
@@ -115,6 +119,7 @@ def ADER41D_cauchy(data):
     :param data: Donnee1D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
+    print("ADER4 1D Cauchy()")
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
@@ -158,6 +163,7 @@ def LaxWendroff2D(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    print("LaxWendroff 2D()")
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
@@ -184,6 +190,7 @@ def ADER42D(data):
     :param data: Donnee2D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
+    print("ADER4 2D()")
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
@@ -238,6 +245,7 @@ def LaxWendroff2D_cauchy(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    print("LaxWendroff2D Cauchy()")
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
     theta = 0
     rc2 = data.rho * data.c ** 2
@@ -284,13 +292,14 @@ def ADER42D_cauchy(data):
     :param data: Donnee2D, regroupe l'ensemble des données du probleme
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
+    print("ADER4 2D Cauchy()")
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
         return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
 
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
-    rc2 = data.c**2
+    rc2 = data.rho*data.c**2
     theta = 0
     A = np.array([[0,0, 1 / data.rho],
                   [0,0, 0],

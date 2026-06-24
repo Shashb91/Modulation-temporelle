@@ -216,6 +216,21 @@ class Donnee2D:
 
         return retour
 
+    def CFL_maj(self):
+        """
+        Permet de corriger la CFL dans un milieu modulé en temps
+        :return: None
+        """
+        rho, E = [],[]
+        for t in self.t:
+            rho.append(self.rho_mt(self)(t)[0])
+            E.append(self.E_mt(self)(t)[0])
+        rho,E = np.array(rho),np.array(E)
+        self.c: float = np.max(np.sqrt(E/rho))
+        self.dt : float = self.CFL * self.dx / self.c
+        self.N: int = int(self.tc[1] / self.dt)
+        self.t = np.linspace(self.tc[0], self.tc[1], self.N)
+
     def calcul_energie(self):
         if np.all(self.E == 0):
             ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)

@@ -47,8 +47,9 @@ def charger(nom_fichier: str) -> Donnee2D/Donnee1D :
     try:
         with open(nom_fichier, 'rb') as fichier:
             instance = pickle.load(fichier)
-        print(f"Instance chargée avec succès depuis : '{nom_fichier}'")
+        print(f"Instance chargée avec succès depuis : '{nom_fichier}'\n")
         print(instance)
+        print("\n")
         return instance
     except Exception as e:
         print(f"Impossible de charger le fichier : {e}")

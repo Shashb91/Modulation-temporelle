@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionelle de la propagation avec un problème de cauchy">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source.py" beforeDir="false" afterPath="$PROJECT_DIR$/source.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,8 +119,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.main_mt" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.main_mt" />
     </list>
     <recent_temporary>
       <list>
@@ -147,14 +142,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Implémentation de LW2D avec une correction d'ordre 1">
-      <option name="closed" value="true" />
-      <created>1780913025983</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1780913025983</updated>
     </task>
     <task id="LOCAL-00025" summary="Implémentation de la sauvegarde des instances">
       <option name="closed" value="true" />
@@ -540,7 +527,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782220961856</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4">
+      <option name="closed" value="true" />
+      <created>1782231626009</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1782231626009</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -555,7 +550,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implementation de l'horodatage des fichiers" />
     <MESSAGE value="Implémentation de Lax Wendroff 2D avec des corrections" />
     <MESSAGE value="Implémentation de la sauvegarde des instances" />
     <MESSAGE value="Implémentation de la sauvegarde des instances et LW2D" />
@@ -580,7 +574,8 @@
     <MESSAGE value="Version fonctionelle de la propagation en onde plane 2D nmt" />
     <MESSAGE value="Version fonctionelle de la propagation en onde tronquée lointaine" />
     <MESSAGE value="Version fonctionelle de la propagation avec un problème de cauchy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionelle de la propagation avec un problème de cauchy" />
+    <MESSAGE value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

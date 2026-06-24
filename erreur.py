@@ -1,4 +1,4 @@
-from schemas import*
+from schema import*
 from analytique import*
 from tracer import*
 from tqdm import trange

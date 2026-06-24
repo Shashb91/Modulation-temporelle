@@ -8,7 +8,7 @@ modulé en temps
 """
 from erreur import *
 from sauvegarde import *
-from schemas import*
+from schema import*
 
 """
 ============================================================
@@ -77,15 +77,16 @@ Implémentation de la résolution 2D homogène
 # sauvegarder(data1, '.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
 # anim2D(data1)
 
-data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = 200, My = 200, f = 20, e= 2.25e9)
-data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = 200, My = 200, f = 20, e = 2.25e9)
+data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = 300, My = 300, f = 20, e= 2.25e9)
+data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = 300, My = 300, f = 20, e = 2.25e9)
 
-data2 = Donnee1D(M = 200, label = "Analytique", xs = 0, f = 20, rho = 1000, c = 1500, CFL = 0.6, tc = (0, 0.2), xc = (0,300))
+data2 = Donnee1D(M = 300, label = "Analytique", xs = 0, f = 20, rho = 1000, c = 1500, CFL = 0.6, tc = (0, 0.2), xc = (0,300))
 analytique1D_cauchy(data2)
 
-# LaxWendroff2D_OP(data4)
-# sauvegarder(data4, ".save_2D_nmt/")
-data4 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_15-17-22.pkl')
+print("LaxWendroff2D_cauchy()")
+LaxWendroff2D_cauchy(data4)
+sauvegarder(data4, ".save_2D_nmt/")
+# data4 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_15-17-22.pkl')
 anim2D(data4)
 
 data4_ = Donnee1D(M = data4.Mx, label = "LW 2D OP", xc = data4.xc, tc = data4.tc, x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)

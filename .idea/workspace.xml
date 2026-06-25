@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections mineures pour la résolution mt">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle de la mt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
@@ -73,7 +73,7 @@
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.main_mt">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -145,22 +145,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Implémentation de la sauvegarde des instances">
-      <option name="closed" value="true" />
-      <created>1780923554311</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1780923554311</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Implémentation de la sauvegarde des instances et LW2D">
-      <option name="closed" value="true" />
-      <created>1780929355739</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1780929355739</updated>
     </task>
     <task id="LOCAL-00031" summary="Implémentation de la sauvegarde des instances et LW2D">
       <option name="closed" value="true" />
@@ -538,7 +522,23 @@
       <option name="project" value="LOCAL" />
       <updated>1782309027774</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="Version fonctionnelle de la mt">
+      <option name="closed" value="true" />
+      <created>1782315919365</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1782315919365</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Version fonctionnelle de la mt">
+      <option name="closed" value="true" />
+      <created>1782315946308</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1782315946308</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -553,7 +553,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentation de la sauvegarde des instances" />
     <MESSAGE value="Implémentation de la sauvegarde des instances et LW2D" />
     <MESSAGE value="Implémentation de LW2D" />
     <MESSAGE value="Correction de la sauvegarde" />
@@ -578,7 +577,8 @@
     <MESSAGE value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
     <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Corrections mineures pour la résolution mt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrections mineures pour la résolution mt" />
+    <MESSAGE value="Version fonctionnelle de la mt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle de la mt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

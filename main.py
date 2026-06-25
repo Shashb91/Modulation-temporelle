@@ -23,8 +23,8 @@ data3 = Donnee1D(M = 200, label = "ADER4")                                      
 # LaxWendroff1D(data1)
 # anim1D(data1)
 
-analytique1D(data2)
-anim1D(data2)
+# analytique1D(data2)
+# anim1D(data2)
 
 # ADER41D(data3)
 # anim1D(data3)
@@ -58,13 +58,13 @@ Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
 """
 
 # epsLW = erreur1D(0.05, f = "LW")
-# erreur1D_trace(epsLW, f = "LW")
+# erreur_trace(epsLW, f = "LW")
 
 # epsADER2 = erreur1D(0.05, f = "ADER2")
-# erreur1D_trace(epsADER2, f = "ADER2")
+# erreur_trace(epsADER2, f = "ADER2")
 
 # epsADER4 = erreur1D(0.05, M_li = [150,200,250], f = "ADER4")
-# erreur1D_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
+# erreur_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
 
 """
 ============================================================
@@ -84,24 +84,29 @@ data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,3
 data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20, e = 2.25e9)
 
 data2 = Donnee1D(M = M, label = "Analytique", xs = 0, f = 20, rho = 1000, c = 1500, CFL = 0.6, tc = (0, 0.2), xc = (0,300))
-analytique1D_cauchy(data2)
+# analytique1D_cauchy(data2)
 
 # LaxWendroff2D_cauchy(data4)
 # sauvegarder(data4, ".save_2D_nmt/")
 data4 = charger('.save_2D_nmt/Lax Wendroff 2D_cauchy.pkl')
 anim2D(data4)
 
-data4_ = Donnee1D(M = M, label = "LW 2D OP", xc = data4.xc, tc = data4.tc, x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
-data4_.U = data4.U[:, M//2, :,1:]
-anim1D(data4_, interval = 30)
-anim1D_comparaison(data4_, data2, interval = 30)
+# data4_ = Donnee1D(M = M, label = "LW 2D OP", xc = data4.xc, tc = data4.tc, x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
+# data4_.U = data4.U[:, M//2, :,1:]
+# anim1D(data4_, interval = 30)
+# anim1D_comparaison(data4_, data2, interval = 30)
 
 # ADER42D_cauchy(data5)
 # sauvegarder(data5)
-data5 = charger('.save_2D_nmt/ADER4 2D_cauchy.pkl')
-anim2D(data5)
+# data5 = charger('.save_2D_nmt/ADER4 2D_cauchy.pkl')
+# anim2D(data5)
 
-data5_ = Donnee1D(M = M, label = "ADER4 2D OP", xc = (0,300), tc = (0, 0.2), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
-data5_.U = data5.U[:, M//2, :,1:]
-anim1D(data5_, interval = 30)
-anim1D_comparaison(data5_,data2, interval=30)
+# data5_ = Donnee1D(M = M, label = "ADER4 2D OP", xc = (0,300), tc = (0, 0.2), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
+# data5_.U = data5.U[:, M//2, :,1:]
+# anim1D(data5_, interval = 30)
+# anim1D_comparaison(data5_,data2, interval=30)
+
+a = np.array([[67.17904439,35.95252148,21.80539893,14.47996566],[67.17904439,35.95252148,21.80539893,14.47996566]]).transpose()
+
+# a = erreur2D(0.1, M_li = [100, 150, 200, 250], f = "ADER4")
+erreur_trace(a, M_li = np.array([100, 150, 200, 250]), xc = (0, 300))

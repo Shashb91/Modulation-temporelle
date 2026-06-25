@@ -25,10 +25,10 @@ Implémentation de la résolution 1D modulée en temps
 """
 
 #Paramètres
-f_mt = 0
-modulation = "echelon"
+f_mt = 6
+modulation = "sinus"
 alpha = 0.5
-eps = 0                              #0 < eps <<1
+eps = 0                              # |eps| << 1
 
 if modulation == "echelon":
     rho = rho_echelon
@@ -41,9 +41,9 @@ elif modulation == "triangle":
     E = E_triangle
 
 data1 = Donnee1D(M = 500, label = "LaxWendrof_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.6), xc = (0,1200), CFL = 0.95, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+                 tc = (0, 0.6), xc = (0,1200), CFL = 0.95, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
 data2 = Donnee1D(M = 500, label = "ADER4_mt=" + modulation, eps_r = eps/2, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.6), xc = (0,1200), CFL = 0.95, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+                 tc = (0, 0.6), xc = (0,1200), CFL = 0.95, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
 
 #Resolution
 # LaxWendroff1D_mt(data1)
@@ -80,7 +80,7 @@ Implémentation de la résolution 2D modulée en temps
 """
 
 data5 = Donnee2D(Mx = 150, My = 150, label = "LaxWendrof_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.4), xc = (0,500), yc = (0, 500), CFL = 0.6, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+                 tc = (0, 0.4), xc = (0,300), yc = (0, 300), CFL = 0.6, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
 data5.CFL_maj()
 print(data5)
 LaxWendroff2D_mt(data5)

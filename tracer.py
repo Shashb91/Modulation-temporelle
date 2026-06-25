@@ -182,7 +182,7 @@ def tracer1D_comparaison(t, data1, data2):
 
     plt.show()
 
-def erreur1D_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,30), f = "LW"):
+def erreur_trace(eps, M_li = np.array([100, 200, 400, 800, 1600]), xc = (0,30), f = "LW"):
     c1 = "darkblue"
     c2 = "red"
 

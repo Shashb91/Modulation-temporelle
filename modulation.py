@@ -42,7 +42,7 @@ def rho_echelon(data):
     def f(t):
         try : eps = data.eps
         except : eps = data.eps_r
-        T, alpha = (2*np.pi)/data.omega, data.alpha
+        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.alpha
         return [data.rho * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f
 
@@ -50,7 +50,7 @@ def E_echelon(data):
     def f(t):
         try : eps = data.eps
         except : eps = data.eps_E
-        T, alpha = (2*np.pi)/data.omega, data.alpha
+        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.alpha
         return [data.e / (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f
 

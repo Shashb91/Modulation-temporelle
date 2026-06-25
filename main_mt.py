@@ -25,8 +25,8 @@ Implémentation de la résolution 1D modulée en temps
 """
 
 #Paramètres
-f_mt = 6
-modulation = "sinus"
+f_mt = 0.00000000000000000000001
+modulation = "echelon"
 alpha = 0.5
 eps = 0                              # |eps| << 1
 
@@ -79,9 +79,17 @@ Implémentation de la résolution 2D modulée en temps
 ============================================================
 """
 
-data5 = Donnee2D(Mx = 150, My = 150, label = "LaxWendrof_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.4), xc = (0,300), yc = (0, 300), CFL = 0.6, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
+data5 = Donnee2D(Mx = 150, My = 150, label = "ADER42D_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
+                 tc = (0, 0.08), xc = (0,300), yc = (0, 300), CFL = 0.6, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
 data5.CFL_maj()
 print(data5)
-LaxWendroff2D_mt(data5)
+# data5 = charger('.save/LaxWendrof_mt=echelon_06-25_11-14-15.pkl')
+ADER42D_mt(data5)
+sauvegarder(data5)
 anim2D(data5)
+
+data5_ = data5.projection((75,0))
+data5__ = data5.projection((0,75))
+
+anim1D(data5_)
+anim1D(data5__)

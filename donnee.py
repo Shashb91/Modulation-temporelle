@@ -62,10 +62,10 @@ class Donnee1D:
         f = self.omega/(2*np.pi)
         crit = self.c/((f*4+self.f)*self.dx)
         mess = ""
-        if crit <= 20:
+        if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
-        return "Donnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
+        return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -167,10 +167,15 @@ class Donnee2D:
         else: self.alpha = 0.5
 
     def __str__(self):
-        try : return "Donnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + str(self.c/(self.f*self.dx))
-        except:
-            self.e = None
-            return __str__(self)
+        f = self.omega / (2 * np.pi)
+        crit = self.c / ((f * 4 + self.f) * self.dx)
+        mess = ""
+        if crit <= 25:
+            mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
+        crit = str(crit) + mess
+        return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(
+                self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(
+                self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c
@@ -197,20 +202,20 @@ class Donnee2D:
     def projection(self, coupe):
         """
         Réalise la projection d'une variable de Donnee2D en une variable de Donnee1D
-        :param coupe: (int,int), correspond à la positon de la coupe. Attention, une des deux coordonnées doit forcément être nul !!
+        :param coupe: (int,int), correspond à la positon de la coupe. Attention, une des deux coordonnées doit forcément être nulle !!
         :return: Donnee1D
         """
+        coupe = (int(coupe[0]), int(coupe[1]))
+        pos = "_decoupe-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
         retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc,
                           M=self.Mx, dx=self.dx, CFL=self.CFL, dt=self.dt, N=self.N,
-                          fmax=f * 10, opt=self.opt, label=self.label, S=self.S, t = self.t)
+                          fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         if coupe[0] != 0:  # coupe selon l'axe y
-            retour.xs = self.ps[1]
-            retour.U = np.concatenate(self.U[:, coupe[0], :, 1], self.U[:, coupe[0], :, 2])
+            retour.U = self.U[:, coupe[0], :, 1:]
             retour.xc = self.yc
             retour.x = self.y
         if coupe[1] != 0:  # coupe selon l'axe x
-            retour.xs = self.ps[0]
-            retour.U = np.concatenate(self.U[:, :, coupe[1], 0], self.U[:, :, coupe[1], 2])
+            retour.U = self.U[:, :, coupe[1], ::2]
             retour.xc = self.xc
             retour.x = self.x
 
@@ -232,7 +237,6 @@ class Donnee2D:
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
     def calcul_energie(self):
-        if np.all(self.E == 0):
-            ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
-            ep = self.U[..., 2] ** 2 / (self.rho * self.c ** 2)
-            self.E = np.sum(ec + ep, axis=(1, 2))
+        ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
+        ep = self.U[..., 2] ** 2 / (self.rho * self.c ** 2)
+        self.E = np.sum(ec + ep, axis=(1, 2))

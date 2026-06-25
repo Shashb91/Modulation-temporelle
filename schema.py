@@ -191,13 +191,14 @@ def LaxWendroff2D(data):
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
-                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, j, :] - data.U[n, i-1,j, :])
-                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j+1, :] - data.U[n, i, j-1, :])
-                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i+1, j, :] + data.U[n, i-1, j, :] - 2 * data.U[n, i, j, :])/data.dx**2)
-                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j+1, :] + data.U[n, i, j-1, :] - 2 * data.U[n, i, j, :])/data.dy**2)
-                s = ((data.dt/np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt/(data.rho*np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
+                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
+                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
+                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
+                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
                 data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
+
+
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
     data.E = np.sum(ec + ep, axis=(1, 2))
@@ -279,7 +280,7 @@ def LaxWendroff2D_cauchy(data):
     # init
     for i in range(0, data.Mx + 2):
         for j in range(0, data.My):
-            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.tc[0] - data.dy * j / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
+            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.dy/data.c + data.tc[0] - data.dy * j / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
 
 
     for n in trange(0, data.N - 1, ncols=ncols):
@@ -339,7 +340,7 @@ def ADER42D_cauchy(data):
     #init
     for i in range(0, data.Mx+4):
         for j in range(0, data.My):
-            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.tc[0] - data.dy*j/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
+            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.dy/data.c + data.tc[0] - data.dy*j/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
 
 
     for n in trange(0, data.N - 1, ncols = ncols):

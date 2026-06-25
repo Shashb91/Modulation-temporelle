@@ -16,9 +16,9 @@ Implémentation de la résolution 1D homogène
 ============================================================
 """
 
-data1 = Donnee1D(M = 200, label = "Lax Wendroff")                                #Lax Wendroff
-data2 = Donnee1D(M = 200, label = "Analytique")                                  #ADER4
-data3 = Donnee1D(M = 200, label = "ADER4")                                       #Solution analytique
+data1 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho = 1000, f = 20, label = "Lax Wendroff")                                #Lax Wendroff
+data2 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho = 1000, f = 20, label = "Analytique")                                  #ADER4
+data3 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho = 1000, f = 20, label = "ADER4")                                       #Solution analytique
 
 # LaxWendroff1D(data1)
 # anim1D(data1)
@@ -41,11 +41,11 @@ data3 = Donnee1D(M = 200, label = "ADER4")                                      
 # analytique1D_cauchy(data2)
 # anim1D(data2)
 
-# LaxWendroff1D_cauchy(data1)
-# anim1D(data1, interval = 30)
+LaxWendroff1D_cauchy(data1)
+anim1D(data1, interval = 30)
 
-# ADER41D_cauchy(data3)
-# anim1D(data3, interval = 30)
+ADER41D_cauchy(data3)
+anim1D(data3, interval = 30)
 
 # tracer1D_comparaison(10, data1, data2)
 # anim1D_comparaison(data1, data2, interval = 30)                                                      #Comparaison LaxWendroff VS Analytique
@@ -71,7 +71,8 @@ Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
 Implémentation de la résolution 2D homogène
 ============================================================
 """
-# data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D)
+# data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D, Mx = 200, My = 200, CFL = 0.6, opt = False, f = 10, tc = (0, 0.08), xc = (0, 300), yc = (0, 300))
+# print(data1)
 # LaxWendroff2D(data1)
 # data1 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
 # sauvegarder(data1, '.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
@@ -84,29 +85,42 @@ data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,3
 data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20, e = 2.25e9)
 
 data2 = Donnee1D(M = M, label = "Analytique", xs = 0, f = 20, rho = 1000, c = 1500, CFL = 0.6, tc = (0, 0.2), xc = (0,300))
-# analytique1D_cauchy(data2)
+analytique1D_cauchy(data2)
 
 # LaxWendroff2D_cauchy(data4)
 # sauvegarder(data4, ".save_2D_nmt/")
 data4 = charger('.save_2D_nmt/Lax Wendroff 2D_cauchy.pkl')
 anim2D(data4)
 
-# data4_ = Donnee1D(M = M, label = "LW 2D OP", xc = data4.xc, tc = data4.tc, x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
-# data4_.U = data4.U[:, M//2, :,1:]
-# anim1D(data4_, interval = 30)
-# anim1D_comparaison(data4_, data2, interval = 30)
+data4_ = data4.projection((data4.Mx//2,0))
+anim1D(data4_, interval = 30)
+anim1D_comparaison(data4_, data2, interval = 30)
+anim1D_comparaison(data4_, data1, interval = 30)
 
 # ADER42D_cauchy(data5)
 # sauvegarder(data5)
-# data5 = charger('.save_2D_nmt/ADER4 2D_cauchy.pkl')
-# anim2D(data5)
+data5 = charger('.save_2D_nmt/ADER4 2D_cauchy.pkl')
+anim2D(data5)
 
-# data5_ = Donnee1D(M = M, label = "ADER4 2D OP", xc = (0,300), tc = (0, 0.2), x = data4.x, t = data4.t, c = data4.c, rho = data4.rho, CFL = 0.6)
-# data5_.U = data5.U[:, M//2, :,1:]
-# anim1D(data5_, interval = 30)
-# anim1D_comparaison(data5_,data2, interval=30)
+data5_ = data5.projection((data5.Mx//2,0))
+anim1D(data5_, interval = 30)
+anim1D_comparaison(data5_,data2, interval=30)
+anim1D_comparaison(data5_,data3, interval=30)
 
-a = np.array([[67.17904439,35.95252148,21.80539893,14.47996566],[67.17904439,35.95252148,21.80539893,14.47996566]]).transpose()
+erreur_LW = []
+for M in [125,150,200,250]:
+    LW2D = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = M, My = M, f = 20, e= 2.25e9)
+    LaxWendroff2D_cauchy(LW2D)
+    LW2D_ = LW2D.projection((LW2D.Mx//2,0))
 
-# a = erreur2D(0.1, M_li = [100, 150, 200, 250], f = "ADER4")
-erreur_trace(a, M_li = np.array([100, 150, 200, 250]), xc = (0, 300))
+    LW1D = Donnee1D(M = M, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho = 1000, f = 20, label = "Lax Wendroff")
+    LaxWendroff1D_cauchy(LW1D)
+    print(LW2D_)
+    print(LW1D)
+
+    # anim1D_comparaison(LW1D, LW2D_)
+    t = int(0.1/LW1D.dt)
+    erreur_LW.append(np.sum([np.abs(LW1D.U[t,i,0] - LW2D_.U[t,i,0]) for i in range(M)])/M)
+
+erreur_LW = np.array([erreur_LW, erreur_LW]).transpose()
+erreur_trace(erreur_LW, M_li = np.array([100, 150, 200, 250]), xc = (0, 300))

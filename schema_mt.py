@@ -59,6 +59,16 @@ def B2D_mt(data):
         return [A,B,C,D]
     return f
 
+def c_mt(data):
+    def f(t):
+        rho = data.rho_mt(data)(t)
+        E = data.E_mt(data)(t)
+        c = np.sqrt(E[0]/rho[0])
+        c_ = 1/(2*c*rho[0]**2)*(E[1]*rho[0]-rho[1]*E[0])
+        c__ = 1/(E[0]*rho[0])*((E[1]*rho[0]-rho[1]*E[1])*c_ - 2*c*((E[2]*rho[0] - rho[2]*E[0])*rho[0] - (E[1]*rho[0]-rho[1]*E[1])*rho[1])/rho[0])
+        return [c, c_, c__]
+    return f
+
 """
 Modulation temporelle dans un problème de propagation 1D 
 """
@@ -258,7 +268,7 @@ def LaxWendroff2D_mt(data):
 
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
-                s = (data.dt * data.rho / (np.sqrt(data.dx) * rho(t)[0])) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1])
+                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
                 a1 = 0.5 / data.dx * (data.dt * A + data.dt ** 2 / 2 * A_) @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
                 a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :])
                 
@@ -286,44 +296,72 @@ def ADER42D_mt(data):
     """
     print("ADER4 2D mt()")
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
-    rc2 = data.rho*data.c**2
-    A = np.array([[0,0, 1 / data.rho],
-                  [0,0, 0],
-                  [rc2, 0, 0]])
-    B = np.array([[0,0,0],
-                  [0,0,1/data.rho],
-                  [0, rc2, 0]])
-    b2 = - (data.c*data.dt)**2/24
-    b3 = data.c**2*data.dt**3/6
-    b4 = - (data.c*data.dt)**4/24
+    coeff = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
 
-    c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
     for n in trange(0, data.N - 1, ncols = ncols):
+        t = n * data.dt
+        rho = data.rho_mt(data)
+        E = data.E_mt(data)
+        A = A2D_mt(data)(t)
+        B = B2D_mt(data)(t)
+        c = c_mt(data)(t)
+        U_temp = data.U[n, ...]
+        U_temp_ = np.zeros(data.U[n, ...].shape)
+
+        S_n = np.array([[-rho(t)[1] / rho(t)[0], 0, 0], [0, -rho(t)[1] / rho(t)[0], 0], [0, 0, E(t)[1] / E(t)[0]]])
+        for i in range(0, data.Mx):
+            for j in range(0, data.My):
+                U_temp[i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ data.U[n, i, j, :]
+
         for i in range(2, data.Mx - 2):
             for j in range(2, data.My - 2):
-                a1 = data.dt * (c[0] * A @ (data.U[n,i-2,j,:] - 8*data.U[n,i-1,j,:] + 8*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                                c[0] * B @ (data.U[n,i,j-2,:] - 8*data.U[n,i,j-1,:] + 8*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a2 = b2 * (c[1] * (- data.U[n,i-2,j,:] + 16*data.U[n,i-1,j,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                           c[1] * (- data.U[n,i,j-2,:] + 16*data.U[n,i,j-1,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a3 = b3 * (A @ (c[2] * (- data.U[n,i-2,j,:] + 2*data.U[n,i-1,j,:] - 2*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-1,j-2,:] - 8*data.U[n,i+1,j-2,:] + data.U[n,i+2,j-2,:]+
-                                        16*data.U[n,i-2,j-1,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i+1,j-1,:] - 16*data.U[n,i+2,j-1,:]
-                                        -30*data.U[n,i-2,j,:] + 240*data.U[n,i-1,j,:] - 240*data.U[n,i+1,j,:] + 30*data.U[n,i+2,j,:]+
-                                        16*data.U[n,i-2,j+1,:] - 128*data.U[n,i-1,j+1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+2,j+1,:]
-                                        - data.U[n,i-2,j+2,:] + 8*data.U[n,i-1,j+2,:] - 8*data.U[n,i+1,j+2,:] + data.U[n,i+2,j+2,:])) +
-                           B @ (c[2] * (- data.U[n,i,j-2,:] + 2*data.U[n,i,j-1,:] - 2*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-2,j-1,:] - 8*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                        + 16*data.U[n,i-1,j-2,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                        - 30*data.U[n,i,j-2,:] + 240*data.U[n,i,j-1,:] - 240*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                        + 16*data.U[n,i+1,j-2,:] - 128*data.U[n,i+1,j-1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                        - data.U[n,i+2,j-2,:] + 8*data.U[n,i+2,j-1,:] - 8*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:])))
-                a4 = b4 * (c[4] * (data.U[n,i-2,j,:] - 4*data.U[n,i-1,j,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                           c[4] * (data.U[n,i,j-2,:] - 4*data.U[n,i,j-1,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                           c[5] * (data.U[n,i-2,j-2,:] -16*data.U[n,i-2,j-1,:] +30 * data.U[n,i-2,j,:] - 16*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                   -16*data.U[n,i-1,j-2,:] +256*data.U[n,i-1,j-1,:]-480*data.U[n,i-1,j,:] + 256*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                   +30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                   -16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                   + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([1, 0, 0]).transpose()) * (data.opt))
-                data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
+                dxU = [0,
+                       coeff[0] * (U_temp[i-2,j,:] - 8*U_temp[i-1,j,:] + 8*U_temp[i+1,j,:] - U_temp[i+2,j,:]),
+                       coeff[1] * (- U_temp[i-2,j,:] + 16*U_temp[i-1,j,:] - 30*U_temp[i,j,:] + 16*U_temp[i+1,j,:] - U_temp[i+2,j,:]),
+                       coeff[2] * (- U_temp[i-2,j,:] + 2*U_temp[i-1,j,:] - 2*U_temp[i+1,j,:] + U_temp[i+2,j,:]),
+                       coeff[4] * (U_temp[i-2,j,:] - 4*U_temp[i-1,j,:] + 6*U_temp[i,j,:] - 4*U_temp[i+1,j,:] + U_temp[i+2,j,:])]
+
+                dyU = [0,
+                       coeff[0] * (U_temp[i,j-2,:] - 8*U_temp[i,j-1,:] + 8*U_temp[i,j+1,:] - U_temp[i,j+2,:]),
+                       coeff[1] * (- U_temp[i,j-2,:] + 16*U_temp[i,j-1,:] - 30*U_temp[i,j,:] + 16*U_temp[i,j+1,:] - U_temp[i,j+2,:]),
+                       coeff[2] * (- U_temp[i,j-2,:] + 2*U_temp[i,j-1,:] - 2*U_temp[i,j+1,:] + U_temp[i,j+2,:]),
+                       coeff[4] * (U_temp[i,j-2,:] - 4*U_temp[i,j-1,:] + 6*U_temp[i,j,:] - 4*U_temp[i,j+1,:] + U_temp[i,j+2,:])]
+
+                dxyU = [1/(data.dx*data.dy*4) * (U_temp[i+1, j+1,:] - U_temp[i+1, j-1, :] - U_temp[i-1, j+1,:] + U_temp[i-1, j-1,:]),                     #dxyU
+                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-1,j-2,:] - 8*U_temp[i+1,j-2,:] + U_temp[i+2,j-2,:]+                                  #dxyyU
+                                    16*U_temp[i-2,j-1,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i+1,j-1,:] - 16*U_temp[i+2,j-1,:]
+                                    -30*U_temp[i-2,j,:] + 240*U_temp[i-1,j,:] - 240*U_temp[i+1,j,:] + 30*U_temp[i+2,j,:]+
+                                    16*U_temp[i-2,j+1,:] - 128*U_temp[i-1,j+1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+2,j+1,:]
+                                    - U_temp[i-2,j+2,:] + 8*U_temp[i-1,j+2,:] - 8*U_temp[i+1,j+2,:] + U_temp[i+2,j+2,:]),
+                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-2,j-1,:] - 8*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]                                   #dyxxU
+                                    + 16*U_temp[i-1,j-2,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
+                                    - 30*U_temp[i,j-2,:] + 240*U_temp[i,j-1,:] - 240*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
+                                    + 16*U_temp[i+1,j-2,:] - 128*U_temp[i+1,j-1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
+                                    - U_temp[i+2,j-2,:] + 8*U_temp[i+2,j-1,:] - 8*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:]),
+                        coeff[5] * (U_temp[i-2,j-2,:] -16*U_temp[i-2,j-1,:] +30 * U_temp[i-2,j,:] - 16*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]              #dxxyyU
+                                    -16*U_temp[i-1,j-2,:] +256*U_temp[i-1,j-1,:]-480*U_temp[i-1,j,:] + 256*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
+                                    +30*U_temp[i,j-2,:] -480*U_temp[i,j-1,:] +900*U_temp[i,j,:] -480*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
+                                    -16*U_temp[i+1,j-2,:] +256*U_temp[i+1,j-1,:]-480*U_temp[i+1,j,:] + 256*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
+                                    + U_temp[i+2,j-2,:] -16*U_temp[i+2,j-1,:] +30*U_temp[i+2,j,:] - 16*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:])]
+
+                a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+                a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+                a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dxU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                     + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                     + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+                a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                      - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                      + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                      + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]) + (A[1] @ A[1] @dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                      - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                      + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1]))
+
+                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
+                U_temp_[i, j, :] = U_temp[i,j,:] + a1 + a2 + a3 + a4 + s
+
+        S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0], [0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0],[0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
+        for i in range(data.Mx):
+            for j in range(data.My):
+                data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2),np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
+
+        data.calcul_energie()

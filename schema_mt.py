@@ -165,7 +165,9 @@ def LaxWendroff1D_cauchy_mt(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
+        r = data.rho_mt(data)(0)[0]
+        c = np.sqrt(data.E_mt(data)(0)[0]/r)
+        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*i/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
@@ -204,7 +206,9 @@ def ADER41D_cauchy_mt(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
+        r = data.rho_mt(data)(0)[0]
+        c = np.sqrt(data.E_mt(data)(0)[0]/r)
+        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*i/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
@@ -256,8 +260,9 @@ def LaxWendroff2D_mt(data):
         t = n * data.dt
         rho = data.rho_mt(data)
         E = data.E_mt(data)
-        A, A_ = A2D_mt(data)(t)[0], np.zeros((3,3))
-        B, B_ = B2D_mt(data)(t)[0], np.zeros((3,3))
+        c = np.sqrt(E(t)[0]/rho(t)[0])
+        A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
+        B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
         U_temp = data.U[n, ...]
         U_temp_ = np.zeros(data.U[n,...].shape)
 
@@ -270,14 +275,12 @@ def LaxWendroff2D_mt(data):
             for j in range(1, data.My - 1):
                 s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
                 a1 = 0.5 / data.dx * (data.dt * A + data.dt ** 2 / 2 * A_) @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
-                a2 = (0.5 * (data.dt / data.dx) ** 2) * (A @ A) @ (U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :])
-                
                 b1 = 0.5 / data.dy * (data.dt * B + data.dt ** 2 / 2 * B_) @ (U_temp[i, j + 1, :] - U_temp[i, j - 1, :])
-                b2 = (0.5 * (data.dt / data.dy) ** 2) * (B @ B) @ (U_temp[i, j + 1, :] + U_temp[i, j - 1, :] - 2 * U_temp[i, j, :])
 
-                c = 0.5 * data.dt**2/(data.dx*data.dy*4) * (A @ B  + B @ A) @ (U_temp[i+1, j+1,:] - U_temp[i+1, j-1, :] - U_temp[i-1, j+1,:] + U_temp[i-1, j-1,:])
+                a2 = (0.5 * (data.dt * c/ data.dx) ** 2) * (U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :])
+                b2 = (0.5 * (data.dt * c/ data.dy) ** 2) * (U_temp[i, j + 1, :] + U_temp[i, j - 1, :] - 2 * U_temp[i, j, :])
 
-                U_temp_[i, j, :] = U_temp[i, j, :] - a1 - b1 + b2 + a2 + s + c
+                U_temp_[i, j, :] = U_temp[i, j, :] - a1 - b1 + b2 + a2 + s
 
         S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0],[0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0], [0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
         for i in range(data.Mx):
@@ -375,4 +378,67 @@ def ADER42D_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2),np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
+        data.calcul_energie()
+        
+        
+def LaxWendroff2D_cauchy_mt(data):
+    """
+    Utilise le schéma de Lax Wendroff en 2D dans un mileu modulé en temps
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
+    """
+    print("LaxWendroff 2D mt()")
+    data.CFL_maj()
+    data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
+
+    # init
+    r = data.rho_mt(data)(0)[0]
+    c = np.sqrt(data.E_mt(data)(0)[0] / r)
+    for i in range(0, data.Mx + 2):
+        for j in range(0, data.My):
+            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.dy/c + data.tc[0] - data.dy * j / c) * np.array([0, 1, r * c]).transpose()
+
+    for n in trange(data.N - 1, ncols=ncols):
+        t = n * data.dt
+        rho = data.rho_mt(data)
+        E = data.E_mt(data)
+        c = np.sqrt(E(t)[0]/rho(t)[0])
+        A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
+        B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
+        U_temp = data.U[n, ...]
+        U_temp_ = np.zeros(data.U[n,...].shape)
+
+        S_n = np.array([[-rho(t)[1] / rho(t)[0], 0,0],[0, -rho(t)[1] / rho(t)[0],0], [0,0, E(t)[1] / E(t)[0]]])
+        for i in range(0, data.Mx):
+            for j in range(0, data.My):
+                U_temp[i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ data.U[n, i, j, :]
+
+        for j in range(1, data.My - 1):
+            # condition de periodicité gauche
+            a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[1, j, :] - U_temp[- 1, j, :])
+            a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[0, j + 1, :] - U_temp[0, j - 1, :])
+            b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[1, j, :] + U_temp[- 1, j, :] - 2 * U_temp[0, j, :]) / data.dx ** 2)
+            b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j + 1, :] + U_temp[0, j - 1, :] - 2 * U_temp[0, j, :]) / data.dy ** 2)
+            data.U[n + 1, 0, j, :] = U_temp[0, j, :] - a1 - a2 + b1 + b2
+
+            # condition de periodicité droite
+            a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[0, j, :] - U_temp[-2, j, :])
+            a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[-1, j + 1, :] - U_temp[-1, j - 1, :])
+            b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j, :] + U_temp[-2, j, :] - 2 * U_temp[-1, j, :]) / data.dx ** 2)
+            b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[-1, j + 1, :] + U_temp[-1, j - 1, :] - 2 * U_temp[-1, j, :]) / data.dy ** 2)
+            data.U[n + 1, -1, j, :] = U_temp[-1, j, :] - a1 - a2 + b1 + b2
+            for i in range(1, data.Mx + 1):
+                # Lax-Wendroff 2D
+                a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
+                a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[i, j + 1, :] - U_temp[i, j - 1, :])
+                b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :]) / data.dx ** 2)
+                b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[i, j + 1, :] + U_temp[i, j - 1, :] - 2 * U_temp[i, j, :]) / data.dy ** 2)
+                U_temp_[i, j, :] = U_temp[i, j, :] - a1 - a2 + b1 + b2
+
+        S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0],[0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0], [0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
+        for i in range(data.Mx):
+            for j in range(data.My):
+                data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
+
+        data.U = data.U[:, 1:data.Mx + 1, :, :]
         data.calcul_energie()

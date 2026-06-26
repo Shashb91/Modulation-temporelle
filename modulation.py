@@ -24,7 +24,7 @@ def rho_sinus(data):
         try : eps = data.eps
         except : eps = data.eps_r
         w = data.omega
-        return [data.rho * (1 - eps*np.sin(w*t)), -data.rho * eps * w * np.cos(w*t), data.rho * eps * w**2 * np.sin(w*t), data.rho * eps * w**3 * np.cos(w*t)]
+        return [data.rho * (1 - eps*np.sin(w*t + np.pi/2)), -data.rho * eps * w * np.cos(w*t + np.pi/2), data.rho * eps * w**2 * np.sin(w*t + np.pi/2), data.rho * eps * w**3 * np.cos(w*t + np.pi/2)]
     return f
 
 def E_sinus(data):
@@ -32,10 +32,10 @@ def E_sinus(data):
         try : eps = data.eps
         except : eps = data.eps_E
         w = data.omega
-        return [data.e * 1/(1 + eps*np.sin(w*t)),
-                - data.e * eps * w *np.cos(w*t)/(1 + eps*np.sin(w*t))**2,
-                data.e * eps * w**2 * (np.sin(w*t)*(1+eps*np.sin(w*t))-2*eps*np.cos(w*t)**2)/(1 + eps*np.sin(w*t))**3,
-                - data.e * (eps*w**3*np.cos(w*t)*(1+eps*np.sin(w*t))**2+6*(1+eps*np.sin(w*t))*eps**2*w**3*np.cos(w*t)*np.sin(w*t)+6*eps*w**3*np.cos(w*t))/(1 + eps*np.sin(w*t))**4]
+        return [data.e * 1/(1 + eps*np.sin(w*t + np.pi/2)),
+                - data.e * eps * w *np.cos(w*t + np.pi/2)/(1 + eps*np.sin(w*t + np.pi/2))**2,
+                data.e * eps * w**2 * (np.sin(w*t + np.pi/2)*(1+eps*np.sin(w*t + np.pi/2))-2*eps*np.cos(w*t + np.pi/2)**2)/(1 + eps*np.sin(w*t + np.pi/2))**3,
+                - data.e * (eps*w**3*np.cos(w*t + np.pi/2)*(1+eps*np.sin(w*t + np.pi/2))**2+6*(1+eps*np.sin(w*t + np.pi/2))*eps**2*w**3*np.cos(w*t + np.pi/2)*np.sin(w*t + np.pi/2)+6*eps*w**3*np.cos(w*t + np.pi/2))/(1 + eps*np.sin(w*t + np.pi/2))**4]
     return f
 
 def rho_echelon(data):

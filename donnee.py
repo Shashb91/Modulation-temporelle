@@ -206,9 +206,9 @@ class Donnee2D:
         :return: Donnee1D
         """
         coupe = (int(coupe[0]), int(coupe[1]))
-        pos = "_decoupe-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
+        pos = "-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
         retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc,
-                          M=self.Mx, dx=self.dx, CFL=self.CFL, dt=self.dt, N=self.N,
+                          M=self.Mx, CFL = self.CFL, xc = self.xc,
                           fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         if coupe[0] != 0:  # coupe selon l'axe y
             retour.U = self.U[:, coupe[0], :, 1:]

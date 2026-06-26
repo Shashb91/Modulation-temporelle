@@ -256,8 +256,8 @@ def LaxWendroff2D_mt(data):
         t = n * data.dt
         rho = data.rho_mt(data)
         E = data.E_mt(data)
-        A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
-        B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
+        A, A_ = A2D_mt(data)(t)[0], np.zeros((3,3))
+        B, B_ = B2D_mt(data)(t)[0], np.zeros((3,3))
         U_temp = data.U[n, ...]
         U_temp_ = np.zeros(data.U[n,...].shape)
 
@@ -295,6 +295,13 @@ def ADER42D_mt(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     print("ADER4 2D mt()")
+    rc2 = data.rho * data.c ** 2
+    a = np.array([[0, 0, 1 / data.rho],
+                  [0, 0, 0],
+                  [rc2, 0, 0]])
+    b = np.array([[0, 0, 0],
+                  [0, 0, 1 / data.rho],
+                  [0, rc2, 0]])
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
 
@@ -302,8 +309,12 @@ def ADER42D_mt(data):
         t = n * data.dt
         rho = data.rho_mt(data)
         E = data.E_mt(data)
-        A = A2D_mt(data)(t)
-        B = B2D_mt(data)(t)
+        # A = A2D_mt(data)(t)
+        # B = B2D_mt(data)(t)
+
+        A = [a, np.zeros((3,3)), np.zeros((3,3)),np.zeros((3,3))]
+        B = [b, np.zeros((3,3)), np.zeros((3,3)),np.zeros((3,3))]
+
         c = c_mt(data)(t)
         U_temp = data.U[n, ...]
         U_temp_ = np.zeros(data.U[n, ...].shape)

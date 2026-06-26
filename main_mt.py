@@ -15,6 +15,7 @@ Parametres :
 """
 
 from schema_mt import *
+from schema import LaxWendroff2D
 from sauvegarde import *
 from tracer import *
 
@@ -78,18 +79,26 @@ data2 = Donnee1D(M = 500, label = "ADER4_mt=" + modulation, eps_r = eps/2, eps_E
 Implémentation de la résolution 2D modulée en temps
 ============================================================
 """
+LW2D = Donnee2D(Mx = 150, My = 150, label ="LaxWendroff2D",tc = (0, 0.2), xc = (0,500), yc = (0, 500), CFL = 0.6, f = 10)
 
-data5 = Donnee2D(Mx = 150, My = 150, label = "ADER42D_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
-                 tc = (0, 0.08), xc = (0,300), yc = (0, 300), CFL = 0.6, f = 20, rho_mt=rho, E_mt=E, alpha = alpha)
-data5.CFL_maj()
-print(data5)
-# data5 = charger('.save/LaxWendrof_mt=echelon_06-25_11-14-15.pkl')
-ADER42D_mt(data5)
-sauvegarder(data5)
-anim2D(data5)
+# LaxWendroff2D(LW2D)
+LW2D = charger('.save/LaxWendroff2D_06-26_09-29-26.pkl')
+anim2D(LW2D)
+# sauvegarder(LW2D)
 
-data5_ = data5.projection((75,0))
-data5__ = data5.projection((0,75))
+LW2D_x = LW2D.projection((75, 0))
+LW2D_y = LW2D.projection((0, 75))
 
-anim1D(data5_)
-anim1D(data5__)
+LW2D_mt = Donnee2D(Mx = 150, My = 150, label ="LaxWendroff2D_mt=" + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi,
+                   tc = (0, 0.2), xc = (0,500), yc = (0, 500), CFL = 0.6, f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
+LaxWendroff2D_mt(LW2D_mt)
+# LW2D_mt = charger('.save/LaxWendroff2D_mt=echelon_06-26_09-22-44.pkl')
+anim2D(LW2D_mt)
+# sauvegarder(LW2D_mt)
+
+LW2D_mt_x = LW2D_mt.projection((75, 0))
+LW2D_mt_y = LW2D_mt.projection((0, 75))
+
+
+anim1D_comparaison(LW2D_mt_x, LW2D_x)
+anim1D_comparaison(LW2D_mt_y, LW2D_y)

@@ -42,10 +42,10 @@ data3 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho 
 # anim1D(data2)
 
 LaxWendroff1D_cauchy(data1)
-anim1D(data1, interval = 30)
+# anim1D(data1, interval = 30)
 
 ADER41D_cauchy(data3)
-anim1D(data3, interval = 30)
+# anim1D(data3, interval = 30)
 
 # tracer1D_comparaison(10, data1, data2)
 # anim1D_comparaison(data1, data2, interval = 30)                                                      #Comparaison LaxWendroff VS Analytique
@@ -90,21 +90,21 @@ analytique1D_cauchy(data2)
 # LaxWendroff2D_cauchy(data4)
 # sauvegarder(data4, ".save_2D_nmt/")
 data4 = charger('.save_2D_nmt/Lax Wendroff 2D_cauchy.pkl')
-anim2D(data4)
+# anim2D(data4)
 
 data4_ = data4.projection((data4.Mx//2,0))
-anim1D(data4_, interval = 30)
-anim1D_comparaison(data4_, data2, interval = 30)
+# anim1D(data4_, interval = 30)
+# anim1D_comparaison(data4_, data2, interval = 30)
 anim1D_comparaison(data4_, data1, interval = 30)
 
 # ADER42D_cauchy(data5)
 # sauvegarder(data5)
 data5 = charger('.save_2D_nmt/ADER4 2D_cauchy.pkl')
-anim2D(data5)
+# anim2D(data5)
 
 data5_ = data5.projection((data5.Mx//2,0))
-anim1D(data5_, interval = 30)
-anim1D_comparaison(data5_,data2, interval=30)
+# anim1D(data5_, interval = 30)
+# anim1D_comparaison(data5_,data2, interval=30)
 anim1D_comparaison(data5_,data3, interval=30)
 
 erreur_LW = []

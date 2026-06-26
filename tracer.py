@@ -93,7 +93,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
     line1_1, = ax1.plot([], [], color='darkblue', lw=2, linestyle='-', label=data1.label)
-    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, linestyle='-', label=data2.label)
+    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, linestyle='--', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -103,7 +103,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax1.grid(True)
 
     line2_1, = ax2.plot([], [], color='red', lw=2, linestyle='-', label=data1.label)
-    line2_2, = ax2.plot([], [], color='deeppink', lw=2, linestyle='-', label=data2.label)
+    line2_2, = ax2.plot([], [], color='deeppink', lw=2, linestyle='--', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -115,7 +115,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     data1.calcul_energie()
     data2.calcul_energie()
     line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
-    line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='-', label=data2.label)
+    line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='--', label=data2.label)
     ax3.set_xlim(data1.t[0], data1.t[-1])
     ax3.set_ylim(0, np.max(data1.E)*1.1)
     ax3.set_xlabel('Temps t (s)')
@@ -443,8 +443,8 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     rho = [data1.rho_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
     E = [data1.E_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
 
-    line1_1, = ax1.plot([], [], color='darkblue', lw=2  , label = data1.label)
-    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, label = data2.label)
+    line1_1, = ax1.plot([], [], color='darkblue', lw=2  , label = data1.label, ls = '-')
+    line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, label = data2.label, ls = '--')
     ax1.set_xlim(data1.x[0], data1.x[-1])
     ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
@@ -453,8 +453,8 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     ax1.legend()
     ax1.grid(True)
 
-    line2_1, = ax2.plot([], [], color='red', lw=2, label = data1.label)
-    line2_2, = ax2.plot([], [], color='deeppink', lw=2, label = data2.label)
+    line2_1, = ax2.plot([], [], color='red', lw=2, label = data1.label, ls = '-')
+    line2_2, = ax2.plot([], [], color='deeppink', lw=2, label = data2.label, ls = '--')
     ax2.set_xlim(data1.x[0], data1.x[-1])
     ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
@@ -465,8 +465,8 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
 
     data1.calcul_energie()
     data2.calcul_energie()
-    line3_1, = ax3.plot([], [], color='gold', lw=2, label = data1.label)
-    line3_2, = ax3.plot([], [], color='darkorange', lw=2, label = data2.label)
+    line3_1, = ax3.plot([], [], color='gold', lw=2, label = data1.label, ls = '-')
+    line3_2, = ax3.plot([], [], color='darkorange', lw=2, label = data2.label, ls = '--')
     ax3.set_xlim(data1.t[0], data1.t[-1])
     ax3.set_ylim(np.min(data1.E) * 1.1, np.max(data1.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')

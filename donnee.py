@@ -207,8 +207,8 @@ class Donnee2D:
         """
         coupe = (int(coupe[0]), int(coupe[1]))
         pos = "-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
-        retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc,
-                          M=self.Mx, CFL = self.CFL, xc = self.xc,
+        retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_E, omega = self.omega,
+                          M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.E_mt,
                           fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         if coupe[0] != 0:  # coupe selon l'axe y
             retour.U = self.U[:, coupe[0], :, 1:]

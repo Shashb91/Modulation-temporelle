@@ -405,11 +405,11 @@ def LaxWendroff2D_cauchy_mt(data):
         c = np.sqrt(E(t)[0]/rho(t)[0])
         A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
         B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
-        U_temp = data.U[n, ...]
-        U_temp_ = np.zeros(data.U[n,...].shape)
+        U_temp = np.zeros((data.Mx + 2, data.My, 3))
+        U_temp_ = np.zeros((data.Mx + 2, data.My, 3))
 
         S_n = np.array([[-rho(t)[1] / rho(t)[0], 0,0],[0, -rho(t)[1] / rho(t)[0],0], [0,0, E(t)[1] / E(t)[0]]])
-        for i in range(0, data.Mx):
+        for i in range(0, data.Mx + 2):
             for j in range(0, data.My):
                 U_temp[i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ data.U[n, i, j, :]
 
@@ -419,14 +419,14 @@ def LaxWendroff2D_cauchy_mt(data):
             a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[0, j + 1, :] - U_temp[0, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[1, j, :] + U_temp[- 1, j, :] - 2 * U_temp[0, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j + 1, :] + U_temp[0, j - 1, :] - 2 * U_temp[0, j, :]) / data.dy ** 2)
-            data.U[n + 1, 0, j, :] = U_temp[0, j, :] - a1 - a2 + b1 + b2
+            U_temp_[0, j, :] = U_temp[0, j, :] - a1 - a2 + b1 + b2
 
             # condition de periodicité droite
             a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[0, j, :] - U_temp[-2, j, :])
             a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[-1, j + 1, :] - U_temp[-1, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j, :] + U_temp[-2, j, :] - 2 * U_temp[-1, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[-1, j + 1, :] + U_temp[-1, j - 1, :] - 2 * U_temp[-1, j, :]) / data.dy ** 2)
-            data.U[n + 1, -1, j, :] = U_temp[-1, j, :] - a1 - a2 + b1 + b2
+            U_temp_[-1, j, :] = U_temp[-1, j, :] - a1 - a2 + b1 + b2
             for i in range(1, data.Mx + 1):
                 # Lax-Wendroff 2D
                 a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
@@ -436,9 +436,9 @@ def LaxWendroff2D_cauchy_mt(data):
                 U_temp_[i, j, :] = U_temp[i, j, :] - a1 - a2 + b1 + b2
 
         S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0],[0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0], [0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
-        for i in range(data.Mx):
-            for j in range(data.My):
+        for i in range(0, data.Mx + 2):
+            for j in range(0, data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-        data.U = data.U[:, 1:data.Mx + 1, :, :]
-        data.calcul_energie()
+    data.U = data.U[:, 1:data.Mx + 1, :, :]
+    data.calcul_energie()

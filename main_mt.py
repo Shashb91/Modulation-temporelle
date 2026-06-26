@@ -16,6 +16,7 @@ Parametres :
 
 from schema_mt import *
 from schema import LaxWendroff2D, LaxWendroff1D_cauchy
+from source import pt_source_1D
 from sauvegarde import *
 from tracer import *
 
@@ -75,7 +76,7 @@ data2 = Donnee1D(M = 500, label = "ADER4_mt=" + modulation, eps_r = eps/2, eps_E
 
 
 #Problème de Cauchy
-LW1D_cauchy_mt = Donnee1D(M = 150, label ="LW1D_mt=" + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, S=pt_source_1D,
+LW1D_cauchy_mt = Donnee1D(M = 200, label ="LW1D_mt=" + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, S=pt_source_1D,
                           c=1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,500), f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
 LaxWendroff1D_cauchy_mt(LW1D_cauchy_mt)
 anim1D_mt(LW1D_cauchy_mt)
@@ -84,10 +85,16 @@ anim1D_mt(LW1D_cauchy_mt)
 # LaxWendroff1D_cauchy(LW1D_cauchy)
 # anim1D_comparaison(LW1D_cauchy, LW1D_cauchy_mt)
 
-LW2D_cauchy_mt = Donnee2D(label = 'LW2D_mt=' + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, Mx = 150, My = 150, S=pt_source_1D,
+LW2D_cauchy_mt = Donnee2D(label = 'LW2D_mt=' + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, Mx = 200, My = 200, S=pt_source_1D,
                           c=1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,500), yc = (0, 500), f = 10, rho_mt=rho, E_mt=E, alpha = alpha)
-LaxWendroff2D_cauchy_mt(LW2D_cauchy_mt)
 
+# LaxWendroff2D_cauchy_mt(LW2D_cauchy_mt)
+# sauvegarder(LW2D_cauchy_mt)
+LW2D_cauchy_mt = charger('.save/LW2D_mt=echelon_06-26_11-41-44.pkl')
+anim2D(LW2D_cauchy_mt)
+
+LW2D_cauchy_mt_x = LW2D_cauchy_mt.projection((75, 0))
+anim1D_mt_comparaison(LW2D_cauchy_mt_x, LW1D_cauchy_mt)
 """
 ============================================================
 Implémentation de la résolution 2D modulée en temps

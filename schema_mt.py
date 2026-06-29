@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import trange
+from time import sleep
 ncols = 125                                                                       #largeur de la barre de chargement
 from math import factorial
 from modulation import *
@@ -80,6 +81,7 @@ def LaxWendroff1D_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     print("LaxWendroff 1D mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -116,6 +118,7 @@ def ADER41D_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     print("ADER4 1D mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -153,13 +156,18 @@ def ADER41D_mt(data):
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
     data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
 
+"""
+Résolution du problème de Cauchy 1D modulé en temps
+"""
+
 def LaxWendroff1D_cauchy_mt(data):
     """
     Utilise le schéma de LaxWendroff en 1D dans un mileu modulé en temps
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
-    print("LaxWendroff 1D mt()")
+    print("LaxWendroff 1D Cauchy mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -200,7 +208,8 @@ def ADER41D_cauchy_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
-    print("ADER4 1D mt()")
+    print("ADER4 1D Cauchy mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -244,8 +253,9 @@ def ADER41D_cauchy_mt(data):
     data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
 
 """
-Modulation temporelle dans un problème de propagation 2D
+Résolution du problème de propagation 2D en mil
 """
+
 def LaxWendroff2D_mt(data):
     """
     Utilise le schéma de Lax Wendroff en 2D dans un mileu modulé en temps
@@ -253,6 +263,7 @@ def LaxWendroff2D_mt(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     print("LaxWendroff 2D mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
 
@@ -289,8 +300,6 @@ def LaxWendroff2D_mt(data):
 
         data.calcul_energie()
 
-
-
 def ADER42D_mt(data):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 2D
@@ -298,26 +307,16 @@ def ADER42D_mt(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     print("ADER4 2D mt()")
-    rc2 = data.rho * data.c ** 2
-    a = np.array([[0, 0, 1 / data.rho],
-                  [0, 0, 0],
-                  [rc2, 0, 0]])
-    b = np.array([[0, 0, 0],
-                  [0, 0, 1 / data.rho],
-                  [0, rc2, 0]])
+    sleep(0.001)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
-    coeff = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*data.dx*data.dy)**2]
+    coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
 
     for n in trange(0, data.N - 1, ncols = ncols):
         t = n * data.dt
         rho = data.rho_mt(data)
         E = data.E_mt(data)
-        # A = A2D_mt(data)(t)
-        # B = B2D_mt(data)(t)
-
-        A = [a, np.zeros((3,3)), np.zeros((3,3)),np.zeros((3,3))]
-        B = [b, np.zeros((3,3)), np.zeros((3,3)),np.zeros((3,3))]
-
+        A = A2D_mt(data)(t)
+        B = B2D_mt(data)(t)
         c = c_mt(data)(t)
         U_temp = data.U[n, ...]
         U_temp_ = np.zeros(data.U[n, ...].shape)
@@ -341,53 +340,62 @@ def ADER42D_mt(data):
                        coeff[2] * (- U_temp[i,j-2,:] + 2*U_temp[i,j-1,:] - 2*U_temp[i,j+1,:] + U_temp[i,j+2,:]),
                        coeff[4] * (U_temp[i,j-2,:] - 4*U_temp[i,j-1,:] + 6*U_temp[i,j,:] - 4*U_temp[i,j+1,:] + U_temp[i,j+2,:])]
 
-                dxyU = [1/(data.dx*data.dy*4) * (U_temp[i+1, j+1,:] - U_temp[i+1, j-1, :] - U_temp[i-1, j+1,:] + U_temp[i-1, j-1,:]),                     #dxyU
-                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-1,j-2,:] - 8*U_temp[i+1,j-2,:] + U_temp[i+2,j-2,:]+                                  #dxyyU
-                                    16*U_temp[i-2,j-1,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i+1,j-1,:] - 16*U_temp[i+2,j-1,:]
-                                    -30*U_temp[i-2,j,:] + 240*U_temp[i-1,j,:] - 240*U_temp[i+1,j,:] + 30*U_temp[i+2,j,:]+
-                                    16*U_temp[i-2,j+1,:] - 128*U_temp[i-1,j+1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+2,j+1,:]
+                dxyU = [coeff[5] * (U_temp[i-2, j-2,:] - 8*U_temp[i-1,j-2,:] + 8*U_temp[i+1,j-2,:] - U_temp[i+2,j-2,:]                                    #dxyU
+                                    - 8*U_temp[i-2, j-1,:] + 64*U_temp[i-1,j-1,:] - 64*U_temp[i+1,j-1,:] + 8*U_temp[i+2,j-1,:]
+                                    + 8*U_temp[i-2, j+1,:] - 64*U_temp[i-1,j+1,:] + 64*U_temp[i+1,j+1,:] - 8*U_temp[i+2,j+1,:]
+                                    - U_temp[i-2, j+2,:] + 8*U_temp[i-1,j+2,:] - 8*U_temp[i+1,j+2,:] + U_temp[i+2,j+2,:]),
+                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-1,j-2,:] - 8*U_temp[i+1,j-2,:] + U_temp[i+2,j-2,:]                                  #dxyyU
+                                    + 16*U_temp[i-2,j-1,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i+1,j-1,:] - 16*U_temp[i+2,j-1,:]
+                                    - 30*U_temp[i-2,j,:] + 240*U_temp[i-1,j,:] - 240*U_temp[i+1,j,:] + 30*U_temp[i+2,j,:]
+                                    + 16*U_temp[i-2,j+1,:] - 128*U_temp[i-1,j+1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+2,j+1,:]
                                     - U_temp[i-2,j+2,:] + 8*U_temp[i-1,j+2,:] - 8*U_temp[i+1,j+2,:] + U_temp[i+2,j+2,:]),
                         coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-2,j-1,:] - 8*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]                                   #dyxxU
                                     + 16*U_temp[i-1,j-2,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
                                     - 30*U_temp[i,j-2,:] + 240*U_temp[i,j-1,:] - 240*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
                                     + 16*U_temp[i+1,j-2,:] - 128*U_temp[i+1,j-1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
                                     - U_temp[i+2,j-2,:] + 8*U_temp[i+2,j-1,:] - 8*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:]),
-                        coeff[5] * (U_temp[i-2,j-2,:] -16*U_temp[i-2,j-1,:] +30 * U_temp[i-2,j,:] - 16*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]              #dxxyyU
-                                    -16*U_temp[i-1,j-2,:] +256*U_temp[i-1,j-1,:]-480*U_temp[i-1,j,:] + 256*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
-                                    +30*U_temp[i,j-2,:] -480*U_temp[i,j-1,:] +900*U_temp[i,j,:] -480*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
-                                    -16*U_temp[i+1,j-2,:] +256*U_temp[i+1,j-1,:]-480*U_temp[i+1,j,:] + 256*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
+                        coeff[6] * (U_temp[i-2,j-2,:] -16*U_temp[i-2,j-1,:] +30 * U_temp[i-2,j,:] - 16*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]              #dxxyyU
+                                    - 16*U_temp[i-1,j-2,:] +256*U_temp[i-1,j-1,:]-480*U_temp[i-1,j,:] + 256*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
+                                    + 30*U_temp[i,j-2,:] -480*U_temp[i,j-1,:] +900*U_temp[i,j,:] -480*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
+                                    - 16*U_temp[i+1,j-2,:] +256*U_temp[i+1,j-1,:]-480*U_temp[i+1,j,:] + 256*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
                                     + U_temp[i+2,j-2,:] -16*U_temp[i+2,j-1,:] +30*U_temp[i+2,j,:] - 16*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:])]
 
                 a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
                 a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
-                a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dxU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
                                      + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
                                      + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
                 a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
                                       - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
                                       + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
-                                      + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]) + (A[1] @ A[1] @dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                      + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
                                       - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
-                                      + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1]))
+                                      + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                      + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
 
-                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
-                U_temp_[i, j, :] = U_temp[i,j,:] + a1 + a2 + a3 + a4 + s
+
+                s = data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
+                U_temp_[i, j, :] = U_temp[i, j, :] + a1 + a2 + a3 + a4 + s
 
         S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0], [0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0],[0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
         for i in range(data.Mx):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2),np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-        data.calcul_energie()
-        
-        
+    data.calcul_energie()
+
+"""
+Résolution du problème de Cauchy 2D modulé en temps
+"""
+
 def LaxWendroff2D_cauchy_mt(data):
     """
     Utilise le schéma de Lax Wendroff en 2D dans un mileu modulé en temps
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
-    print("LaxWendroff 2D mt()")
+    print("Lax Wendroff 2D Cauchy mt()")
+    sleep(0.001)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
 
@@ -415,24 +423,24 @@ def LaxWendroff2D_cauchy_mt(data):
 
         for j in range(1, data.My - 1):
             # condition de periodicité gauche
-            a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[1, j, :] - U_temp[- 1, j, :])
-            a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[0, j + 1, :] - U_temp[0, j - 1, :])
+            a1 = (1 / (2 * data.dx)) * (data.dt * A + data.dt ** 2 / 2 * A_) @ (U_temp[1, j, :] - U_temp[- 1, j, :])
+            a2 = (1 / (2 * data.dy)) * (data.dt * B + data.dt ** 2 / 2 * B_) @ (U_temp[0, j + 1, :] - U_temp[0, j - 1, :])
             b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[1, j, :] + U_temp[- 1, j, :] - 2 * U_temp[0, j, :]) / data.dx ** 2)
             b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j + 1, :] + U_temp[0, j - 1, :] - 2 * U_temp[0, j, :]) / data.dy ** 2)
             U_temp_[0, j, :] = U_temp[0, j, :] - a1 - a2 + b1 + b2
 
             # condition de periodicité droite
-            a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[0, j, :] - U_temp[-2, j, :])
-            a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[-1, j + 1, :] - U_temp[-1, j - 1, :])
-            b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[0, j, :] + U_temp[-2, j, :] - 2 * U_temp[-1, j, :]) / data.dx ** 2)
-            b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[-1, j + 1, :] + U_temp[-1, j - 1, :] - 2 * U_temp[-1, j, :]) / data.dy ** 2)
+            a1 = (1 / (2 * data.dx)) * (data.dt * A + data.dt ** 2 / 2 * A_) @ (U_temp[0, j, :] - U_temp[-2, j, :])
+            a2 = (1 / (2 * data.dy)) * (data.dt * B + data.dt ** 2 / 2 * B_) @ (U_temp[-1, j + 1, :] - U_temp[-1, j - 1, :])
+            b1 = (0.5 * (data.dt * c) ** 2) * ((U_temp[0, j, :] + U_temp[-2, j, :] - 2 * U_temp[-1, j, :]) / data.dx ** 2)
+            b2 = (0.5 * (data.dt * c) ** 2) * ((U_temp[-1, j + 1, :] + U_temp[-1, j - 1, :] - 2 * U_temp[-1, j, :]) / data.dy ** 2)
             U_temp_[-1, j, :] = U_temp[-1, j, :] - a1 - a2 + b1 + b2
             for i in range(1, data.Mx + 1):
                 # Lax-Wendroff 2D
-                a1 = (data.dt / (2 * data.dx)) * A @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
-                a2 = (data.dt / (2 * data.dy)) * B @ (U_temp[i, j + 1, :] - U_temp[i, j - 1, :])
-                b1 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :]) / data.dx ** 2)
-                b2 = (0.5 * (data.dt * data.c) ** 2) * ((U_temp[i, j + 1, :] + U_temp[i, j - 1, :] - 2 * U_temp[i, j, :]) / data.dy ** 2)
+                a1 = (1 / (2 * data.dx)) * (data.dt * A + data.dt ** 2 / 2 * A_) @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
+                a2 = (1 / (2 * data.dy)) * (data.dt * B + data.dt ** 2 / 2 * B_) @ (U_temp[i, j + 1, :] - U_temp[i, j - 1, :])
+                b1 = (0.5 * (data.dt * c) ** 2) * ((U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :]) / data.dx ** 2)
+                b2 = (0.5 * (data.dt * c) ** 2) * ((U_temp[i, j + 1, :] + U_temp[i, j - 1, :] - 2 * U_temp[i, j, :]) / data.dy ** 2)
                 U_temp_[i, j, :] = U_temp[i, j, :] - a1 - a2 + b1 + b2
 
         S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0],[0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0], [0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
@@ -441,4 +449,285 @@ def LaxWendroff2D_cauchy_mt(data):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     data.U = data.U[:, 1:data.Mx + 1, :, :]
+    data.calcul_energie()
+
+def ADER42D_cauchy_mt(data):
+    """
+    Utilise le schéma de ADER4 en 2D dans un mileu modulé en temps
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
+    """
+    print("ADER4 2D Cauchy mt()")
+    sleep(0.001)
+    data.CFL_maj()
+    data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
+
+    # init
+    r = data.rho_mt(data)(0)[0]
+    c = np.sqrt(data.E_mt(data)(0)[0] / r)
+    for i in range(0, data.Mx + 4):
+        for j in range(0, data.My):
+            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.dy/c + data.tc[0] - data.dy * j / c) * np.array([0, 1, r * c]).transpose()
+
+    for n in trange(data.N - 1, ncols=ncols):
+        t = n * data.dt
+        rho = data.rho_mt(data)
+        E = data.E_mt(data)
+        c = np.sqrt(E(t)[0]/rho(t)[0])
+        A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
+        B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
+        U_temp = np.zeros((data.Mx + 2, data.My, 3))
+        U_temp_ = np.zeros((data.Mx + 2, data.My, 3))
+
+        S_n = np.array([[-rho(t)[1] / rho(t)[0], 0,0],[0, -rho(t)[1] / rho(t)[0],0], [0,0, E(t)[1] / E(t)[0]]])
+        for i in range(0, data.Mx + 4):
+            for j in range(0, data.My):
+                U_temp[i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ data.U[n, i, j, :]
+
+        for j in range(1, data.My - 1):
+            # condition de periodicité gauche
+            dxU = [0,
+                   coeff[0] * (U_temp[-2,j,:] - 8*U_temp[-1,j,:] + 8*U_temp[1,j,:] - U_temp[2,j,:]),
+                   coeff[1] * (- U_temp[-2,j,:] + 16*U_temp[-1,j,:] - 30*U_temp[0,j,:] + 16*U_temp[1,j,:] - U_temp[2,j,:]),
+                   coeff[2] * (- U_temp[-2,j,:] + 2*U_temp[-1,j,:] - 2*U_temp[1,j,:] + U_temp[2,j,:]),
+                   coeff[4] * (U_temp[-2,j,:] - 4*U_temp[-1,j,:] + 6*U_temp[0,j,:] - 4*U_temp[1,j,:] + U_temp[2,j,:])]
+
+            dyU = [0,
+                   coeff[0] * (U_temp[0,j-2,:] - 8*U_temp[0,j-1,:] + 8*U_temp[0,j+1,:] - U_temp[0,j+2,:]),
+                   coeff[1] * (- U_temp[0,j-2,:] + 16*U_temp[0,j-1,:] - 30*U_temp[0,j,:] + 16*U_temp[0,j+1,:] - U_temp[0,j+2,:]),
+                   coeff[2] * (- U_temp[0,j-2,:] + 2*U_temp[0,j-1,:] - 2*U_temp[0,j+1,:] + U_temp[0,j+2,:]),
+                   coeff[4] * (U_temp[0,j-2,:] - 4*U_temp[0,j-1,:] + 6*U_temp[0,j,:] - 4*U_temp[0,j+1,:] + U_temp[0,j+2,:])]
+
+            dxyU = [coeff[5] * (U_temp[-2, j-2,:] - 8*U_temp[-1,j-2,:] + 8*U_temp[1,j-2,:] - U_temp[2,j-2,:]                                    #dxyU
+                                - 8*U_temp[-2, j-1,:] + 64*U_temp[-1,j-1,:] - 64*U_temp[1,j-1,:] + 8*U_temp[2,j-1,:]
+                                + 8*U_temp[-2, j+1,:] - 64*U_temp[-1,j+1,:] + 64*U_temp[1,j+1,:] - 8*U_temp[2,j+1,:]
+                                - U_temp[-2, j+2,:] + 8*U_temp[-1,j+2,:] - 8*U_temp[1,j+2,:] + U_temp[2,j+2,:]),
+                    coeff[3] * (- U_temp[-2,j-2,:] + 8*U_temp[-1,j-2,:] - 8*U_temp[1,j-2,:] + U_temp[2,j-2,:]                                  #dxyyU
+                                + 16*U_temp[-2,j-1,:] -128*U_temp[-1,j-1,:] + 128*U_temp[1,j-1,:] - 16*U_temp[2,j-1,:]
+                                - 30*U_temp[-2,j,:] + 240*U_temp[-1,j,:] - 240*U_temp[1,j,:] + 30*U_temp[2,j,:]
+                                + 16*U_temp[-2,j+1,:] - 128*U_temp[-1,j+1,:] + 128*U_temp[1,j+1,:] - 16*U_temp[2,j+1,:]
+                                - U_temp[-2,j+2,:] + 8*U_temp[-1,j+2,:] - 8*U_temp[1,j+2,:] + U_temp[2,j+2,:]),
+                    coeff[3] * (- U_temp[-2,j-2,:] + 8*U_temp[-2,j-1,:] - 8*U_temp[-2,j+1,:] + U_temp[-2,j+2,:]                                   #dyxxU
+                                + 16*U_temp[-1,j-2,:] -128*U_temp[-1,j-1,:] + 128*U_temp[-1,j+1,:] - 16*U_temp[-1,j+2,:]
+                                - 30*U_temp[0,j-2,:] + 240*U_temp[0,j-1,:] - 240*U_temp[0,j+1,:] + 30*U_temp[0,j+2,:]
+                                + 16*U_temp[1,j-2,:] - 128*U_temp[1,j-1,:] + 128*U_temp[1,j+1,:] - 16*U_temp[1,j+2,:]
+                                - U_temp[2,j-2,:] + 8*U_temp[2,j-1,:] - 8*U_temp[2,j+1,:] + U_temp[2,j+2,:]),
+                    coeff[6] * (U_temp[-2,j-2,:] -16*U_temp[-2,j-1,:] +30 * U_temp[-2,j,:] - 16*U_temp[-2,j+1,:] + U_temp[-2,j+2,:]              #dxxyyU
+                                - 16*U_temp[-1,j-2,:] +256*U_temp[-1,j-1,:]-480*U_temp[-1,j,:] + 256*U_temp[-1,j+1,:] - 16*U_temp[-1,j+2,:]
+                                + 30*U_temp[0,j-2,:] -480*U_temp[0,j-1,:] +900*U_temp[0,j,:] -480*U_temp[0,j+1,:] + 30*U_temp[0,j+2,:]
+                                - 16*U_temp[1,j-2,:] +256*U_temp[1,j-1,:]-480*U_temp[1,j,:] + 256*U_temp[1,j+1,:] - 16*U_temp[1,j+2,:]
+                                + U_temp[2,j-2,:] -16*U_temp[2,j-1,:] +30*U_temp[2,j,:] - 16*U_temp[2,j+1,:] + U_temp[2,j+2,:])]
+
+            a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+            a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+            a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                 + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                 + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+            a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                  - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                  + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                  + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                  - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                  + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                  + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
+
+            U_temp_[0, j, :] = U_temp[0, j, :] + a1 + a2 + a3 + a4
+            
+            dxU = [0,
+                       coeff[0] * (U_temp[-1,j,:] - 8*U_temp[0,j,:] + 8*U_temp[2,j,:] - U_temp[3,j,:]),
+                       coeff[1] * (- U_temp[-1,j,:] + 16*U_temp[0,j,:] - 30*U_temp[1,j,:] + 16*U_temp[2,j,:] - U_temp[3,j,:]),
+                       coeff[2] * (- U_temp[-1,j,:] + 2*U_temp[0,j,:] - 2*U_temp[2,j,:] + U_temp[3,j,:]),
+                       coeff[4] * (U_temp[-1,j,:] - 4*U_temp[0,j,:] + 6*U_temp[1,j,:] - 4*U_temp[2,j,:] + U_temp[3,j,:])]
+
+            dyU = [0,
+                   coeff[0] * (U_temp[1,j-2,:] - 8*U_temp[1,j-1,:] + 8*U_temp[1,j+1,:] - U_temp[1,j+2,:]),
+                   coeff[1] * (- U_temp[1,j-2,:] + 16*U_temp[1,j-1,:] - 30*U_temp[1,j,:] + 16*U_temp[1,j+1,:] - U_temp[1,j+2,:]),
+                   coeff[2] * (- U_temp[1,j-2,:] + 2*U_temp[1,j-1,:] - 2*U_temp[1,j+1,:] + U_temp[1,j+2,:]),
+                   coeff[4] * (U_temp[1,j-2,:] - 4*U_temp[1,j-1,:] + 6*U_temp[1,j,:] - 4*U_temp[1,j+1,:] + U_temp[1,j+2,:])]
+
+            dxyU = [coeff[5] * (U_temp[-1, j-2,:] - 8*U_temp[0,j-2,:] + 8*U_temp[2,j-2,:] - U_temp[3,j-2,:]                                    #dxyU
+                                - 8*U_temp[-1, j-1,:] + 64*U_temp[0,j-1,:] - 64*U_temp[2,j-1,:] + 8*U_temp[3,j-1,:]
+                                + 8*U_temp[-1, j+1,:] - 64*U_temp[0,j+1,:] + 64*U_temp[2,j+1,:] - 8*U_temp[3,j+1,:]
+                                - U_temp[-1, j+2,:] + 8*U_temp[0,j+2,:] - 8*U_temp[2,j+2,:] + U_temp[3,j+2,:]),
+                    coeff[3] * (- U_temp[-1,j-2,:] + 8*U_temp[0,j-2,:] - 8*U_temp[2,j-2,:] + U_temp[3,j-2,:]                                  #dxyyU
+                                + 16*U_temp[-1,j-1,:] -128*U_temp[0,j-1,:] + 128*U_temp[2,j-1,:] - 16*U_temp[3,j-1,:]
+                                - 30*U_temp[-1,j,:] + 240*U_temp[0,j,:] - 240*U_temp[2,j,:] + 30*U_temp[3,j,:]
+                                + 16*U_temp[-1,j+1,:] - 128*U_temp[0,j+1,:] + 128*U_temp[2,j+1,:] - 16*U_temp[3,j+1,:]
+                                - U_temp[-1,j+2,:] + 8*U_temp[0,j+2,:] - 8*U_temp[2,j+2,:] + U_temp[3,j+2,:]),
+                    coeff[3] * (- U_temp[-1,j-2,:] + 8*U_temp[-1,j-1,:] - 8*U_temp[-1,j+1,:] + U_temp[-1,j+2,:]                                   #dyxxU
+                                + 16*U_temp[0,j-2,:] -128*U_temp[0,j-1,:] + 128*U_temp[0,j+1,:] - 16*U_temp[0,j+2,:]
+                                - 30*U_temp[1,j-2,:] + 240*U_temp[1,j-1,:] - 240*U_temp[1,j+1,:] + 30*U_temp[1,j+2,:]
+                                + 16*U_temp[2,j-2,:] - 128*U_temp[2,j-1,:] + 128*U_temp[2,j+1,:] - 16*U_temp[2,j+2,:]
+                                - U_temp[3,j-2,:] + 8*U_temp[3,j-1,:] - 8*U_temp[3,j+1,:] + U_temp[3,j+2,:]),
+                    coeff[6] * (U_temp[-1,j-2,:] -16*U_temp[-1,j-1,:] +30 * U_temp[-1,j,:] - 16*U_temp[-1,j+1,:] + U_temp[-1,j+2,:]              #dxxyyU
+                                - 16*U_temp[0,j-2,:] +256*U_temp[0,j-1,:]-480*U_temp[0,j,:] + 256*U_temp[0,j+1,:] - 16*U_temp[0,j+2,:]
+                                + 30*U_temp[1,j-2,:] -480*U_temp[1,j-1,:] +900*U_temp[1,j,:] -480*U_temp[1,j+1,:] + 30*U_temp[1,j+2,:]
+                                - 16*U_temp[2,j-2,:] +256*U_temp[2,j-1,:]-480*U_temp[2,j,:] + 256*U_temp[2,j+1,:] - 16*U_temp[2,j+2,:]
+                                + U_temp[3,j-2,:] -16*U_temp[3,j-1,:] +30*U_temp[3,j,:] - 16*U_temp[3,j+1,:] + U_temp[3,j+2,:])]
+
+            a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+            a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+            a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                 + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                 + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+            a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                  - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                  + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                  + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                  - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                  + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                  + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
+
+            U_temp_[1, j, :] = U_temp[1, j, :] + a1 + a2 + a3 + a4
+            
+            # condition de periodicité droite
+            dxU = [0,
+                       coeff[0] * (U_temp[-4,j,:] - 8*U_temp[-3,j,:] + 8*U_temp[-1,j,:] - U_temp[0,j,:]),
+                       coeff[1] * (- U_temp[-4,j,:] + 16*U_temp[-3,j,:] - 30*U_temp[-2,j,:] + 16*U_temp[-1,j,:] - U_temp[0,j,:]),
+                       coeff[2] * (- U_temp[-4,j,:] + 2*U_temp[-3,j,:] - 2*U_temp[-1,j,:] + U_temp[0,j,:]),
+                       coeff[4] * (U_temp[-4,j,:] - 4*U_temp[-3,j,:] + 6*U_temp[-2,j,:] - 4*U_temp[-1,j,:] + U_temp[0,j,:])]
+
+            dyU = [0,
+                   coeff[0] * (U_temp[-2,j-2,:] - 8*U_temp[-2,j-1,:] + 8*U_temp[-2,j+1,:] - U_temp[-2,j+2,:]),
+                   coeff[1] * (- U_temp[-2,j-2,:] + 16*U_temp[-2,j-1,:] - 30*U_temp[-2,j,:] + 16*U_temp[-2,j+1,:] - U_temp[-2,j+2,:]),
+                   coeff[2] * (- U_temp[-2,j-2,:] + 2*U_temp[-2,j-1,:] - 2*U_temp[-2,j+1,:] + U_temp[-2,j+2,:]),
+                   coeff[4] * (U_temp[-2,j-2,:] - 4*U_temp[-2,j-1,:] + 6*U_temp[-2,j,:] - 4*U_temp[-2,j+1,:] + U_temp[-2,j+2,:])]
+
+            dxyU = [coeff[5] * (U_temp[-4, j-2,:] - 8*U_temp[-3,j-2,:] + 8*U_temp[-1,j-2,:] - U_temp[0,j-2,:]                                    #dxyU
+                                - 8*U_temp[-4, j-1,:] + 64*U_temp[-3,j-1,:] - 64*U_temp[-1,j-1,:] + 8*U_temp[0,j-1,:]
+                                + 8*U_temp[-4, j+1,:] - 64*U_temp[-3,j+1,:] + 64*U_temp[-1,j+1,:] - 8*U_temp[0,j+1,:]
+                                - U_temp[-4, j+2,:] + 8*U_temp[-3,j+2,:] - 8*U_temp[-1,j+2,:] + U_temp[0,j+2,:]),
+                    coeff[3] * (- U_temp[-4,j-2,:] + 8*U_temp[-3,j-2,:] - 8*U_temp[-1,j-2,:] + U_temp[0,j-2,:]                                  #dxyyU
+                                + 16*U_temp[-4,j-1,:] -128*U_temp[-3,j-1,:] + 128*U_temp[-1,j-1,:] - 16*U_temp[0,j-1,:]
+                                - 30*U_temp[-4,j,:] + 240*U_temp[-3,j,:] - 240*U_temp[-1,j,:] + 30*U_temp[0,j,:]
+                                + 16*U_temp[-4,j+1,:] - 128*U_temp[-3,j+1,:] + 128*U_temp[-1,j+1,:] - 16*U_temp[0,j+1,:]
+                                - U_temp[-4,j+2,:] + 8*U_temp[-3,j+2,:] - 8*U_temp[-1,j+2,:] + U_temp[0,j+2,:]),
+                    coeff[3] * (- U_temp[-4,j-2,:] + 8*U_temp[-4,j-1,:] - 8*U_temp[-4,j+1,:] + U_temp[-4,j+2,:]                                   #dyxxU
+                                + 16*U_temp[-3,j-2,:] -128*U_temp[-3,j-1,:] + 128*U_temp[-3,j+1,:] - 16*U_temp[-3,j+2,:]
+                                - 30*U_temp[-2,j-2,:] + 240*U_temp[-2,j-1,:] - 240*U_temp[-2,j+1,:] + 30*U_temp[-2,j+2,:]
+                                + 16*U_temp[-1,j-2,:] - 128*U_temp[-1,j-1,:] + 128*U_temp[-1,j+1,:] - 16*U_temp[-1,j+2,:]
+                                - U_temp[0,j-2,:] + 8*U_temp[0,j-1,:] - 8*U_temp[0,j+1,:] + U_temp[0,j+2,:]),
+                    coeff[6] * (U_temp[-4,j-2,:] -16*U_temp[-4,j-1,:] +30 * U_temp[-4,j,:] - 16*U_temp[-4,j+1,:] + U_temp[-4,j+2,:]              #dxxyyU
+                                - 16*U_temp[-3,j-2,:] +256*U_temp[-3,j-1,:]-480*U_temp[-3,j,:] + 256*U_temp[-3,j+1,:] - 16*U_temp[-3,j+2,:]
+                                + 30*U_temp[-2,j-2,:] -480*U_temp[-2,j-1,:] +900*U_temp[-2,j,:] -480*U_temp[-2,j+1,:] + 30*U_temp[-2,j+2,:]
+                                - 16*U_temp[-1,j-2,:] +256*U_temp[-1,j-1,:]-480*U_temp[-1,j,:] + 256*U_temp[-1,j+1,:] - 16*U_temp[-1,j+2,:]
+                                + U_temp[0,j-2,:] -16*U_temp[0,j-1,:] +30*U_temp[0,j,:] - 16*U_temp[0,j+1,:] + U_temp[0,j+2,:])]
+
+            a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+            a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+            a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                 + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                 + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+            a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                  - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                  + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                  + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                  - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                  + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                  + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
+
+            U_temp_[-2, j, :] = U_temp[-2, j, :] + a1 + a2 + a3 + a4
+            
+            dxU = [0,
+                       coeff[0] * (U_temp[-3,j,:] - 8*U_temp[-2,j,:] + 8*U_temp[0,j,:] - U_temp[1,j,:]),
+                       coeff[1] * (- U_temp[-3,j,:] + 16*U_temp[-2,j,:] - 30*U_temp[-1,j,:] + 16*U_temp[0,j,:] - U_temp[1,j,:]),
+                       coeff[2] * (- U_temp[-3,j,:] + 2*U_temp[-2,j,:] - 2*U_temp[0,j,:] + U_temp[1,j,:]),
+                       coeff[4] * (U_temp[-3,j,:] - 4*U_temp[-2,j,:] + 6*U_temp[-1,j,:] - 4*U_temp[0,j,:] + U_temp[1,j,:])]
+
+            dyU = [0,
+                   coeff[0] * (U_temp[-1,j-2,:] - 8*U_temp[-1,j-1,:] + 8*U_temp[-1,j+1,:] - U_temp[-1,j+2,:]),
+                   coeff[1] * (- U_temp[-1,j-2,:] + 16*U_temp[-1,j-1,:] - 30*U_temp[-1,j,:] + 16*U_temp[-1,j+1,:] - U_temp[-1,j+2,:]),
+                   coeff[2] * (- U_temp[-1,j-2,:] + 2*U_temp[-1,j-1,:] - 2*U_temp[-1,j+1,:] + U_temp[-1,j+2,:]),
+                   coeff[4] * (U_temp[-1,j-2,:] - 4*U_temp[-1,j-1,:] + 6*U_temp[-1,j,:] - 4*U_temp[-1,j+1,:] + U_temp[-1,j+2,:])]
+
+            dxyU = [coeff[5] * (U_temp[-3, j-2,:] - 8*U_temp[-2,j-2,:] + 8*U_temp[0,j-2,:] - U_temp[1,j-2,:]                                    #dxyU
+                                - 8*U_temp[-3, j-1,:] + 64*U_temp[-2,j-1,:] - 64*U_temp[0,j-1,:] + 8*U_temp[1,j-1,:]
+                                + 8*U_temp[-3, j+1,:] - 64*U_temp[-2,j+1,:] + 64*U_temp[0,j+1,:] - 8*U_temp[1,j+1,:]
+                                - U_temp[-3, j+2,:] + 8*U_temp[-2,j+2,:] - 8*U_temp[0,j+2,:] + U_temp[1,j+2,:]),
+                    coeff[3] * (- U_temp[-3,j-2,:] + 8*U_temp[-2,j-2,:] - 8*U_temp[0,j-2,:] + U_temp[1,j-2,:]                                  #dxyyU
+                                + 16*U_temp[-3,j-1,:] -128*U_temp[-2,j-1,:] + 128*U_temp[0,j-1,:] - 16*U_temp[1,j-1,:]
+                                - 30*U_temp[-3,j,:] + 240*U_temp[-2,j,:] - 240*U_temp[0,j,:] + 30*U_temp[1,j,:]
+                                + 16*U_temp[-3,j+1,:] - 128*U_temp[-2,j+1,:] + 128*U_temp[0,j+1,:] - 16*U_temp[1,j+1,:]
+                                - U_temp[-3,j+2,:] + 8*U_temp[-2,j+2,:] - 8*U_temp[0,j+2,:] + U_temp[1,j+2,:]),
+                    coeff[3] * (- U_temp[-3,j-2,:] + 8*U_temp[-3,j-1,:] - 8*U_temp[-3,j+1,:] + U_temp[-3,j+2,:]                                   #dyxxU
+                                + 16*U_temp[-2,j-2,:] -128*U_temp[-2,j-1,:] + 128*U_temp[-2,j+1,:] - 16*U_temp[-2,j+2,:]
+                                - 30*U_temp[-1,j-2,:] + 240*U_temp[-1,j-1,:] - 240*U_temp[-1,j+1,:] + 30*U_temp[-1,j+2,:]
+                                + 16*U_temp[0,j-2,:] - 128*U_temp[0,j-1,:] + 128*U_temp[0,j+1,:] - 16*U_temp[0,j+2,:]
+                                - U_temp[1,j-2,:] + 8*U_temp[1,j-1,:] - 8*U_temp[1,j+1,:] + U_temp[1,j+2,:]),
+                    coeff[6] * (U_temp[-3,j-2,:] -16*U_temp[-3,j-1,:] +30 * U_temp[-3,j,:] - 16*U_temp[-3,j+1,:] + U_temp[-3,j+2,:]              #dxxyyU
+                                - 16*U_temp[-2,j-2,:] +256*U_temp[-2,j-1,:]-480*U_temp[-2,j,:] + 256*U_temp[-2,j+1,:] - 16*U_temp[-2,j+2,:]
+                                + 30*U_temp[-1,j-2,:] -480*U_temp[-1,j-1,:] +900*U_temp[-1,j,:] -480*U_temp[-1,j+1,:] + 30*U_temp[-1,j+2,:]
+                                - 16*U_temp[0,j-2,:] +256*U_temp[0,j-1,:]-480*U_temp[0,j,:] + 256*U_temp[0,j+1,:] - 16*U_temp[0,j+2,:]
+                                + U_temp[1,j-2,:] -16*U_temp[1,j-1,:] +30*U_temp[1,j,:] - 16*U_temp[1,j+1,:] + U_temp[1,j+2,:])]
+
+            a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+            a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+            a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                 + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                 + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+            a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                  - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                  + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                  + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                  - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                  + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                  + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
+
+            U_temp_[-1, j, :] = U_temp[-1, j, :] + a1 + a2 + a3 + a4
+
+            for i in range(2, data.Mx + 2):
+                # ADER4 2D
+                dxU = [0,
+                       coeff[0] * (U_temp[i-2,j,:] - 8*U_temp[i-1,j,:] + 8*U_temp[i+1,j,:] - U_temp[i+2,j,:]),
+                       coeff[1] * (- U_temp[i-2,j,:] + 16*U_temp[i-1,j,:] - 30*U_temp[i,j,:] + 16*U_temp[i+1,j,:] - U_temp[i+2,j,:]),
+                       coeff[2] * (- U_temp[i-2,j,:] + 2*U_temp[i-1,j,:] - 2*U_temp[i+1,j,:] + U_temp[i+2,j,:]),
+                       coeff[4] * (U_temp[i-2,j,:] - 4*U_temp[i-1,j,:] + 6*U_temp[i,j,:] - 4*U_temp[i+1,j,:] + U_temp[i+2,j,:])]
+
+                dyU = [0,
+                       coeff[0] * (U_temp[i,j-2,:] - 8*U_temp[i,j-1,:] + 8*U_temp[i,j+1,:] - U_temp[i,j+2,:]),
+                       coeff[1] * (- U_temp[i,j-2,:] + 16*U_temp[i,j-1,:] - 30*U_temp[i,j,:] + 16*U_temp[i,j+1,:] - U_temp[i,j+2,:]),
+                       coeff[2] * (- U_temp[i,j-2,:] + 2*U_temp[i,j-1,:] - 2*U_temp[i,j+1,:] + U_temp[i,j+2,:]),
+                       coeff[4] * (U_temp[i,j-2,:] - 4*U_temp[i,j-1,:] + 6*U_temp[i,j,:] - 4*U_temp[i,j+1,:] + U_temp[i,j+2,:])]
+
+                dxyU = [coeff[5] * (U_temp[i-2, j-2,:] - 8*U_temp[i-1,j-2,:] + 8*U_temp[i+1,j-2,:] - U_temp[i+2,j-2,:]                                    #dxyU
+                                    - 8*U_temp[i-2, j-1,:] + 64*U_temp[i-1,j-1,:] - 64*U_temp[i+1,j-1,:] + 8*U_temp[i+2,j-1,:]
+                                    + 8*U_temp[i-2, j+1,:] - 64*U_temp[i-1,j+1,:] + 64*U_temp[i+1,j+1,:] - 8*U_temp[i+2,j+1,:]
+                                    - U_temp[i-2, j+2,:] + 8*U_temp[i-1,j+2,:] - 8*U_temp[i+1,j+2,:] + U_temp[i+2,j+2,:]),
+                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-1,j-2,:] - 8*U_temp[i+1,j-2,:] + U_temp[i+2,j-2,:]                                  #dxyyU
+                                    + 16*U_temp[i-2,j-1,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i+1,j-1,:] - 16*U_temp[i+2,j-1,:]
+                                    - 30*U_temp[i-2,j,:] + 240*U_temp[i-1,j,:] - 240*U_temp[i+1,j,:] + 30*U_temp[i+2,j,:]
+                                    + 16*U_temp[i-2,j+1,:] - 128*U_temp[i-1,j+1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+2,j+1,:]
+                                    - U_temp[i-2,j+2,:] + 8*U_temp[i-1,j+2,:] - 8*U_temp[i+1,j+2,:] + U_temp[i+2,j+2,:]),
+                        coeff[3] * (- U_temp[i-2,j-2,:] + 8*U_temp[i-2,j-1,:] - 8*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]                                   #dyxxU
+                                    + 16*U_temp[i-1,j-2,:] -128*U_temp[i-1,j-1,:] + 128*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
+                                    - 30*U_temp[i,j-2,:] + 240*U_temp[i,j-1,:] - 240*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
+                                    + 16*U_temp[i+1,j-2,:] - 128*U_temp[i+1,j-1,:] + 128*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
+                                    - U_temp[i+2,j-2,:] + 8*U_temp[i+2,j-1,:] - 8*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:]),
+                        coeff[6] * (U_temp[i-2,j-2,:] -16*U_temp[i-2,j-1,:] +30 * U_temp[i-2,j,:] - 16*U_temp[i-2,j+1,:] + U_temp[i-2,j+2,:]              #dxxyyU
+                                    - 16*U_temp[i-1,j-2,:] +256*U_temp[i-1,j-1,:]-480*U_temp[i-1,j,:] + 256*U_temp[i-1,j+1,:] - 16*U_temp[i-1,j+2,:]
+                                    + 30*U_temp[i,j-2,:] -480*U_temp[i,j-1,:] +900*U_temp[i,j,:] -480*U_temp[i,j+1,:] + 30*U_temp[i,j+2,:]
+                                    - 16*U_temp[i+1,j-2,:] +256*U_temp[i+1,j-1,:]-480*U_temp[i+1,j,:] + 256*U_temp[i+1,j+1,:] - 16*U_temp[i+1,j+2,:]
+                                    + U_temp[i+2,j-2,:] -16*U_temp[i+2,j-1,:] +30*U_temp[i+2,j,:] - 16*U_temp[i+2,j+1,:] + U_temp[i+2,j+2,:])]
+
+                a1 = - data.dt * (A[0] @ dxU[1] + B[0] @ dyU[1])
+                a2 = data.dt**2/2 * (- A[1] @ dxU[1] - B[1] @ dyU[1] + c[0]**2 * (dxU[2] + dyU[2]))
+                a3 = data.dt**3/6 * (- c[0]**2 * (A[0] @ dxU[3] + B[0] @ dyU[3] + A[0] @ dxyU[1] + B[0] @ dxyU[2])
+                                     + 2*c[0]*c[1] * (dxU[2] + dyU[2]) - (A[2] @ dxU[1] + B[2] @ dyU[1])
+                                     + A[1] @ A[0] @ dxU[2] + B[1] @ B[0] @ dyU[2] + (A[1] @ B[0] + B[1] @ A[0]) @ dxyU[0])
+                a4 = data.dt**4/24 * (- (A[3] @ dxU[1] + B[3] @ dyU[1]) + 2 * (c[1]**2 + c[0] * c[2]) * (dxU[2] + dyU[2])
+                                      - 4 * c[0]*c[1]*(A[0] @ dxU[3] + B[0] @ dyU[3] + B[0] @ dxyU[2] + A[0] @ dxyU[1])
+                                      + 2 * (A[2] @ A[0] @ dxU[2] + (A[2] @ B[0] + B[2] @ A[0]) @ dxyU[0] + B[2] @ B[0] @ dyU[2])
+                                      + (A[1] @ A[1] @ dxU[2] + B[1] @ B[1] @ dyU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0])
+                                      - (A[1] @ A[0] @ A[0] @ dxU[3] + (A[1] @ A[0] @ B[0] + B[1] @ A[0] @ A[0]) @ dxyU[2]
+                                      + B[1] @ B[0] @ B[0] @ dyU[3] + (B[1] @ B[0] @ A[0] + A[1] @ B[0] @ B[0]) @ dxyU[1])
+                                      + c[0]**4*(dxU[4] + 2 * dxyU[3] + dyU[4]))
+
+                U_temp_[i, j, :] = U_temp[i, j, :] + a1 + a2 + a3 + a4
+
+        S_n = np.array([[-rho(t + data.dt)[1] / rho(t + data.dt)[0], 0, 0],[0, -rho(t + data.dt)[1] / rho(t + data.dt)[0], 0], [0, 0, E(t + data.dt)[1] / E(t + data.dt)[0]]])
+        for i in range(0, data.Mx + 4):
+            for j in range(0, data.My):
+                data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
+
+    data.U = data.U[:, 2:data.Mx + 2, :, :]
     data.calcul_energie()

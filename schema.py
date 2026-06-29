@@ -1,5 +1,6 @@
 from donnee import *
 from numpy.linalg import matrix_power
+from time import sleep
 from tqdm import trange
 ncols = 125                                                                       #largeur de la barre de chargement
 from math import factorial
@@ -15,6 +16,7 @@ def LaxWendroff1D(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     print("LaxWendroff1D()")
+    sleep(0.001)
     data.U = np.zeros((data.N, data.M, 2))
     A = np.array([[0, 1/data.rho], [data.rho * data.c**2, 0]])
 
@@ -34,6 +36,7 @@ def ADER21D(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
     print("ADER2 1D()")
+    sleep(0.001)
     gamma = np.array([[-1/2,-1/2],
                        [0, 1],
                        [1/2,-1/2]])
@@ -66,6 +69,7 @@ def ADER41D(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
     print("ADER4 1D()")
+    sleep(0.001)
     gamma = np.array([[1 / 12, 1 / 24, -1 / 12, -1 / 24],
                       [-2 / 3, -2 / 3, 1 / 6, 1 / 6],
                       [0, 5 / 4, 0, -1 / 4],
@@ -94,7 +98,7 @@ def ADER41D(data):
                             i in range(data.M)]) for n in range(0, data.N)])
 
 """
-Schémas numériques pour la résolution du problème de propagation en 1D non modulé en temps, avec une initialisation en ondelette tronquée lointaine
+Schémas numériques pour la résolution du problème de Cauchy de propagation en 1D non modulé en temps
 """
 
 def LaxWendroff1D_cauchy(data):
@@ -104,6 +108,7 @@ def LaxWendroff1D_cauchy(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     print("LaxWendroff 1D Cauchy()")
+    sleep(0.001)
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
@@ -132,6 +137,7 @@ def ADER41D_cauchy(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 1D
     """
     print("ADER4 1D Cauchy()")
+    sleep(0.001)
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
@@ -179,6 +185,7 @@ def LaxWendroff2D(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     print("LaxWendroff 2D()")
+    sleep(0.001)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
@@ -210,6 +217,7 @@ def ADER42D(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     print("ADER4 2D()")
+    sleep(0.001)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     rc2 = data.rho*data.c**2
     A = np.array([[0,0, 1 / data.rho],
@@ -249,15 +257,14 @@ def ADER42D(data):
                                    +30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
                                    -16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
                                    + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                s = ((data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()) * (not data.opt) +
-                     (data.dt / (data.rho * np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([1, 0, 0]).transpose()) * (data.opt))
+                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
     data.E = np.sum(ec + ep, axis=(1, 2))
 
 """
-Schémas numériques pour la résolution du problème de propagation en 2D non modulé en temps, avec un point source en onde plane
+Schémas numériques pour la résolution du problème de Cauchy de propagation en 2D non modulé en temps
 """
 
 def LaxWendroff2D_cauchy(data):
@@ -267,6 +274,7 @@ def LaxWendroff2D_cauchy(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     print("LaxWendroff2D Cauchy()")
+    sleep(0.001)
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
     theta = 0
     rc2 = data.rho * data.c ** 2
@@ -318,6 +326,7 @@ def ADER42D_cauchy(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     print("ADER4 2D Cauchy()")
+    sleep(0.001)
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]

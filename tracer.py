@@ -225,8 +225,7 @@ def anim2D(data, **kwargs):
     ax3, ax4 = axs[1, 0], axs[1, 1]
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-    correc_v = 0.15
-    v_min, v_max = min(np.min(data.U[...,0]),np.min(data.U[...,1])), max(np.max(data.U[...,0]),np.max(data.U[...,1]))
+    v_min, v_max = min(np.min(data.U[data.N//20:, ...,0]),np.min(data.U[data.N//20:,...,1])), max(np.max(data.U[data.N//20:,...,0]),np.max(data.U[data.N//20:,...,1]))
     im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Position y (m)')
@@ -239,7 +238,7 @@ def anim2D(data, **kwargs):
     ax2.set_title('Champ des vitesses vy')
     fig.colorbar(im2, ax=ax2)
 
-    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=0.35*np.min(data.U[..., 2]), vmax=0.03*np.max(data.U[..., 2]), vcenter = 0))
+    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=np.min(data.U[data.N//20:,..., 2]), vmax=np.max(data.U[data.N//20:,..., 2]), vcenter = 0))
     ax3.set_xlabel('Position x (m)')
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')

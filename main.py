@@ -72,7 +72,7 @@ erreur_trace(epsADER4,M_li = np.array([150,200,250]), f = "ADER4")
 Implémentation de la résolution 2D homogène
 ============================================================
 """
-data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D, Mx = 200, My = 200, CFL = 0.6, opt = False, f = 10, tc = (0, 0.08), xc = (0, 300), yc = (0, 300))
+data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D, Mx = 150, My = 150, CFL = 0.6, opt = False, f = 10, tc = (0, 0.2), xc = (0, 600), yc = (0, 600))
 print(data1)
 LaxWendroff2D(data1)
 # data1 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')

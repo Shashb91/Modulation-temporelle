@@ -119,7 +119,7 @@ def LaxWendroff1D_cauchy(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
+        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/data.c) * np.array([1, data.c*data.rho])
 
     for n in trange(0, data.N - 1, ncols = ncols):
         for i in range(1, data.M - 1):
@@ -157,7 +157,7 @@ def ADER41D_cauchy(data):
 
     # init
     for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*i/data.c) * np.array([1, data.c*data.rho])
+        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/data.c) * np.array([1, data.c*data.rho])
 
     for s in range(0, s_max):
         a = np.zeros((2, 2))
@@ -288,7 +288,7 @@ def LaxWendroff2D_cauchy(data):
     # init
     for i in range(0, data.Mx + 2):
         for j in range(0, data.My):
-            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.dy/data.c + data.tc[0] - data.dy * j / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
+            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
 
 
     for n in trange(0, data.N - 1, ncols=ncols):
@@ -349,7 +349,7 @@ def ADER42D_cauchy(data):
     #init
     for i in range(0, data.Mx+4):
         for j in range(0, data.My):
-            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.dy/data.c + data.tc[0] - data.dy*j/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
+            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.tc[0] - data.dy*(j-1)/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
 
 
     for n in trange(0, data.N - 1, ncols = ncols):

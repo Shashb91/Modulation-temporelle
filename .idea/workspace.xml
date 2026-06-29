@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Tests LW2D mt vs LW1D mt avec un pblm de Cauchy">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
@@ -150,14 +149,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Ajouts de fonctionnalités pour la sauvegarde">
-      <option name="closed" value="true" />
-      <created>1781014117004</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1781014117004</updated>
     </task>
     <task id="LOCAL-00037" summary="Corrections mineures (bar de chargement, CFL, ...)">
       <option name="closed" value="true" />
@@ -543,7 +534,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782467210194</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy">
+      <option name="closed" value="true" />
+      <created>1782724777641</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1782724777641</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -558,7 +557,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentation d'ADER4 en 2D" />
     <MESSAGE value="Correction pour le tracé de Lax Wendroff en 2D" />
     <MESSAGE value="Ajouts de fonctionnalités pour la sauvegarde" />
     <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
@@ -583,7 +581,8 @@
     <MESSAGE value="Version fonctionnelle et vérifiée de la résolution 1D nmt, 2D nmt, 1D mt" />
     <MESSAGE value="Tests LW2D mt vs LW2D nmt ou eps = 0" />
     <MESSAGE value="Tests LW2D mt vs LW1D mt avec un pblm de Cauchy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tests LW2D mt vs LW1D mt avec un pblm de Cauchy" />
+    <MESSAGE value="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

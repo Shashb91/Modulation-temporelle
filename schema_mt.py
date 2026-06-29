@@ -469,22 +469,23 @@ def ADER42D_cauchy_mt(data):
         for j in range(0, data.My):
             data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.dy/c + data.tc[0] - data.dy * j / c) * np.array([0, 1, r * c]).transpose()
 
+    coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
         rho = data.rho_mt(data)
         E = data.E_mt(data)
-        c = np.sqrt(E(t)[0]/rho(t)[0])
-        A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
-        B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
-        U_temp = np.zeros((data.Mx + 2, data.My, 3))
-        U_temp_ = np.zeros((data.Mx + 2, data.My, 3))
+        A = A2D_mt(data)(t)
+        B = B2D_mt(data)(t)
+        c = c_mt(data)(t)
+        U_temp = np.zeros((data.Mx + 4, data.My, 3))
+        U_temp_ = np.zeros((data.Mx + 4, data.My, 3))
 
         S_n = np.array([[-rho(t)[1] / rho(t)[0], 0,0],[0, -rho(t)[1] / rho(t)[0],0], [0,0, E(t)[1] / E(t)[0]]])
         for i in range(0, data.Mx + 4):
             for j in range(0, data.My):
                 U_temp[i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ data.U[n, i, j, :]
 
-        for j in range(1, data.My - 1):
+        for j in range(2, data.My - 2):
             # condition de periodicité gauche
             dxU = [0,
                    coeff[0] * (U_temp[-2,j,:] - 8*U_temp[-1,j,:] + 8*U_temp[1,j,:] - U_temp[2,j,:]),

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib import colors
 from matplotlib.widgets import Slider
 
 def anim1D(data, **kwargs):
@@ -225,22 +226,20 @@ def anim2D(data, **kwargs):
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
     correc_v = 0.15
-    im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=correc_v*np.min(data.U[..., 0]), vmax=correc_v*np.max(data.U[..., 0]))
+    v_min, v_max = min(np.min(data.U[...,0]),np.min(data.U[...,1])), max(np.max(data.U[...,0]),np.max(data.U[...,1]))
+    im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Position y (m)')
     ax1.set_title('Champ des vitesses vx')
     fig.colorbar(im1, ax=ax1)
 
-    im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=correc_v *np.min(data.U[..., 1]), vmax=correc_v*np.max(data.U[..., 1]))
+    im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Position y (m)')
     ax2.set_title('Champ des vitesses vy')
     fig.colorbar(im2, ax=ax2)
 
-    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,
-                     vmin=0.35*np.min(data.U[..., 2]), vmax=0.03*np.max(data.U[..., 2]))
+    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=0.35*np.min(data.U[..., 2]), vmax=0.03*np.max(data.U[..., 2]), vcenter = 0))
     ax3.set_xlabel('Position x (m)')
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')
@@ -390,7 +389,7 @@ def anim1D_mt(data, **kwargs):
     data.calcul_energie()
     line3, = ax3.plot([], [], color='gold', lw=2)
     ax3.set_xlim(data.t[0], data.t[-1])
-    ax3.set_ylim(np.min(data.E) * 1.1, np.max(data.E) * 1.1)
+    ax3.set_ylim(0 , np.max(data.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')
     ax3.set_ylabel('Energie (J)')
     ax3.set_title("Evolution de l'energie (J)")
@@ -468,7 +467,7 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     line3_1, = ax3.plot([], [], color='gold', lw=2, label = data1.label, ls = '-')
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, label = data2.label, ls = '--')
     ax3.set_xlim(data1.t[0], data1.t[-1])
-    ax3.set_ylim(np.min(data1.E) * 1.1, np.max(data1.E) * 1.1)
+    ax3.set_ylim(0, np.max(data1.E) * 1.1)
     ax3.set_xlabel('Temps t (s)')
     ax3.set_ylabel('Energie (J)')
     ax3.set_title("Evolution de l'energie (J)")

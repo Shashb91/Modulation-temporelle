@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Code fonctionnel !">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analytique.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytique.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erreur.py" beforeDir="false" afterPath="$PROJECT_DIR$/erreur.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +80,7 @@
       <command value="python main.py" />
     </option>
   </component>
-  <component name="RunManager" selected="Python.main_mt">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -149,14 +152,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Corrections mineures (bar de chargement, CFL, ...)">
-      <option name="closed" value="true" />
-      <created>1781014144284</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1781014144284</updated>
     </task>
     <task id="LOCAL-00038" summary="Corrections d'ADER4 2D">
       <option name="closed" value="true" />
@@ -542,7 +537,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782724777641</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="Code fonctionnel !">
+      <option name="closed" value="true" />
+      <created>1782728435699</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1782728435699</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -557,7 +560,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Correction pour le tracé de Lax Wendroff en 2D" />
     <MESSAGE value="Ajouts de fonctionnalités pour la sauvegarde" />
     <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
     <MESSAGE value="Corrections d'ADER4 2D" />
@@ -582,7 +584,8 @@
     <MESSAGE value="Tests LW2D mt vs LW2D nmt ou eps = 0" />
     <MESSAGE value="Tests LW2D mt vs LW1D mt avec un pblm de Cauchy" />
     <MESSAGE value="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy" />
+    <MESSAGE value="Code fonctionnel !" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code fonctionnel !" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

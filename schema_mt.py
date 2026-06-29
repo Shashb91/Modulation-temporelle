@@ -175,7 +175,7 @@ def LaxWendroff1D_cauchy_mt(data):
     for i in range(0, data.M):
         r = data.rho_mt(data)(0)[0]
         c = np.sqrt(data.E_mt(data)(0)[0]/r)
-        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*i/c) * np.array([1, c*r])
+        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
@@ -217,7 +217,7 @@ def ADER41D_cauchy_mt(data):
     for i in range(0, data.M):
         r = data.rho_mt(data)(0)[0]
         c = np.sqrt(data.E_mt(data)(0)[0]/r)
-        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*i/c) * np.array([1, c*r])
+        data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
@@ -404,7 +404,7 @@ def LaxWendroff2D_cauchy_mt(data):
     c = np.sqrt(data.E_mt(data)(0)[0] / r)
     for i in range(0, data.Mx + 2):
         for j in range(0, data.My):
-            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.dy/c + data.tc[0] - data.dy * j / c) * np.array([0, 1, r * c]).transpose()
+            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / c) * np.array([0, 1, r * c]).transpose()
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
@@ -467,7 +467,7 @@ def ADER42D_cauchy_mt(data):
     c = np.sqrt(data.E_mt(data)(0)[0] / r)
     for i in range(0, data.Mx + 4):
         for j in range(0, data.My):
-            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.dy/c + data.tc[0] - data.dy * j / c) * np.array([0, 1, r * c]).transpose()
+            data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / c) * np.array([0, 1, r * c]).transpose()
 
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
     for n in trange(data.N - 1, ncols=ncols):

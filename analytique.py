@@ -28,7 +28,7 @@ def analytique1D_cauchy(data):
     data.U = np.zeros((data.N, data.M, 2))
     for n in range(0, data.N-1):
         for i in range(2, data.M-2):
-            ind = 1/data.f + n*data.dt - i*data.dx/data.c
+            ind = 1/data.f + n*data.dt - (i-1)*data.dx/data.c
             a = 1/data.c * data.S(data.f, ind)
             b = data.rho * data.S(data.f, ind)
             data.U[n, i, :] = np.array([a,b])

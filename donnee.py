@@ -15,7 +15,7 @@ class Donnee1D:
         self.xc : tuple = xc                                               #couple position min, max
         self.tc : tuple = tc                                               #couple temps init, final
         self.M : int = M                                                   #discretisation spatiale
-        self.dx : float = self.xc[1]/self.M                                #infinitesimal spatial
+        self.dx : float = self.xc[1]/(self.M -1)                                #infinitesimal spatial
         self.CFL: float = CFL
         self.dt : float = self.CFL * self.dx / self.c
 
@@ -44,7 +44,7 @@ class Donnee1D:
         else: self.opt : bool = True
 
         if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
-        else: self.eps_p = 0
+        else: self.eps_r = 0
         if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]
         else: self.eps_E = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
@@ -66,6 +66,12 @@ class Donnee1D:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
         return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
+
+    def __eq__(self, other):
+        return (self.c == other.c)*(self.rho == other.rho)*(self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps_E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
@@ -176,6 +182,13 @@ class Donnee2D:
         return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(
                 self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(
                 self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
+
+    def __eq__(self, other):
+        return (self.c == other.c)*(self.rho == other.rho)*(self.Mx == other.Mx)*(self.My == other.My)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.yc == other.yc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps.E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c

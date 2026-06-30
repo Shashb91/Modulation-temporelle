@@ -91,6 +91,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     :param data2: Donnee1D, regroupe l'ensemble des données du problème avec la solution 2
     :return: plot
     """
+    assert data1 == data2, "Les paramètres sont différents"
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
     line1_1, = ax1.plot([], [], color='darkblue', lw=2, linestyle='-', label=data1.label)
@@ -164,6 +165,7 @@ def tracer1D_comparaison(t, data1, data2):
     :param data2: Donnee1D, regroupe l'ensemble des données du problème tracé avec des markers transparents
     :return: plot
     """
+    assert data1 == data2, "Les paramètres sont différents"
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
     ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'dodgerblue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
@@ -435,6 +437,7 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     :param data2: Donnee2D, regroupe l'ensemble des données du problème
     :return: plot
     """
+    assert data1 == data2, "Les paramètres sont différents"
     fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
     ax1, ax2 = axs[0, 0], axs[1, 0]
     ax3, ax4 = axs[0, 1], axs[1, 1]

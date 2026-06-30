@@ -25,7 +25,7 @@ from tracer import *
 Implémentation de la résolution 1D modulée en temps
 ============================================================
 """
-
+#Les valeurs sont ajustés
 #Paramètres
 f_mt = 4
 modulation = "echelon"

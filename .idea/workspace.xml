@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle complète">
-      <change afterPath="$PROJECT_DIR$/anisotropie.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Implémentation anisotropie">
+      <change afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anisotropie.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,6 +59,7 @@
     &quot;Python.data.executor&quot;: &quot;Run&quot;,
     &quot;Python.donnee.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_aniso.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_mt.executor&quot;: &quot;Run&quot;,
     &quot;Python.python main.py.executor&quot;: &quot;Run&quot;,
     &quot;Python.schema_mt.executor&quot;: &quot;Run&quot;,
@@ -83,7 +82,7 @@
       <command value="python main.py" />
     </option>
   </component>
-  <component name="RunManager" selected="Python.main_mt">
+  <component name="RunManager" selected="Python.main_aniso">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -99,6 +98,30 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_aniso" type="PythonConfigurationType" factoryName="Python">
+      <module name="Code Python" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.14 (Code Python) (3)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_aniso.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -133,6 +156,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.main_mt" />
+      <item itemvalue="Python.main_aniso" />
       <item itemvalue="Python.main" />
     </list>
     <recent_temporary>
@@ -155,22 +179,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Implémentations de la compression des fichiers">
-      <option name="closed" value="true" />
-      <created>1781098259053</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1781098259053</updated>
-    </task>
-    <task id="LOCAL-00041" summary="Implémentations de la compression des fichiers">
-      <option name="closed" value="true" />
-      <created>1781098385008</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1781098385008</updated>
     </task>
     <task id="LOCAL-00042" summary="Implémentations de la compression des fichiers">
       <option name="closed" value="true" />
@@ -548,7 +556,23 @@
       <option name="project" value="LOCAL" />
       <updated>1782738928609</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="Corrections mineures">
+      <option name="closed" value="true" />
+      <created>1782826770069</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1782826770069</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Implémentation anisotropie">
+      <option name="closed" value="true" />
+      <created>1782826785056</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1782826785056</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -563,7 +587,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Corrections mineures (bar de chargement, CFL, ...)" />
     <MESSAGE value="Corrections d'ADER4 2D" />
     <MESSAGE value="Implémentations des résolutions en front d'onde" />
     <MESSAGE value="Implémentations de la compression des fichiers" />
@@ -581,14 +604,15 @@
     <MESSAGE value="Version non fonctionelle de la propagation avec un problème de cauchy en ADER4" />
     <MESSAGE value="Corrections mineures pour la résolution mt" />
     <MESSAGE value="Version fonctionnelle de la mt" />
-    <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Version fonctionnelle et vérifiée de la résolution 1D nmt, 2D nmt, 1D mt" />
     <MESSAGE value="Tests LW2D mt vs LW2D nmt ou eps = 0" />
     <MESSAGE value="Tests LW2D mt vs LW1D mt avec un pblm de Cauchy" />
     <MESSAGE value="Implémentation d'ADER4 2D mt avec et sans pblm de Cauchy" />
     <MESSAGE value="Code fonctionnel !" />
     <MESSAGE value="Version fonctionnelle complète" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle complète" />
+    <MESSAGE value="Corrections mineures" />
+    <MESSAGE value="Implémentation anisotropie" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implémentation anisotropie" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

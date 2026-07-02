@@ -114,8 +114,6 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax2.legend()
     ax2.grid(True)
 
-    data1.calcul_energie()
-    data2.calcul_energie()
     line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='--', label=data2.label)
     ax3.set_xlim(data1.t[0], data1.t[-1])
@@ -317,7 +315,7 @@ def tracer2D(data,t, y):
     plt.show()
 
 """
-Fonctions de tracer pour la modulation temporelle, avec l'impédance
+Fonctions de tracé pour la modulation temporelle, avec l'impédance
 """
 
 def tracer_mt(data):
@@ -514,7 +512,11 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     plt.show()
     return anim
 
-def anim2D_aniso(data, **kwargs):
+"""
+Fonctions de tracer pour l'Elasticité AntiPlane
+"""
+
+def anim2D_EAP(data, **kwargs):
     """
     Trace l'évolution de la vitesse v, les contraintes et l'énergie des données de data en 2D
     :param data: Donnee2D, regroupe l'ensemble des données du problème

@@ -68,7 +68,7 @@ class Donnee1D:
         return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def __eq__(self, other):
-        return (self.c == other.c)*(self.rho == other.rho)*(self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps_E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
+        return (self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps_E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
 
     def __ne__(self, other):
         return not self.__eq__(other)

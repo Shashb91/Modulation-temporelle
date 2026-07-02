@@ -73,6 +73,11 @@ class Donnee1D:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __sub__(self, other):
+        ecart = np.abs(self.U - other.U)/other.U
+        return np.array([[np.max(ecart[...,0]), np.min(ecart[...,0]), np.average(ecart[...,0]), np.std(ecart[...,0])],
+                         [np.max(ecart[...,1]), np.min(ecart[...,1]), np.average(ecart[...,1]), np.std(ecart[...,1])]])
+
     def copy(self, instance : Donnee1D):                                   #constructeur de recopie
         self.c : float = instance.c
         self.rho: float = instance.rho
@@ -108,8 +113,7 @@ class Donnee1D:
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
     def calcul_energie(self):
-        if np.all(self.E == 0):
-            self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
+        self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (2*self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
 
 class Donnee2D:
     def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
@@ -189,6 +193,11 @@ class Donnee2D:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __sub__(self, other):
+        ecart = np.abs(self.U - other.U)/other.U
+        return np.array([[np.max(ecart[...,0]), np.min(ecart[...,0]), np.average(ecart[...,0]), np.std(ecart[...,0])],
+                         [np.max(ecart[...,1]), np.min(ecart[...,1]), np.average(ecart[...,1]), np.std(ecart[...,1])],
+                         [np.max(ecart[...,2]), np.min(ecart[...,2]), np.average(ecart[...,2]), np.std(ecart[...,2])]])
 
     def copy(self, instance : Donnee2D):                               #constructeur de recopie
         self.c : float = instance.c
@@ -221,9 +230,9 @@ class Donnee2D:
         coupe = (int(coupe[0]), int(coupe[1]))
         pos = "-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
         try:
-            retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_E, omega = self.omega,
-                          M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.E_mt,
-                          fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
+            retour = Donnee1D(c=self.c, rho= self.rho, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_E, omega = self.omega,
+                              M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.E_mt,
+                              fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         except:
             retour = Donnee1D(c=self.c, rho=self.rho, f=self.f, tc=self.tc,
                             M=self.Mx, CFL = self.CFL, xc = self.xc,
@@ -232,14 +241,31 @@ class Donnee2D:
             retour.U = self.U[:, coupe[0], :, 1:]
             retour.xc = self.yc
             retour.x = self.y
+            if type(self.rho) == tuple:
+                (r0, r1) = self.rho
+                r00 = r0 * self.alpha + r1 * (1 - self.alpha)
+                e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+                ec = 0.5 * (r00 * retour.U[..., 0] ** 2)
+                ep = 0.5 * retour.U[..., 1] ** 2 / e
+                retour.E = np.sum(ec + ep, axis = 1)
+            else:
+                retour.calcul_energie()
         if coupe[1] != 0:  # coupe selon l'axe x
             retour.U = self.U[:, :, coupe[1], ::2]
             retour.xc = self.xc
             retour.x = self.x
-
+            if type(self.rho) == tuple:
+                (r0, r1) = self.rho
+                r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
+                e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+                ec = 0.5 * (r11 * retour.U[..., 0] ** 2)
+                ep = 0.5 * retour.U[..., 1] ** 2 / e
+                retour.E = np.sum(ec + ep, axis = 1)
+            else:
+                retour.calcul_energie()
         return retour
 
-    def CFL_maj(self):
+    def CFL_maj(self, **kwargs):
         """
         Permet de corriger la CFL dans un milieu modulé en temps
         :return: None
@@ -249,12 +275,32 @@ class Donnee2D:
             rho.append(self.rho_mt(self)(t)[0])
             E.append(self.E_mt(self)(t)[0])
         rho,E = np.array(rho),np.array(E)
-        self.c: float = np.max(np.sqrt(E/rho))
+        if "c" in kwargs.keys(): self.c = kwargs["c"]
+        else: self.c: float = np.max(np.sqrt(E/rho))
         self.dt : float = self.CFL * self.dx / self.c
         self.N: int = int(self.tc[1] / self.dt)
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
+    def CFL_aniso(self, c):
+        """
+        Permet de corriger la CFL dans un milieu anisotropique non modulé en temps
+        :return: None
+        """
+        self.c = c
+        self.dt: float = self.CFL * self.dx / self.c
+        self.N: int = int(self.tc[1] / self.dt)
+        self.t = np.linspace(self.tc[0], self.tc[1], self.N)
+
     def calcul_energie(self):
-        ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
-        ep = self.U[..., 2] ** 2 / (self.rho * self.c ** 2)
-        self.E = np.sum(ec + ep, axis=(1, 2))
+        if type(self.rho) == float:
+            ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
+            ep = self.U[..., 2] ** 2 / (2*self.rho * self.c ** 2)
+            self.E = np.sum(ec + ep, axis=(1, 2))
+        elif type(self.rho) == tuple:
+            (r0, r1) = self.rho
+            r00 = r0 * self.alpha + r1 * (1 - self.alpha)
+            r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
+            e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+            ec = 0.5 * (r00 * self.U[..., 0] ** 2 + r11 * self.U[..., 1] ** 2)
+            ep = 0.5 * self.U[..., 2] ** 2 / e
+            self.E = np.sum(ec + ep, axis=(1, 2))

@@ -117,7 +117,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     line3_1, = ax3.plot([], [], color='gold', lw=2, linestyle='-', label=data1.label)
     line3_2, = ax3.plot([], [], color='darkorange', lw=2, linestyle='--', label=data2.label)
     ax3.set_xlim(data1.t[0], data1.t[-1])
-    ax3.set_ylim(0, np.max(data1.E)*1.1)
+    ax3.set_ylim(0, max(np.max(data1.E), np.max(data2.E))*1.1)
     ax3.set_xlabel('Temps t (s)')
     ax3.set_ylabel('Energie (J)')
     ax3.set_title("Evolution de l'energie (J)")

@@ -80,8 +80,9 @@ def LaxWendroff1D_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    sleep(0.01)
     print("LaxWendroff 1D mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -109,7 +110,7 @@ def LaxWendroff1D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2 * E[n]) for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_mt(data):
     """
@@ -117,8 +118,9 @@ def ADER41D_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    sleep(0.01)
     print("ADER4 1D mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -154,7 +156,7 @@ def ADER41D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
 
 """
 Résolution du problème de Cauchy 1D modulé en temps
@@ -166,8 +168,9 @@ def LaxWendroff1D_cauchy_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    sleep(0.01)
     print("LaxWendroff 1D Cauchy mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -200,7 +203,7 @@ def LaxWendroff1D_cauchy_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_cauchy_mt(data):
     """
@@ -208,8 +211,9 @@ def ADER41D_cauchy_mt(data):
     :param data: Donnee1D, regroupe l'ensemble des données du problème
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
+    sleep(0.01)
     print("ADER4 1D Cauchy mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
 
@@ -250,7 +254,7 @@ def ADER41D_cauchy_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / E[n] for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 /(2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
 
 """
 Résolution du problème de propagation 2D en mil
@@ -262,8 +266,9 @@ def LaxWendroff2D_mt(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    sleep(0.01)
     print("LaxWendroff 2D mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
 
@@ -298,7 +303,9 @@ def LaxWendroff2D_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-        data.calcul_energie()
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_mt(data):
     """
@@ -306,8 +313,9 @@ def ADER42D_mt(data):
     :param data: Donnee2D, regroupe l'ensemble des données du probleme 2D
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
+    sleep(0.01)
     print("ADER4 2D mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
 
@@ -382,7 +390,9 @@ def ADER42D_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2),np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-    data.calcul_energie()
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
 
 """
 Résolution du problème de Cauchy 2D modulé en temps
@@ -394,8 +404,9 @@ def LaxWendroff2D_cauchy_mt(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    sleep(0.01)
     print("Lax Wendroff 2D Cauchy mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
 
@@ -449,7 +460,9 @@ def LaxWendroff2D_cauchy_mt(data):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     data.U = data.U[:, 1:data.Mx + 1, :, :]
-    data.calcul_energie()
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_cauchy_mt(data):
     """
@@ -457,8 +470,9 @@ def ADER42D_cauchy_mt(data):
     :param data: Donnee2D, regroupe l'ensemble des données du problème
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    sleep(0.01)
     print("ADER4 2D Cauchy mt()")
-    sleep(0.001)
+    sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
 
@@ -731,4 +745,6 @@ def ADER42D_cauchy_mt(data):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     data.U = data.U[:, 2:data.Mx + 2, :, :]
-    data.calcul_energie()
+    rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]

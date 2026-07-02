@@ -31,12 +31,16 @@ LaxWendroff_aniso(LW2D_)
 # sauvegarder(LW2D_, opt = True)
 anim2D(LW2D_)
 
-LW2D = Donnee2D(label ="LW_aniso", e = rho[1]*c[1]**2, rho = rho[1], c = c[1], alpha=0, Mx = M, My = M, S = pt_source_2D,
+LW2D = Donnee2D(label ="LW", e = rho[1]*c[1]**2, rho = rho[1], c = c[1], alpha=0, Mx = M, My = M, S = pt_source_2D,
                  xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6)
 LaxWendroff2D(LW2D)
-print(LW2D - LW2D_)
+print(LW2D_ - LW2D)
 LW2D_x_, LW2D_y_ = LW2D_.projection((M//2,0)), LW2D_.projection((0, M//2))
+LW2D_x, LW2D_y = LW2D.projection((M//2,0)), LW2D.projection((0, M//2))
 anim1D_comparaison(LW2D_x_, LW2D_y_)
+anim1D_comparaison(LW2D_y_, LW2D_y)
+anim1D_comparaison(LW2D_x_, LW2D_x)
+
 
 ADER42D_ = Donnee2D(label ="ADER2D_aniso", e = e, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
                     xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 549)

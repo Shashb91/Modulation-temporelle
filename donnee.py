@@ -4,7 +4,7 @@ from modulation import*
 import numpy as np
 
 class Donnee1D:
-    def __init__(self, c = 2800, rho = 1200,  e = 9.4e9, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
+    def __init__(self, c, rho, e, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
         """
         Initialisation d'une instance de Donnee1D, permettant à la résolution du problème 1D de proagation en milieu homogène ou modulée en temps
         """
@@ -74,7 +74,7 @@ class Donnee1D:
         return not self.__eq__(other)
 
     def __sub__(self, other):
-        ecart = np.abs(self.U - other.U)/other.U
+        ecart = self.U - other.U
         return np.array([[np.max(ecart[...,0]), np.min(ecart[...,0]), np.average(ecart[...,0]), np.std(ecart[...,0])],
                          [np.max(ecart[...,1]), np.min(ecart[...,1]), np.average(ecart[...,1]), np.std(ecart[...,1])]])
 
@@ -116,7 +116,7 @@ class Donnee1D:
         self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (2*self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
 
 class Donnee2D:
-    def __init__(self, c=1500, rho=1000, e = 2.25e9,f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
+    def __init__(self, c, rho, e, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
         """
         Initialisation d'une instance de Donnee2D, permettant à la résolution du problème 2D de proagation en milieu homogène ou modulée en temps
         """
@@ -194,7 +194,7 @@ class Donnee2D:
         return not self.__eq__(other)
 
     def __sub__(self, other):
-        ecart = np.abs(self.U - other.U)/other.U
+        ecart = self.U - other.U
         return np.array([[np.max(ecart[...,0]), np.min(ecart[...,0]), np.average(ecart[...,0]), np.std(ecart[...,0])],
                          [np.max(ecart[...,1]), np.min(ecart[...,1]), np.average(ecart[...,1]), np.std(ecart[...,1])],
                          [np.max(ecart[...,2]), np.min(ecart[...,2]), np.average(ecart[...,2]), np.std(ecart[...,2])]])
@@ -302,5 +302,5 @@ class Donnee2D:
             r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
             e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
             ec = 0.5 * (r00 * self.U[..., 0] ** 2 + r11 * self.U[..., 1] ** 2)
-            ep = 0.5 * self.U[..., 2] ** 2 / e
+            ep = 0.5 * self.U[..., 2] ** 2 / (2*e)
             self.E = np.sum(ec + ep, axis=(1, 2))

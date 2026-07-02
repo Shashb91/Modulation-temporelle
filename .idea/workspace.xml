@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Anisotropie Fonctionnelle !">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Anisotropie Fonctionnelle et implémentation d'une étude d'erreur rapide">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -179,14 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Création des fichiers pour la résolution temporelle">
-      <option name="closed" value="true" />
-      <created>1781169163000</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1781169163000</updated>
     </task>
     <task id="LOCAL-00045" summary="Implémentation de la résolution en milieu modulé en temps">
       <option name="closed" value="true" />
@@ -572,7 +563,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782989867366</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="Anisotropie Fonctionnelle et implémentation d'une étude d'erreur rapide">
+      <option name="closed" value="true" />
+      <created>1782997841508</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1782997841508</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -587,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentations des résolutions en front d'onde" />
     <MESSAGE value="Implémentations de la compression des fichiers" />
     <MESSAGE value="Création des fichiers pour la résolution temporelle" />
     <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
@@ -612,7 +610,8 @@
     <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Implémentation anisotropie" />
     <MESSAGE value="Anisotropie Fonctionnelle !" />
-    <option name="LAST_COMMIT_MESSAGE" value="Anisotropie Fonctionnelle !" />
+    <MESSAGE value="Anisotropie Fonctionnelle et implémentation d'une étude d'erreur rapide" />
+    <option name="LAST_COMMIT_MESSAGE" value="Anisotropie Fonctionnelle et implémentation d'une étude d'erreur rapide" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

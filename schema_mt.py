@@ -110,7 +110,7 @@ def LaxWendroff1D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2 * E[n]) for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2 * E[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_mt(data):
     """
@@ -156,7 +156,7 @@ def ADER41D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = data.dx*np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 """
 Résolution du problème de Cauchy 1D modulé en temps
@@ -203,7 +203,7 @@ def LaxWendroff1D_cauchy_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*E[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_cauchy_mt(data):
     """
@@ -254,7 +254,7 @@ def ADER41D_cauchy_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*np.array([sum([0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 /(2*E[n]) for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = data.dx*np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 /(2*E[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 """
 Résolution du problème de propagation 2D en mil
@@ -305,7 +305,7 @@ def LaxWendroff2D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
+    data.E = data.dx*[np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_mt(data):
     """
@@ -392,7 +392,7 @@ def ADER42D_mt(data):
 
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
+    data.E = data.dx*[np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 """
 Résolution du problème de Cauchy 2D modulé en temps
@@ -462,7 +462,7 @@ def LaxWendroff2D_cauchy_mt(data):
     data.U = data.U[:, 1:data.Mx + 1, :, :]
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
+    data.E = data.dx*[np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_cauchy_mt(data):
     """
@@ -747,4 +747,4 @@ def ADER42D_cauchy_mt(data):
     data.U = data.U[:, 2:data.Mx + 2, :, :]
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
     E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    data.E = data.dx*[np.sum(0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]), axis = (0,1)) for n in range(data.N)]
+    data.E = data.dx*[np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*E[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]

@@ -20,7 +20,7 @@ from sauvegarde import *
 from tracer import *
 
 rho = (100, 1000)
-c = (500, 1500)                                                                                                # c[0] < c[1]
+c = (500, 1000)                                                                                                # c[0] < c[1]
 e = (rho[0]*c[0]**2, rho[1]*c[1]**2)
 M = 150
 

@@ -73,7 +73,7 @@ def LaxWendroff_aniso(data):
 
     ec = 0.5 * (r00 * data.U[..., 0] ** 2 + r11 * data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 /(2*e)
-    data.E = np.sum(ec + ep, axis=(1, 2))
+    data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))
 
 def ADER4_aniso(data):
     """
@@ -160,4 +160,4 @@ def ADER4_aniso(data):
 
     ec = 0.5 * (r00 * data.U[..., 0] ** 2 + r11*data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 / (2*e)
-    data.E = np.sum(ec + ep, axis=(1, 2))
+    data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))

@@ -81,7 +81,7 @@ def LaxWendroff1D_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     sleep(0.01)
-    print("LaxWendroff 1D mt()")
+    print("\nLaxWendroff 1D mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
@@ -119,7 +119,7 @@ def ADER41D_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     sleep(0.01)
-    print("ADER4 1D mt()")
+    print("\nADER4 1D mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
@@ -169,7 +169,7 @@ def LaxWendroff1D_cauchy_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     sleep(0.01)
-    print("LaxWendroff 1D Cauchy mt()")
+    print("\nLaxWendroff 1D Cauchy mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
@@ -212,7 +212,7 @@ def ADER41D_cauchy_mt(data):
     :return: Donnee1D, solution en vitesse et pression du problème 1D
     """
     sleep(0.01)
-    print("ADER4 1D Cauchy mt()")
+    print("\nADER4 1D Cauchy mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.M, 2))
@@ -267,7 +267,7 @@ def LaxWendroff2D_mt(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     sleep(0.01)
-    print("LaxWendroff 2D mt()")
+    print("\nLaxWendroff 2D mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
@@ -314,7 +314,7 @@ def ADER42D_mt(data):
     :return: np.ndarray(), solution en vitesse et pression du problème 2D
     """
     sleep(0.01)
-    print("ADER4 2D mt()")
+    print("\nADER4 2D mt()")
     sleep(0.01)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
@@ -405,7 +405,7 @@ def LaxWendroff2D_cauchy_mt(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     sleep(0.01)
-    print("Lax Wendroff 2D Cauchy mt()")
+    print("\nLax Wendroff 2D Cauchy mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
@@ -471,7 +471,7 @@ def ADER42D_cauchy_mt(data):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     sleep(0.01)
-    print("ADER4 2D Cauchy mt()")
+    print("\nADER4 2D Cauchy mt()")
     sleep(0.01)
     data.CFL_maj()
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))

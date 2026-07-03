@@ -6,16 +6,12 @@ from tqdm import trange
 ncols = 125
 from donnee import Donnee2D
 
-def cmax(data, opt = True):
+def cmax(r00, r11, e, opt = True):
     """
     Renvoie la vitesse de phase polaire maximale et trace le profil de vitesse
     :param data:
     :return: float: vitesse de phase maximale
     """
-    (r0, r1) = data.rho
-    r00 = r0*data.alpha + r1*(1-data.alpha)
-    r11 = r0*r1/(data.alpha*r1 + r0*(1-data.alpha))
-    e = 1/(data.alpha/data.e[0] + (1-data.alpha)/data.e[1])
     c0,c1 = np.sqrt(e/r00), np.sqrt(e/r11)
     theta = np.linspace(0, 2*np.pi, 300)
     Vp = np.sqrt(c0**2*np.cos(theta)**2 + c1**2*np.sin(theta)**2)
@@ -45,17 +41,17 @@ def LaxWendroff_aniso(data):
         x, y = np.abs(data.ps[0][0] - i)*data.dx, np.abs(data.ps[0][1] - j)*data.dy
         return (1/(np.pi*sigma**2)*np.exp(-(x**2 + y**2)/sigma**2))*(0 <= x**2 + y**2 <= R**2)
 
+    print("\nLaxWendroff Anisotrope()")
     sleep(0.01)
-    print("LaxWendroff Anisotrope()")
-    sleep(0.01)
-    c = cmax(data)
-    data.CFL_aniso(c)
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
-
     (r0, r1) = data.rho
     r00 = r0*data.alpha + r1*(1-data.alpha)
     r11 = r0*r1/(data.alpha*r1 + r0*(1-data.alpha))
     e = 1/(data.alpha/data.e[0] + (1-data.alpha)/data.e[1])
+
+    c = cmax(r00, r11, e)
+    data.CFL_aniso(c)
+    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+
     A = np.array([[0, 0, 1/r11],
                   [0, 0, 0],
                   [e, 0, 0]])
@@ -91,16 +87,17 @@ def ADER4_aniso(data):
         return (1/(np.pi*sigma**2)*np.exp(-(x**2 + y**2)/sigma**2))*(0 <= x**2 + y**2 <= R**2)
 
     sleep(0.01)
-    print("ADER4 Anisotrope()")
+    print("\nADER4 Anisotrope()")
     sleep(0.01)
-    c = cmax(data, False)
-    data.CFL_aniso(c)
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
-
     (r0, r1) = data.rho
     r00 = r0*data.alpha + r1*(1-data.alpha)
     r11 = r0*r1/(data.alpha*r1 + r0*(1-data.alpha))
     e = 1/(data.alpha/data.e[0] + (1-data.alpha)/data.e[1])
+
+    c = cmax(r00, r11, e, False)
+    data.CFL_aniso(c)
+    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+
     A = np.array([[0, 0, 1/r11],
                   [0, 0, 0],
                   [e, 0, 0]])

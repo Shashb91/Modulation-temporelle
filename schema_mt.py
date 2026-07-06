@@ -8,8 +8,8 @@ from modulation import *
 #dérivées temporelles des matrices du probleme
 def A1D_mt(data):
     def f(t):
-        rho = data.rho*data.rho_mt(data)(t)
-        kappa = data.kappa*data.kappa_mt(data)(t)
+        rho = data.rho*data.rho_mt(data, data.eps_r)(t)
+        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
         A = np.array([[0, 1/rho[0]],
                       [kappa[0], 0]])
         B = np.array([[0,-rho[1]/rho[0]**2],
@@ -23,8 +23,8 @@ def A1D_mt(data):
 
 def A2D_mt(data):
     def f(t):
-        rho = data.rho*data.rho_mt(data)(t)
-        kappa = data.kappa*data.kappa_mt(data)(t)
+        rho = data.rho*data.rho_mt(data, data.eps_r)(t)
+        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
         A = np.array([[0, 0, 1/rho[0]],
                       [0, 0, 0],
                       [kappa[0], 0, 0]])
@@ -42,8 +42,8 @@ def A2D_mt(data):
 
 def B2D_mt(data):
     def f(t):
-        rho = data.rho*data.rho_mt(data)(t)
-        kappa = data.kappa*data.kappa_mt(data)(t)
+        rho = data.rho*data.rho_mt(data, data.eps_r)(t)
+        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
         A = np.array([[0, 0, 0],
                       [0, 0, 1/rho[0]],
                       [0, kappa[0], 0]])
@@ -61,8 +61,8 @@ def B2D_mt(data):
 
 def c_mt(data):
     def f(t):
-        rho = data.rho*data.rho_mt(data)(t)
-        kappa = data.kappa*data.kappa_mt(data)(t)
+        rho = data.rho*data.rho_mt(data, data.eps_r)(t)
+        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
         c = np.sqrt(kappa[0]/rho[0])
         c_ = 1/(2*c*rho[0]**2)*(kappa[1]*rho[0]-rho[1]*kappa[0])
         c__ = 1/(kappa[0]*rho[0])*((kappa[1]*rho[0]-rho[1]*kappa[1])*c_ - 2*c*((kappa[2]*rho[0] - rho[2]*kappa[0])*rho[0] - (kappa[1]*rho[0]-rho[1]*kappa[1])*rho[1])/rho[0])
@@ -87,8 +87,8 @@ def LaxWendroff1D_mt(data):
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         A, A_ = A1D_mt(data)(t)[0], A1D_mt(data)(t)[1]
         U_temp = data.U[n, :, :]
         U_temp_ = np.zeros(data.U[n, :, :].shape)
@@ -107,8 +107,8 @@ def LaxWendroff1D_mt(data):
         for i in range(data.M):
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ U_temp_[i, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2 * kappa[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_mt(data):
@@ -125,8 +125,8 @@ def ADER41D_mt(data):
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         g = A1D_mt(data)(t)
         U_temp = data.U[n, :, :]
         U_temp_ = np.zeros(data.U[n, :, :].shape)
@@ -153,8 +153,8 @@ def ADER41D_mt(data):
         for i in range(data.M):
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ U_temp_[i, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*kappa[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 """
@@ -175,14 +175,14 @@ def LaxWendroff1D_cauchy_mt(data):
 
     # init
     for i in range(0, data.M):
-        r = data.rho*data.rho_mt(data)(0)[0]
-        c = np.sqrt(data.kappa*data.kappa_mt(data)(0)[0] / r)
+        r = data.rho*data.rho_mt(data, data.eps_r)(0)[0]
+        c = np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(0)[0] / r)
         data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         A, A_ = A1D_mt(data)(t)[0], A1D_mt(data)(t)[1]
         U_temp = data.U[n, :, :]
         U_temp_ = np.zeros(data.U[n, :, :].shape)
@@ -200,8 +200,8 @@ def LaxWendroff1D_cauchy_mt(data):
         for i in range(data.M):
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0,0]*data.dt/2), np.exp(-S_n[1,1]*data.dt/2)]) @ U_temp_[i, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 / (2*kappa[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 def ADER41D_cauchy_mt(data):
@@ -218,14 +218,14 @@ def ADER41D_cauchy_mt(data):
 
     # init
     for i in range(0, data.M):
-        r = data.rho*data.rho_mt(data)(0)[0]
-        c = np.sqrt(data.kappa*data.kappa_mt(data)(0)[0] / r)
+        r = data.rho*data.rho_mt(data, data.eps_r)(0)[0]
+        c = np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(0)[0] / r)
         data.U[0,i,:] = 1/c * data.S(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/c) * np.array([1, c*r])
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         g = A1D_mt(data)(t)
         U_temp = data.U[n, :, :]
         U_temp_ = np.zeros(data.U[n, :, :].shape)
@@ -251,8 +251,8 @@ def ADER41D_cauchy_mt(data):
         for i in range(data.M):
             data.U[n + 1, i, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2)]) @ U_temp_[i, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = data.dx*np.array([sum([(0.5 * rho[n] * data.U[n, i, 0] ** 2 + data.U[n, i, 1]**2 /(2*kappa[n]))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
 
 """
@@ -273,9 +273,9 @@ def LaxWendroff2D_mt(data):
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
-        c = np.sqrt(kappa(t)[0]/rho(t)[0])
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
+        c = np.sqrt(data.kappa*kappa(t)[0]/(data.rho*rho(t)[0]))
         A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
         B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
         U_temp = data.U[n, ...]
@@ -302,8 +302,8 @@ def LaxWendroff2D_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = [np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_mt(data):
@@ -320,8 +320,8 @@ def ADER42D_mt(data):
 
     for n in trange(0, data.N - 1, ncols = ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         A = A2D_mt(data)(t)
         B = B2D_mt(data)(t)
         c = c_mt(data)(t)
@@ -389,8 +389,8 @@ def ADER42D_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2),np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = [np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 """
@@ -410,16 +410,16 @@ def LaxWendroff2D_cauchy_mt(data):
     data.U = np.zeros((data.N, data.Mx + 2, data.My, 3))
 
     # init
-    r = data.rho*data.rho_mt(data)(0)[0]
-    c = np.sqrt(data.kappa*data.kappa_mt(data)(0)[0] / r)
+    r = data.rho*data.rho_mt(data, data.eps_r)(0)[0]
+    c = np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(0)[0] / r)
     for i in range(0, data.Mx + 2):
         for j in range(0, data.My):
             data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / c) * np.array([0, 1, r * c]).transpose()
 
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         c = np.sqrt(data.kappa*kappa(t)[0]/(data.rho*rho(t)[0]))
         A, A_ = A2D_mt(data)(t)[0], A2D_mt(data)(t)[1]
         B, B_ = B2D_mt(data)(t)[0], B2D_mt(data)(t)[1]
@@ -459,8 +459,8 @@ def LaxWendroff2D_cauchy_mt(data):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     data.U = data.U[:, 1:data.Mx + 1, :, :]
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.kappa = [np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def ADER42D_cauchy_mt(data):
@@ -476,8 +476,8 @@ def ADER42D_cauchy_mt(data):
     data.U = np.zeros((data.N, data.Mx + 4, data.My, 3))
 
     # init
-    r = data.rho*data.rho_mt(data)(0)[0]
-    c = np.sqrt(data.kappa*data.kappa_mt(data)(0)[0] / r)
+    r = data.rho*data.rho_mt(data, data.eps_r)(0)[0]
+    c = np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(0)[0] / r)
     for i in range(0, data.Mx + 4):
         for j in range(0, data.My):
             data.U[0, i, j, :] = 1/c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / c) * np.array([0, 1, r * c]).transpose()
@@ -485,8 +485,8 @@ def ADER42D_cauchy_mt(data):
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2)]
     for n in trange(data.N - 1, ncols=ncols):
         t = n * data.dt
-        rho = data.rho_mt(data)
-        kappa = data.kappa_mt(data)
+        rho = data.rho_mt(data, data.eps_r)
+        kappa = data.kappa_mt(data, data.eps_kappa)
         A = A2D_mt(data)(t)
         B = B2D_mt(data)(t)
         c = c_mt(data)(t)
@@ -744,6 +744,6 @@ def ADER42D_cauchy_mt(data):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S_n[0, 0] * data.dt / 2), np.exp(-S_n[1, 1] * data.dt / 2), np.exp(-S_n[2, 2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     data.U = data.U[:, 2:data.Mx + 2, :, :]
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
     data.E = [np.sum((0.5 * rho[n] * data.U[n, ..., 0] ** 2 + data.U[n,..., 1]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]

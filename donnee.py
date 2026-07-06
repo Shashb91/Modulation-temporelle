@@ -68,7 +68,8 @@ class Donnee1D:
         if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
-        return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.kappa) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
+        return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", kappa : " + str(self.kappa) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(
+            self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def __eq__(self, other):
         return (self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_kappa == other.eps_kappa)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.kappa_mt == other.kappa_mt)
@@ -189,7 +190,7 @@ class Donnee2D:
         if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
-        return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.kappa) + ", rho : " + str(
+        return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", kappa : " + str(self.kappa) + ", rho : " + str(
                 self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(
                 self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
@@ -248,11 +249,8 @@ class Donnee2D:
             retour.xc = self.yc
             retour.x = self.y
             if type(self.rho) == tuple:
-                (r0, r1) = self.rho
-                r00 = r0 * self.alpha + r1 * (1 - self.alpha)
-                e = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
-                ec = 0.5 * (r00 * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / e
+                ec = 0.5 * (self.rho[0] * retour.U[..., 0] ** 2)
+                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
                 retour.E = np.sum(ec + ep, axis = 1)
             else:
                 retour.calcul_energie()
@@ -261,11 +259,8 @@ class Donnee2D:
             retour.xc = self.xc
             retour.x = self.x
             if type(self.rho) == tuple:
-                (r0, r1) = self.rho
-                r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
-                e = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
-                ec = 0.5 * (r11 * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / e
+                ec = 0.5 * (self.rho[1] * retour.U[..., 0] ** 2)
+                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
                 retour.E = np.sum(ec + ep, axis = 1)
             else:
                 retour.calcul_energie()
@@ -278,8 +273,8 @@ class Donnee2D:
         """
         rho, kappa = [],[]
         for t in self.t:
-            rho.append(self.rho_mt(self)(t)[0])
-            kappa.append(self.kappa_mt(self)(t)[0])
+            rho.append(self.rho*self.rho_mt(self)(t)[0])
+            kappa.append(self.kappa*self.kappa_mt(self)(t)[0])
         rho,kappa = np.array(rho),np.array(kappa)
         if "c" in kwargs.keys(): self.c = kwargs["c"]
         else: self.c: float = np.max(np.sqrt(kappa/rho))

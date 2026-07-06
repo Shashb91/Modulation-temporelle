@@ -329,9 +329,9 @@ def tracer_mt(data):
     r, e, c, Z = [], [], [], []
     for i in range(data.N):
         r.append(data.rho_mt(data)(data.dt * i)[0])
-        e.append(data.E_mt(data)(data.dt * i)[0])
-        c.append(np.sqrt(data.E_mt(data)(data.dt * i)[0]/data.rho_mt(data)(data.dt * i)[0]))
-        Z.append(data.rho_mt(data)(data.dt * i)[0]*np.sqrt(data.E_mt(data)(data.dt * i)[0]/data.rho_mt(data)(data.dt * i)[0]))
+        e.append(data.kappa_mt(data)(data.dt * i)[0])
+        c.append(np.sqrt(data.kappa_mt(data)(data.dt * i)[0] / data.rho_mt(data)(data.dt * i)[0]))
+        Z.append(data.rho_mt(data)(data.dt * i)[0] * np.sqrt(data.kappa_mt(data)(data.dt * i)[0] / data.rho_mt(data)(data.dt * i)[0]))
 
     ax1.plot(data.t, r, lw=2, c='red')
     ax1.grid(True)
@@ -365,7 +365,7 @@ def anim1D_mt(data, **kwargs):
     ax1, ax2 = axs[0, 0], axs[1, 0]
     ax3, ax4 = axs[0, 1], axs[1, 1]
     rho = [data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    E = [data.E_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    E = [data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
 
     line1, = ax1.plot([], [], color='darkblue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
@@ -424,6 +424,14 @@ def anim1D_mt(data, **kwargs):
     plt.show()
     return anim
 
+def tracer_energie(data):
+    plt.semilogy(data.t, data.E, 'r-')
+    plt.grid(True)
+    plt.xlabel("Temps")
+    plt.ylabel("log(Energie)")
+    plt.title("Evolution de l'énergie en échelle log")
+    plt.show()
+
 def anim1D_mt_comparaison(data1, data2, **kwargs):
     """
     Trace la comparaison entre deux Donnee2D, l'évolution de la vitesse, la pression et l'énergie des données de data1 et data2 dans le cas d'un milieu modulé en temps
@@ -437,7 +445,7 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     ax1, ax2 = axs[0, 0], axs[1, 0]
     ax3, ax4 = axs[0, 1], axs[1, 1]
     rho = [data1.rho_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
-    E = [data1.E_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
+    E = [data1.kappa_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
 
     line1_1, = ax1.plot([], [], color='darkblue', lw=2  , label = data1.label, ls = '-')
     line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, label = data2.label, ls = '--')

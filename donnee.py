@@ -4,13 +4,13 @@ from modulation import*
 import numpy as np
 
 class Donnee1D:
-    def __init__(self, c, rho, e, f = 20, xc = (0,400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
+    def __init__(self, c, rho, kappa, f = 20, xc = (0, 400), tc = (0, 0.125), M = 400, CFL = 0.95, **kwargs):
         """
         Initialisation d'une instance de Donnee1D, permettant à la résolution du problème 1D de proagation en milieu homogène ou modulée en temps
         """
         self.c : float = c                                                 #célérité en m/s
         self.rho : float = rho                                             #masse volumique en g/m^3
-        self.e : float = e                                                 #module d'Young en Pa
+        self.kappa : float = kappa                                                 #module d'Young en Pa
         self.f : float = f                                                 #frequence max observable
         self.xc : tuple = xc                                               #couple position min, max
         self.tc : tuple = tc                                               #couple temps init, final
@@ -45,18 +45,21 @@ class Donnee1D:
 
         if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
         else: self.eps_r = 0
-        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]
-        else: self.eps_E = 0
+        if "eps_E" in kwargs.keys(): self.eps_kappa = kwargs["eps_E"]
+        else: self.eps_kappa = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
 
         if "rho_mt" in kwargs.keys(): self.rho_mt = kwargs["rho_mt"]
         else: self.rho_mt = rho_sinus
-        if "E_mt" in kwargs.keys(): self.E_mt = kwargs["E_mt"]
-        else: self.E_mt = E_sinus
+        if "E_mt" in kwargs.keys(): self.kappa_mt = kwargs["E_mt"]
+        else: self.kappa_mt = kappa_sinus
 
         if "alpha" in kwargs.keys(): self.alpha = kwargs["alpha"]
         else: self.alpha = 0.5
+
+        if "param" in kwargs.keys(): self.param = kwargs["param"]
+        else: self.param = 0.5
 
     def __str__(self):
         f = self.omega/(2*np.pi)
@@ -65,10 +68,10 @@ class Donnee1D:
         if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
-        return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
+        return "\nDonnee1D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.kappa) + ", rho : " + str(self.rho) + ",\n" + "N : " + str(self.N) + ", M : " + str(self.M) + ", dx : " + str(self.dx) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def __eq__(self, other):
-        return (self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps_E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
+        return (self.M == other.M)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_kappa == other.eps_kappa)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.kappa_mt == other.kappa_mt)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -105,7 +108,7 @@ class Donnee1D:
         rho, E = [],[]
         for t in self.t:
             rho.append(self.rho_mt(self)(t)[0])
-            E.append(self.E_mt(self)(t)[0])
+            E.append(self.kappa_mt(self)(t)[0])
         rho,E = np.array(rho),np.array(E)
         self.c: float = np.max(np.sqrt(E/rho))
         self.dt : float = self.CFL * self.dx / self.c
@@ -116,13 +119,13 @@ class Donnee1D:
         self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (2*self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
 
 class Donnee2D:
-    def __init__(self, c, rho, e, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
+    def __init__(self, c, rho, kappa, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
         """
         Initialisation d'une instance de Donnee2D, permettant à la résolution du problème 2D de proagation en milieu homogène ou modulée en temps
         """
         self.c: float = c                                              # célérité en m/s
         self.rho: float = rho                                          # masse volumique en g/m^3
-        self.e : float = e                                             #module d'Young en Pa
+        self.kappa : float = kappa                                             #module d'Young en Pa
         self.f: float = f                                              # frequence max observable
         self.xc: tuple = xc                                            # couple position x min, max
         self.yc: tuple = yc                                            # couple position y min, max
@@ -163,18 +166,21 @@ class Donnee2D:
 
         if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
         else: self.eps_p = 0
-        if "eps_E" in kwargs.keys(): self.eps_E = kwargs["eps_E"]                #Modulation temporelle
-        else: self.eps_E = 0
+        if "eps_kappa" in kwargs.keys(): self.eps_kappa = kwargs["eps_kappa"]                #Modulation temporelle
+        else: self.eps_kappa = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
 
         if "rho_mt" in kwargs.keys(): self.rho_mt = kwargs["rho_mt"]
         else: self.rho_mt = rho_sinus
-        if "E_mt" in kwargs.keys(): self.E_mt = kwargs["E_mt"]
-        else: self.E_mt = E_sinus
+        if "kappa_mt" in kwargs.keys(): self.kappa_mt = kwargs["kappa_mt"]
+        else: self.kappa_mt = kappa_sinus
 
         if "alpha" in kwargs.keys(): self.alpha = kwargs["alpha"]
         else: self.alpha = 0.5
+
+        if "param" in kwargs.keys(): self.param = kwargs["param"]
+        else: self.param = 0.5
 
     def __str__(self):
         f = self.omega / (2 * np.pi)
@@ -183,12 +189,12 @@ class Donnee2D:
         if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"
         crit = str(crit) + mess
-        return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.e) + ", rho : " + str(
+        return "\nDonnee2D(" + self.label + ", c :" + str(self.c) + ", E : " + str(self.kappa) + ", rho : " + str(
                 self.rho) + ",\n" + "N : " + str(self.N) + ", Mx : " + str(self.Mx) + ", My : " + str(self.My) + ", dx : " + str(
                 self.dx) +  ", dy : " + str(self.dy) + ', dt : ' + str(self.dt) + ")\nlambda/dx = " + crit
 
     def __eq__(self, other):
-        return (self.c == other.c)*(self.rho == other.rho)*(self.Mx == other.Mx)*(self.My == other.My)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.yc == other.yc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_E == other.eps.E)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.E_mt == other.E_mt)
+        return (self.c == other.c)*(self.rho == other.rho)*(self.Mx == other.Mx)*(self.My == other.My)*(self.CFL == other.CFL)*(self.xc == other.xc)*(self.yc == other.yc)*(self.tc == other.tc)*(self.f == other.f)*(self.S == other.S)*(self.eps_r == other.eps_r)*(self.eps_kappa == other.eps_kappa)*(self.omega == other.omega)*(self.rho_mt == other.rho_mt)*(self.kappa_mt == other.kappa_mt)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -230,13 +236,13 @@ class Donnee2D:
         coupe = (int(coupe[0]), int(coupe[1]))
         pos = "-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
         try:
-            retour = Donnee1D(c=self.c, rho= self.rho, e = self.e, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_E, omega = self.omega,
-                              M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.E_mt,
+            retour = Donnee1D(c=self.c, rho= self.rho, kappa= self.kappa, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_kappa, omega = self.omega,
+                              M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.kappa_mt,
                               fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         except:
-            retour = Donnee1D(c=self.c, rho=self.rho, e=self.e, f=self.f, tc=self.tc,
-                            M=self.Mx, CFL = self.CFL, xc = self.xc,
-                            fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
+            retour = Donnee1D(c=self.c, rho=self.rho, kappa=self.kappa, f=self.f, tc=self.tc,
+                              M=self.Mx, CFL = self.CFL, xc = self.xc,
+                              fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         if coupe[0] != 0:  # coupe selon l'axe y
             retour.U = self.U[:, coupe[0], :, 1:]
             retour.xc = self.yc
@@ -244,7 +250,7 @@ class Donnee2D:
             if type(self.rho) == tuple:
                 (r0, r1) = self.rho
                 r00 = r0 * self.alpha + r1 * (1 - self.alpha)
-                e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+                e = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
                 ec = 0.5 * (r00 * retour.U[..., 0] ** 2)
                 ep = 0.5 * retour.U[..., 1] ** 2 / e
                 retour.E = np.sum(ec + ep, axis = 1)
@@ -257,7 +263,7 @@ class Donnee2D:
             if type(self.rho) == tuple:
                 (r0, r1) = self.rho
                 r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
-                e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+                e = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
                 ec = 0.5 * (r11 * retour.U[..., 0] ** 2)
                 ep = 0.5 * retour.U[..., 1] ** 2 / e
                 retour.E = np.sum(ec + ep, axis = 1)
@@ -270,13 +276,13 @@ class Donnee2D:
         Permet de corriger la CFL dans un milieu modulé en temps
         :return: None
         """
-        rho, E = [],[]
+        rho, kappa = [],[]
         for t in self.t:
             rho.append(self.rho_mt(self)(t)[0])
-            E.append(self.E_mt(self)(t)[0])
-        rho,E = np.array(rho),np.array(E)
+            kappa.append(self.kappa_mt(self)(t)[0])
+        rho,kappa = np.array(rho),np.array(kappa)
         if "c" in kwargs.keys(): self.c = kwargs["c"]
-        else: self.c: float = np.max(np.sqrt(E/rho))
+        else: self.c: float = np.max(np.sqrt(kappa/rho))
         self.dt : float = self.CFL * self.dx / self.c
         self.N: int = int(self.tc[1] / self.dt)
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
@@ -295,12 +301,20 @@ class Donnee2D:
         if type(self.rho) == float:
             ec = 0.5 * self.rho * (self.U[..., 0] ** 2 + self.U[..., 1] ** 2)
             ep = self.U[..., 2] ** 2 / (2*self.rho * self.c ** 2)
-            self.E = np.sum(ec + ep, axis=(1, 2))
+            self.E = np.sum((ec + ep)*self.dx*self.dy, axis=(1, 2))
         elif type(self.rho) == tuple:
             (r0, r1) = self.rho
             r00 = r0 * self.alpha + r1 * (1 - self.alpha)
             r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
-            e = 1 / (self.alpha / self.e[0] + (1 - self.alpha) / self.e[1])
+            e = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
             ec = 0.5 * (r00 * self.U[..., 0] ** 2 + r11 * self.U[..., 1] ** 2)
             ep = 0.5 * self.U[..., 2] ** 2 / (2*e)
-            self.E = np.sum(ec + ep, axis=(1, 2))
+            self.E = np.sum((ec + ep)*self.dx*self.dy, axis=(1, 2))
+
+    def aniso(self):
+        (r0, r1) = self.rho
+        r00 = r0 * self.alpha + r1 * (1 - self.alpha)
+        r11 = r0 * r1 / (self.alpha * r1 + r0 * (1 - self.alpha))
+        kappa = 1 / (self.alpha / self.kappa[0] + (1 - self.alpha) / self.kappa[1])
+        self.kappa = kappa
+        self.rho = (r00, r11)

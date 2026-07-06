@@ -21,12 +21,28 @@ from tracer import *
 
 rho = (100, 1000)
 c = (500, 1000)                                                                                                # c[0] < c[1]
-e = (rho[0]*c[0]**2, rho[1]*c[1]**2)
+kappa = (rho[0] * c[0] ** 2, rho[1] * c[1] ** 2)
 M = 150
+f_mt = 30
+modulation = "echelon"
+param = 0.5
+eps = 0.3                            # |eps| << 1, eps = 0 -> pas de modulation
 
-LW2D_ = Donnee2D(label ="LW_aniso", e = e, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
-                 xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000)
-LaxWendroff_aniso(LW2D_)
+if modulation == "echelon":
+    rho = rho_echelon
+    kappa = kappa_echelon
+elif modulation == "sinus":
+    rho = rho_sinus
+    kappa = kappa_sinus
+elif modulation == "triangle":
+    rho = rho_triangle
+    kappa = kappa_triangle
+
+if eps == 0: modulation = "0"
+
+LW2D_ = Donnee2D(label ="LW_aniso", kappa= kappa, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
+                 xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000, rho_mt = (rho, rho), kappa_mt = kappa)
+LaxWendroff_aniso_mt(LW2D_)
 # LW2D_ = charger('.save/LW_aniso_07-02_14-28-45.pkl')
 # sauvegarder(LW2D_, opt = True)
 anim2D(LW2D_)
@@ -42,7 +58,7 @@ anim2D(LW2D_)
 # anim1D_comparaison(LW2D_x_, LW2D_x)
 
 
-ADER42D_ = Donnee2D(label ="ADER2D_aniso", e = e, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
+ADER42D_ = Donnee2D(label ="ADER2D_aniso", kappa= kappa, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
                     xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 549)
 ADER4_aniso(ADER42D_)
 # ADER42D_ = charger('.save/ADER2D_aniso_07-02_14-54-38.pkl')

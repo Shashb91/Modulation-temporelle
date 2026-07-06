@@ -17,9 +17,9 @@ Implémentation de la résolution 1D homogène
 """
 #CFL = 0.6 afin de pouvoir comparer avec les projections 2D !!! par défaut à 0.95
 
-data1 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500,e = 2.25e9, rho = 1000, f = 20, label = "Lax Wendroff")                                #Lax Wendroff
-data2 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500,e = 2.25e9, rho = 1000, f = 20, label = "Analytique")                                  #ADER4
-data3 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500,e = 2.25e9, rho = 1000, f = 20, label = "ADER4")                                       #Solution analytique
+data1 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2), c = 1500, kappa= 2.25e9, rho = 1000, f = 20, label ="Lax Wendroff")                                #Lax Wendroff
+data2 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2), c = 1500, kappa= 2.25e9, rho = 1000, f = 20, label ="Analytique")                                  #ADER4
+data3 = Donnee1D(M = 150, CFL = 0.6, xc = (0, 300), tc = (0, 0.2), c = 1500, kappa= 2.25e9, rho = 1000, f = 20, label ="ADER4")                                       #Solution analytique
 LaxWendroff1D(data1)
 anim1D(data1)
 
@@ -37,7 +37,7 @@ anim1D_comparaison(data3, data2, interval = 30)                                 
 # sauvegarder(data1)
 # sauvegarder(data2)
 
-data2 = Donnee1D(M = 150,c = 1500, rho = 1000, e = 2.25e9, f=20,xc = (0, 300), tc = (0, 0.2), label = "Analytique", CFL = 0.6)
+data2 = Donnee1D(M = 150, c = 1500, rho = 1000, kappa= 2.25e9, f=20, xc = (0, 300), tc = (0, 0.2), label ="Analytique", CFL = 0.6)
 analytique1D_cauchy(data2)
 anim1D(data2)
 
@@ -71,14 +71,14 @@ Etude de l'erreur à t = 0.05s ! (t < xf/(2*c))
 Implémentation de la résolution 2D homogène
 ============================================================
 """
-data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D, Mx = 150, My = 150, CFL = 0.6, opt = False, f = 10, tc = (0, 0.2), xc = (0, 300), yc = (0, 300),c = 1500, rho = 1000, e = 2.25e9)
+data1 = Donnee2D(label="Lax Wendroff 2D", S = pt_source_2D, Mx = 150, My = 150, CFL = 0.6, opt = False, f = 10, tc = (0, 1), xc = (0, 300), yc = (0, 300), c = 1500, rho = 1000, kappa= 2.25e9)
 print(data1)
 LaxWendroff2D(data1)
 # data1 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
 # sauvegarder(data1, '.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
 anim2D(data1)
 
-data2 = Donnee2D(label="ADER4 2D", S = pt_source_2D, Mx = 150, My = 150, CFL = 0.6, opt = False, f = 10, tc = (0, 0.2), xc = (0, 300), yc = (0, 300),c = 1500, rho = 1000, e = 2.25e9)
+data2 = Donnee2D(label="ADER4 2D", S = pt_source_2D, Mx = 150, My = 150, CFL = 0.6, opt = False, f = 10, tc = (0, 0.2), xc = (0, 300), yc = (0, 300), c = 1500, rho = 1000, kappa= 2.25e9)
 print(data2)
 ADER42D(data2)
 # data1 = charger('.save_2D_nmt/Lax Wendroff 2D_06-23_16-30-26.pkl')
@@ -88,10 +88,10 @@ anim2D(data2)
 
 #Cas de l'onde plane avec un problème de Cauchy
 M = 150
-data4 = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2),CFL = 0.6, Mx = M, My = M, f = 20, e= 2.25e9)
-data5 = Donnee2D(label = "ADER4 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20, e = 2.25e9)
+data4 = Donnee2D(label = "Lax Wendroff 2D", opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20, kappa= 2.25e9)
+data5 = Donnee2D(label = "ADER4 2D", opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20, kappa= 2.25e9)
 
-data2 = Donnee1D(M = M, label = "Analytique", xs = 0, f = 20,c = 1500, rho = 1000, e = 2.25e9, CFL = 0.6, tc = (0, 0.2), xc = (0,300))
+data2 = Donnee1D(M = M, label = "Analytique", xs = 0, f = 20, c = 1500, rho = 1000, kappa= 2.25e9, CFL = 0.6, tc = (0, 0.2), xc = (0, 300))
 analytique1D_cauchy(data2)
 
 LaxWendroff2D_cauchy(data4)
@@ -116,11 +116,11 @@ anim1D_comparaison(data5_,data3, interval=30)
 
 erreur_LW = []
 for M in [125,150,200,250]:
-    LW2D = Donnee2D(label = "Lax Wendroff 2D",opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300),c = 1500, rho = 1000, e = 2.25e9, tc = (0, 0.2),CFL = 0.6, Mx = M, My = M, f = 20)
+    LW2D = Donnee2D(label = "Lax Wendroff 2D", opt = True, S=pt_source_1D, xc = (0,300), yc = (0,300), c = 1500, rho = 1000, kappa= 2.25e9, tc = (0, 0.2), CFL = 0.6, Mx = M, My = M, f = 20)
     LaxWendroff2D_cauchy(LW2D)
     LW2D_ = LW2D.projection((LW2D.Mx//2,0))
 
-    LW1D = Donnee1D(M = M, CFL = 0.6, xc = (0, 300), tc = (0, 0.2),c = 1500, rho = 1000, e = 2.29e9, f = 20, label = "Lax Wendroff")
+    LW1D = Donnee1D(M = M, CFL = 0.6, xc = (0, 300), tc = (0, 0.2), c = 1500, rho = 1000, kappa= 2.29e9, f = 20, label ="Lax Wendroff")
     LaxWendroff1D_cauchy(LW1D)
     print(LW2D_)
     print(LW1D)

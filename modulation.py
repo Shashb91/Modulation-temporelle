@@ -24,52 +24,52 @@ def rho_sinus(data):
         try : eps = data.eps
         except : eps = data.eps_r
         w = data.omega
-        return [data.rho * (1 - eps*np.sin(w*t + np.pi/2)), -data.rho * eps * w * np.cos(w*t + np.pi/2), data.rho * eps * w**2 * np.sin(w*t + np.pi/2), data.rho * eps * w**3 * np.cos(w*t + np.pi/2)]
+        return [(1 - eps*np.sin(w*t + np.pi/2)), eps * w * np.cos(w*t + np.pi/2), eps * w**2 * np.sin(w*t + np.pi/2), eps * w**3 * np.cos(w*t + np.pi/2)]
     return f
 
-def E_sinus(data):
+def kappa_sinus(data):
     def f(t):
         try : eps = data.eps
-        except : eps = data.eps_E
+        except : eps = data.eps_kappa
         w = data.omega
-        return [data.e * 1/(1 + eps*np.sin(w*t + np.pi/2)),
-                - data.e * eps * w *np.cos(w*t + np.pi/2)/(1 + eps*np.sin(w*t + np.pi/2))**2,
-                data.e * eps * w**2 * (np.sin(w*t + np.pi/2)*(1+eps*np.sin(w*t + np.pi/2))-2*eps*np.cos(w*t + np.pi/2)**2)/(1 + eps*np.sin(w*t + np.pi/2))**3,
-                - data.e * (eps*w**3*np.cos(w*t + np.pi/2)*(1+eps*np.sin(w*t + np.pi/2))**2+6*(1+eps*np.sin(w*t + np.pi/2))*eps**2*w**3*np.cos(w*t + np.pi/2)*np.sin(w*t + np.pi/2)+6*eps*w**3*np.cos(w*t + np.pi/2))/(1 + eps*np.sin(w*t + np.pi/2))**4]
+        return [1 / (1 + eps * np.sin(w * t + np.pi / 2)),
+                - eps * w * np.cos(w * t + np.pi / 2) / (1 + eps * np.sin(w * t + np.pi / 2)) ** 2,
+                eps * w ** 2 * (np.sin(w * t + np.pi / 2) * (1 + eps * np.sin(w * t + np.pi / 2)) - 2 * eps * np.cos(w * t + np.pi / 2) ** 2) / (1 + eps * np.sin(w * t + np.pi / 2)) ** 3,
+                - (eps * w ** 3 * np.cos(w * t + np.pi / 2) * (1 + eps * np.sin(w * t + np.pi / 2)) ** 2 + 6 * (1 + eps * np.sin(w * t + np.pi / 2)) * eps ** 2 * w ** 3 * np.cos(w * t + np.pi / 2) * np.sin(w * t + np.pi / 2) + 6 * eps * w ** 3 * np.cos(w * t + np.pi / 2)) / (1 + eps * np.sin(w * t + np.pi / 2)) ** 4]
     return f
 
 def rho_echelon(data):
     def f(t):
         try : eps = data.eps
         except : eps = data.eps_r
-        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.alpha
-        return [data.rho * (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
+        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.param
+        return [(1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
     return f
 
-def E_echelon(data):
+def kappa_echelon(data):
     def f(t):
         try : eps = data.eps
-        except : eps = data.eps_E
-        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.alpha
-        return [data.e / (1 + eps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T))), 0,0,0]
+        except : eps = data.eps_kappa
+        T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.param
+        return [1 / (1 + eps * (int(0 <= modulo(t, T) < alpha * T) - int(alpha * T <= modulo(t, T) < T))), 0, 0, 0]
     return f
 
 def rho_triangle(data):
     def f(t):
         try : eps = data.eps
         except : eps = data.eps_r
-        T, alpha = (2 * np.pi) / data.omega, data.alpha
+        T, alpha = (2 * np.pi) / data.omega, data.param
         tau = modulo(t, T)
-        return [data.rho * (1 + eps * (np.where(tau <= alpha * T, (2 * tau / (alpha * T)) - 1, (-2 / ((1 - alpha) * T)) * (tau - alpha * T) + 1))),
-                data.rho * (eps * (np.where(tau <= alpha * T, (2 / (alpha * T)) - 1, (-2 / ((1 - alpha) * T))))), 0, 0]
+        return [(1 + eps * (np.where(tau <= alpha * T, (2 * tau / (alpha * T)) - 1, (-2 / ((1 - alpha) * T)) * (tau - alpha * T) + 1))),
+                (eps * (np.where(tau <= alpha * T, (2 / (alpha * T)) - 1, (-2 / ((1 - alpha) * T))))), 0, 0]
     return f
 
-def E_triangle(data):
+def kappa_triangle(data):
     def f(t):
         try : eps = data.eps
-        except : eps = data.eps_E
-        T, alpha = (2*np.pi)/data.omega, data.alpha
+        except : eps = data.eps_kappa
+        T, alpha = (2*np.pi)/data.omega, data.param
         tau = modulo(t,T)
-        return [data.e / (1 + eps * (np.where(tau <= alpha * T, (2 * tau / (alpha * T)) - 1, (-2 / ((1 - alpha) * T)) * (tau - alpha * T) + 1))),
-                data.e / (eps * (np.where(tau <= alpha * T, (2 / (alpha * T)) - 1, (-2 / ((1 - alpha) * T))))), 0, 0]
+        return [1 / (1 + eps * (np.where(tau <= alpha * T, (2 * tau / (alpha * T)) - 1, (-2 / ((1 - alpha) * T)) * (tau - alpha * T) + 1))),
+                1 / (eps * (np.where(tau <= alpha * T, (2 / (alpha * T)) - 1, (-2 / ((1 - alpha) * T))))), 0, 0]
     return f

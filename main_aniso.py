@@ -21,11 +21,11 @@ from sauvegarde import *
 from tracer import *
 
 alpha = 0.25
-rho = (1000, 1000)
-c = (1000, 1000)                                                                                                # c[0] < c[1]
-kappa = rho[1] * c[1] ** 2
+rho = (750, 1000)
+c = (750, 1000)                                                                                                # c[0] < c[1]
+kappa = (rho[0] * c[0] ** 2, rho[1] * c[1] ** 2)
 M = 200
-f_mt = 30
+f_mt = 1/0.15
 modulation = "echelon"
 param = 0.5
 eps = 0.3                            # |eps| << 1, eps = 0 -> pas de modulation
@@ -45,7 +45,7 @@ if eps == 0: modulation = "0"
 LW2D_ = Donnee2D(label ="LW_aniso", kappa = kappa, rho = rho, alpha=0.25, Mx = M, My = M, S = pt_source_2D,
                  xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000)
 # LaxWendroff_aniso(LW2D_)
-# LW2D_ = charger('.save/LW_aniso_07-02_14-28-45.pkl')
+# LW2D_ = charger('.save/LW_aniso_mt=echelon_07-07_15-59-11.pkl')
 # sauvegarder(LW2D_, opt = True)
 # anim2D(LW2D_)
 
@@ -77,13 +77,13 @@ Anisotropie + modulation temporelle
 """
 
 LW2D_aniso_mt = Donnee2D(label ="LW_aniso_mt="+modulation, kappa = kappa, rho = rho, alpha = alpha, Mx = M, My = M, S = pt_source_2D,
-                 xc = (0, 800), yc = (0, 800), tc = (0, 0.8), f = 10, CFL = 0.6, c = 1500,
+                 xc = (0, 400), yc = (0, 400), tc = (0, 0.15), f = 10, CFL = 0.6, c = 1000,
                  rho_mt = (rho_, rho_), kappa_mt = kappa_, eps_r = (eps,0), eps_kappa = -eps, omega = 2*np.pi*f_mt, param = param)
-LaxWendroff_aniso_mt(LW2D_aniso_mt)
-# LW2D_aniso_mt = charger('.save/LW_aniso_mt=echelon_07-06_15-12-28.pkl')
-sauvegarder(LW2D_aniso_mt, opt = True)
-anim2D(LW2D_aniso_mt)
-tracer_energie(LW2D_aniso_mt)
+# LaxWendroff_aniso_mt(LW2D_aniso_mt)
+# LW2D_aniso_mt = charger('.save/LW_aniso_mt=echelon_07-07_15-59-11.pkl')
+# sauvegarder(LW2D_aniso_mt, opt = True)
+# anim2D(LW2D_aniso_mt)
+# tracer_energie(LW2D_aniso_mt)
 
 # LW2D_mt = Donnee2D(label ="LW_mt="+modulation, kappa= rho[1] * c[1] ** 2, rho = rho[0], alpha=0.25, Mx = M, My = M, S = pt_source_2D,
 #                  xc = (0, 400), yc = (0, 400), tc = (0, 0.8), f = 10, CFL = 0.6, c = 1500,
@@ -94,12 +94,40 @@ tracer_energie(LW2D_aniso_mt)
 # sauvegarder(LW2D_mt, opt = True)
 # anim2D(LW2D_mt)
 
-LW_aniso_mt_x, LW_aniso_mt_y = LW2D_aniso_mt.projection((M//2,0)), LW2D_aniso_mt.projection((0,M//2))
+# LW_aniso_mt_x, LW_aniso_mt_y = LW2D_aniso_mt.projection((M//2,0)), LW2D_aniso_mt.projection((0,M//2))
 # LW_mt_x, LW_mt_y = LW2D_mt.projection((M//2,0)), LW2D_mt.projection((0,M//2))
 
-anim1D(LW_aniso_mt_x)
-anim1D(LW_aniso_mt_y)
-tracer_energie(LW_aniso_mt_x)
-tracer_energie(LW_aniso_mt_y)
+# anim1D(LW_aniso_mt_x)
+# anim1D(LW_aniso_mt_y)
 # anim1D_comparaison(LW_mt_x, LW_aniso_mt_x)
 # anim1D_comparaison(LW_mt_y, LW_aniso_mt_y)
+
+
+ADER42D_aniso_mt = Donnee2D(label ="ADER4_aniso_mt="+modulation, kappa = kappa, rho = rho, alpha = alpha, Mx = M, My = M, S = pt_source_2D,
+                            xc = (0, 400), yc = (0, 400), tc = (0, 0.15), f = 10, CFL = 0.6, c = 1000,
+                            rho_mt = (rho_, rho_), kappa_mt = kappa_, eps_r = (eps,0), eps_kappa = -eps, omega = 2*np.pi*f_mt, param = param)
+# ADER4_aniso_mt(ADER42D_aniso_mt)
+# ADER42D_aniso_mt = charger('.save/ADER4_aniso_mt=echelon_07-07_15-52-09.pkl')
+# sauvegarder(ADER42D_aniso_mt, opt = True)
+# anim2D(ADER42D_aniso_mt)
+# tracer_energie(ADER42D_aniso_mt)
+# print(ADER42D_aniso_mt-LW2D_aniso_mt)
+
+# ADER42D_aniso_mt_x, ADER42D_aniso_mt_y = ADER42D_aniso_mt.projection((M//2,0)), ADER42D_aniso_mt.projection((0,M//2))
+# ADER4_mt_x, ADER4_mt_y = ADER4_mt.projection((M//2,0)), ADER4_mt.projection((0,M//2))
+
+# anim1D(ADER42D_aniso_mt_x)
+# anim1D(ADER42D_aniso_mt_y)
+# anim1D_comparaison(ADER4_mt_x, ADER42D_aniso_mt_x)
+# anim1D_comparaison(ADER4_mt_y, ADER42D_aniso_mt_y)
+
+
+LW2D_ms = Donnee2D(label ="ADER4_ms", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
+                   xc = (0, 200), yc = (0, 200), tc = (0, 0.1), f = 10, CFL = 0.6, c = 1000)
+l, L = 1, 4
+LaxWendroff_ms(LW2D_ms, l, L)
+sauvegarder(LW2D_ms)
+# LW2D_ms = charger('.save/ADER4_ms_07-08_14-38-52.pkl')
+# LW2D_ms = charger('.save/ADER4_ms_07-08_15-14-57.pkl')
+
+anim2D_ms(LW2D_ms, l, L)

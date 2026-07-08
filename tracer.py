@@ -224,7 +224,7 @@ def anim2D(data, **kwargs):
     ax3, ax4 = axs[1, 0], axs[1, 1]
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-    param = data.N//2
+    param = int(data.N*0.1)
     v_min, v_max = min(np.min(data.U[param:, ...,0]),np.min(data.U[param:,...,1])), max(np.max(data.U[param:,...,0]),np.max(data.U[param:,...,1]))
     im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax1.set_xlabel('Position x (m)')
@@ -586,5 +586,99 @@ def anim2D_EAP(data, **kwargs):
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+    plt.show()
+    return anim
+
+"""
+Fonctions de tracé pour le milieu anisotrope micro strucutré
+"""
+
+def anim2D_ms(data, l, L, **kwargs):
+    """
+    Trace l'évolution de la vitesse (vx, vy), la pression et l'énergie des données de data en 2D dans le cas du milieu anisotrope micro structuré
+    :param data: Donnee2D, regroupe l'ensemble des données du problème
+    :return: plot
+    """
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+    ax1, ax2 = axs[0, 0], axs[0, 1]
+    ax3, ax4 = axs[1, 0], axs[1, 1]
+    l, L = l // data.dy, L // data.dy
+
+    extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
+    param = int(data.N*0.1)
+    v_min, v_max = min(np.min(data.U[param:, ...,0]),np.min(data.U[param:,...,1])), max(np.max(data.U[param:,...,0]),np.max(data.U[param:,...,1]))
+    im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Position y (m)')
+    ax1.set_title('Champ des vitesses vx')
+    fig.colorbar(im1, ax=ax1)
+
+    im2 = ax2.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Position y (m)')
+    ax2.set_title('Champ des vitesses vy')
+    fig.colorbar(im2, ax=ax2)
+
+    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=np.min(data.U[param:,..., 2]), vmax=np.max(data.U[param:,..., 2]), vcenter = 0))
+    ax3.set_xlabel('Position x (m)')
+    ax3.set_ylabel('Position y (m)')
+    ax3.set_title('Champ des pressions')
+    fig.colorbar(im3, ax=ax3)
+
+    line4, = ax4.plot([], [], color='gold', lw=2)
+    ax4.set_xlim(data.t[0], data.t[-1])
+    ax4.set_ylim(np.min(data.E) * 0.9, np.max(data.E) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel('Energie (J)')
+    ax4.set_title("Evolution de l'energie (J)")
+    ax4.grid(True)
+    title = fig.suptitle('', fontsize=14)
+
+    def init():
+        im1.set_data(np.zeros((len(data.y), len(data.x))))
+        im2.set_data(np.zeros((len(data.y), len(data.x))))
+        im3.set_data(np.zeros((len(data.y), len(data.x))))
+        line4.set_data([], [])
+        title.set_text('Courbes 2D pour la solution ' + data.label)
+
+        for j in range(data.My):
+            if j % (l +L) == l or j % (l + L) == l + L:
+                ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+                ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+                ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+
+        return im1, im2, im3, line4
+
+    def update(n):
+        im1.set_data(data.U[n, :, :, 0].transpose())
+        im2.set_data(data.U[n, :, :, 1].transpose())
+        im3.set_data(data.U[n, :, :, 2].transpose())
+        line4.set_data(data.t[:n + 1], data.E[:n + 1])
+
+        for j in range(data.My):
+            if j % (l +L) == l or j % (l + L) == l + L:
+                ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+                ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+                ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+
+        title.set_text(f'Évolution des champs à t = {data.t[n]:.3f} s')
+        return im1, im2, im3, line4
+
+    ax1.set_box_aspect(1)
+    ax2.set_box_aspect(1)
+    ax3.set_box_aspect(1)
+    ax4.set_box_aspect(1)
+
+    plt.tight_layout()
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
+    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+
+    for j in range(data.My):
+        if j % (l +L) == l or j % (l + L) == l + L:
+            ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+            ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+            ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
+
     plt.show()
     return anim

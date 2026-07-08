@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Corrections de E vers kappa">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Résolution du problème anisotrope modulé en temps">
+      <change afterPath="$PROJECT_DIR$/dispersion_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
@@ -75,7 +73,7 @@
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "settings.editor.selected.configurable": "editor.preferences.completion",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
@@ -181,14 +179,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00049" summary="Ajout de la diversification en modulation temporelle">
-      <option name="closed" value="true" />
-      <created>1781511732043</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1781511732043</updated>
     </task>
     <task id="LOCAL-00050" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -574,7 +564,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783330593408</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <task id="LOCAL-00098" summary="Résolution du problème anisotrope modulé en temps">
+      <option name="closed" value="true" />
+      <created>1783353804105</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1783353804105</updated>
+    </task>
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -589,7 +587,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Création des fichiers pour la résolution temporelle" />
     <MESSAGE value="Implémentation de la résolution en milieu modulé en temps" />
     <MESSAGE value="Implémentation fonctionnelle de la modulation temporelle" />
     <MESSAGE value="Ajout de la diversification en modulation temporelle" />
@@ -614,7 +611,8 @@
     <MESSAGE value="Anisotropie Fonctionnelle et implémentation d'une étude d'erreur rapide" />
     <MESSAGE value="Corrections mineures" />
     <MESSAGE value="Corrections de E vers kappa" />
-    <option name="LAST_COMMIT_MESSAGE" value="Corrections de E vers kappa" />
+    <MESSAGE value="Résolution du problème anisotrope modulé en temps" />
+    <option name="LAST_COMMIT_MESSAGE" value="Résolution du problème anisotrope modulé en temps" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

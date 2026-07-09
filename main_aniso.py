@@ -21,8 +21,8 @@ from sauvegarde import *
 from tracer import *
 
 alpha = 0.25
-rho = (750, 1000)
-c = (750, 1000)                                                                                                # c[0] < c[1]
+rho = (300, 1000)
+c = (500, 1000)                                                                                                # c[0] < c[1]
 kappa = (rho[0] * c[0] ** 2, rho[1] * c[1] ** 2)
 M = 200
 f_mt = 1/0.15
@@ -122,12 +122,30 @@ ADER42D_aniso_mt = Donnee2D(label ="ADER4_aniso_mt="+modulation, kappa = kappa, 
 # anim1D_comparaison(ADER4_mt_y, ADER42D_aniso_mt_y)
 
 
-LW2D_ms = Donnee2D(label ="ADER4_ms", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
-                   xc = (0, 200), yc = (0, 200), tc = (0, 0.1), f = 10, CFL = 0.6, c = 1000)
-l, L = 1, 4
-LaxWendroff_ms(LW2D_ms, l, L)
-sauvegarder(LW2D_ms)
-# LW2D_ms = charger('.save/ADER4_ms_07-08_14-38-52.pkl')
+LW2D_ms = Donnee2D(label ="LW_ms", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
+                   xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000)
+l, L = 15 * LW2D_ms.dy, 5 * LW2D_ms.dy
+# LaxWendroff_ms(LW2D_ms, l, L)
+# sauvegarder(LW2D_ms)
+LW2D_ms = charger('.save/LW_ms_07-09_10-20-53.pkl')
+anim2D_ms(LW2D_ms, l, L, interval = 0.005, param=0.75)
 # LW2D_ms = charger('.save/ADER4_ms_07-08_15-14-57.pkl')
+# anim2D_ms(LW2D_ms, l, L)
 
-anim2D_ms(LW2D_ms, l, L)
+data_x, data_y = LW2D_ms.projection((M//2,0)), LW2D_ms.projection((0, M//2))
+anim1D(data_x)
+anim1D(data_y)
+
+ADER42D_ms = Donnee2D(label ="ADER4_ms", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
+                   xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.95, c = 1000)
+l, L = 15 * ADER42D_ms.dy, 5 * ADER42D_ms.dy
+ADER4_ms(ADER42D_ms, l, L)
+sauvegarder(ADER42D_ms)
+# ADER42D_ms = charger('.save/ADER4_ms_07-09_10-20-53.pkl')
+anim2D_ms(ADER42D_ms, l, L, interval = 0.005, param=0.75)
+# ADER42D_ms = charger('.save/ADER4_ms_07-08_15-14-57.pkl')
+# anim2D_ms(ADER42D_ms, l, L)
+
+data_x, data_y = ADER42D_ms.projection((M//2,0)), ADER42D_ms.projection((0, M//2))
+anim1D(data_x)
+anim1D(data_y)

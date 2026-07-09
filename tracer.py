@@ -603,9 +603,10 @@ def anim2D_ms(data, l, L, **kwargs):
     ax1, ax2 = axs[0, 0], axs[0, 1]
     ax3, ax4 = axs[1, 0], axs[1, 1]
     l, L = l // data.dy, L // data.dy
+    if "param" in kwargs.keys(): param = int(kwargs["param"]*data.N)
+    else: param = int(data.N*0.5)
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-    param = int(data.N*0.1)
     v_min, v_max = min(np.min(data.U[param:, ...,0]),np.min(data.U[param:,...,1])), max(np.max(data.U[param:,...,0]),np.max(data.U[param:,...,1]))
     im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax1.set_xlabel('Position x (m)')
@@ -634,51 +635,38 @@ def anim2D_ms(data, l, L, **kwargs):
     ax4.grid(True)
     title = fig.suptitle('', fontsize=14)
 
+    hlines = []
+    for j in range(data.My):
+        if j % (l + L) == L or j % (l + L) == 0:
+            y = j * data.dy - data.yc[1] / 2
+            for ax in (ax1, ax2, ax3):
+                h = ax.axhline(y=y, xmin=-data.xc[1]/2, xmax=data.xc[1]/2, c='black', lw=1, ms=0, animated=True)
+                hlines.append(h)
+
     def init():
         im1.set_data(np.zeros((len(data.y), len(data.x))))
         im2.set_data(np.zeros((len(data.y), len(data.x))))
         im3.set_data(np.zeros((len(data.y), len(data.x))))
         line4.set_data([], [])
         title.set_text('Courbes 2D pour la solution ' + data.label)
-
-        for j in range(data.My):
-            if j % (l +L) == l or j % (l + L) == l + L:
-                ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-                ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-                ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-
-        return im1, im2, im3, line4
+        return im1, im2, im3, *hlines, line4
 
     def update(n):
         im1.set_data(data.U[n, :, :, 0].transpose())
         im2.set_data(data.U[n, :, :, 1].transpose())
         im3.set_data(data.U[n, :, :, 2].transpose())
         line4.set_data(data.t[:n + 1], data.E[:n + 1])
-
-        for j in range(data.My):
-            if j % (l +L) == l or j % (l + L) == l + L:
-                ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-                ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-                ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-
         title.set_text(f'Évolution des champs à t = {data.t[n]:.3f} s')
-        return im1, im2, im3, line4
+        return im1, im2, im3, *hlines, line4
 
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
     ax4.set_box_aspect(1)
 
-    plt.tight_layout()
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
-
-    for j in range(data.My):
-        if j % (l +L) == l or j % (l + L) == l + L:
-            ax1.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-            ax2.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
-            ax3.axhline(y = j*data.dy - data.yc[1]/2,xmin = -data.xc[1]/2, xmax = data.xc[1]/2, c = 'black', lw = 1, ms = 0)
 
     plt.show()
     return anim

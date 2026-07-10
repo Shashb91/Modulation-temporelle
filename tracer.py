@@ -603,11 +603,18 @@ def anim2D_ms(data, l, L, **kwargs):
     ax1, ax2 = axs[0, 0], axs[0, 1]
     ax3, ax4 = axs[1, 0], axs[1, 1]
     l, L = l // data.dy, L // data.dy
-    if "param" in kwargs.keys(): param = int(kwargs["param"]*data.N)
+    if "param" in kwargs.keys(): param = int(kwargs["param"]*data.N/data.tc[1])
     else: param = int(data.N*0.5)
 
+    if "tf" in kwargs.keys():
+        tf = kwargs["tf"]
+        N = int(kwargs["tf"]*data.N/data.tc[1])
+    else:
+        tf = data.tc[1]
+        N = data.N
+
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
-    v_min, v_max = min(np.min(data.U[param:, ...,0]),np.min(data.U[param:,...,1])), max(np.max(data.U[param:,...,0]),np.max(data.U[param:,...,1]))
+    v_min, v_max = min(np.min(data.U[param:N, ...,0]),np.min(data.U[param:N,...,1])), max(np.max(data.U[param:N,...,0]),np.max(data.U[param:N,...,1]))
     im1 = ax1.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Position y (m)')
@@ -620,14 +627,14 @@ def anim2D_ms(data, l, L, **kwargs):
     ax2.set_title('Champ des vitesses vy')
     fig.colorbar(im2, ax=ax2)
 
-    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=np.min(data.U[param:,..., 2]), vmax=np.max(data.U[param:,..., 2]), vcenter = 0))
+    im3 = ax3.imshow(np.zeros((len(data.y), len(data.x))), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=np.min(data.U[param:N,..., 2]), vmax=np.max(data.U[param:N,..., 2]), vcenter = 0))
     ax3.set_xlabel('Position x (m)')
     ax3.set_ylabel('Position y (m)')
     ax3.set_title('Champ des pressions')
     fig.colorbar(im3, ax=ax3)
 
     line4, = ax4.plot([], [], color='gold', lw=2)
-    ax4.set_xlim(data.t[0], data.t[-1])
+    ax4.set_xlim(data.t[0], tf)
     ax4.set_ylim(np.min(data.E) * 0.9, np.max(data.E) * 1.1)
     ax4.set_xlabel('Temps t (s)')
     ax4.set_ylabel('Energie (J)')
@@ -637,7 +644,7 @@ def anim2D_ms(data, l, L, **kwargs):
 
     hlines = []
     for j in range(data.My):
-        if j % (l + L) == L or j % (l + L) == 0:
+        if (j + L//2) % (l + L) == L or (j + L//2) % (l + L) == 0:
             y = j * data.dy - data.yc[1] / 2
             for ax in (ax1, ax2, ax3):
                 h = ax.axhline(y=y, xmin=-data.xc[1]/2, xmax=data.xc[1]/2, c='black', lw=1, ms=0, animated=True)
@@ -666,7 +673,7 @@ def anim2D_ms(data, l, L, **kwargs):
 
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
-    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+    anim = FuncAnimation(fig, update, init_func=init, frames= N, interval=interval, blit=True)
 
     plt.show()
     return anim

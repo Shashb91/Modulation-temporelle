@@ -312,7 +312,6 @@ def LaxWendroff_ms(data, l, L):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     l, L = l//data.dy, L//data.dy
-    data.ps = [(0,0)]
 
     def G(i, j):
         sigma, R = 5 * data.dx, 10 * data.dx
@@ -332,13 +331,13 @@ def LaxWendroff_ms(data, l, L):
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
                 s = data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * G(i, j) * np.array([0, 0, 1]).transpose()
-                if j % (l + L) <= L:
+                if (j + L//2) % (l + L) <= L:
                     a1 = (data.dt / (2 * data.dx)) * A[0] @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
                     a2 = (data.dt / (2 * data.dy)) * B[0] @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
                     b1 = (0.5 * data.dt ** 2 * A[0] @ A[0]) @ ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
                     b2 = (0.5 * data.dt ** 2 * B[0] @ B[0]) @ ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
                     b3 = 1 / (4 * data.dx * data.dy) * (0.5 * data.dt ** 2 * (A[0] @ B[0] + B[0] @ A[0])) @ (data.U[n, i + 1, j + 1] - data.U[n, i + 1, j - 1] - data.U[n, i - 1, j + 1] + data.U[n, i - 1, j - 1])
-                if j % (l + L) > L:
+                if (j + L//2) % (l + L) > L:
                     a1 = (data.dt / (2 * data.dx)) * A[1] @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
                     a2 = (data.dt / (2 * data.dy)) * B[1] @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
                     b1 = (0.5 * data.dt ** 2 * A[1] @ A[1]) @ ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
@@ -358,8 +357,12 @@ def ADER4_ms(data, l, L):
     """
     Utilise le schéma d'ADER4 pour résoudre le problème de propagation 2D dans un milieu anisotrope micro structuré
     :param data: Donnee2D, regroupe l'ensemble des données du probleme
-    :return: np.ndarray(), solution en vitesse et pression du problème 2D
+    :param l: float, correspond à la largeur de la première couche, en m
+    :param L: float, correspond à la largeur de la deuxieème couche, en m
+    :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    l, L = l//data.dy, L//data.dy
+    data.ps = [(data.Mx//2, data.My//2 + L//2)]
 
     def G(i, j):
         sigma, R = 5 * data.dx, 10 * data.dx
@@ -369,7 +372,6 @@ def ADER4_ms(data, l, L):
     sleep(0.01)
     print("\nADER4 Micro Structuré()")
     sleep(0.01)
-    l, L = l//data.dy, L//data.dy
     (rho0, rho1) = data.rho
     (kappa0, kappa1) = data.kappa
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
@@ -424,17 +426,17 @@ def ADER4_ms(data, l, L):
                         ]
 
                 if j % (l + L) <= L:
-                    a1 = - data.dt* (A[0] @ dxU[1] + B[0] @ dyU[1]) 
+                    a1 = - data.dt* (A[0] @ dxU[1] + B[0] @ dyU[1])
                     a2 = data.dt**2/2 * (A[0] @ A[0] @ dxU[2] + (A[0] @ B[0] + B[0] @ A[0]) @ dxyU[0] + B[0] @ B[0] @ dyU[2])
                     a3 = - data.dt**3/6 * (A[0] @ A[0] @ A[0] @ dxU[3] + B[0] @ B[0] @ B[0] @ dyU[3] + (A[0] @ A[0] @ B[0] + B[0] @ A[0] @ A[0]) @ dxyU[2] + (B[0] @ B[0] @ A[0] + A[0] @ B[0] @ B[0]) @ dxyU[1])
                     a4 = data.dt**4/24 * (A[0] @ A[0] @ A[0] @ A[0] @ dxU[4] + B[0] @ B[0] @ B[0] @ B[0] @ dyU[4] + (A[0] @ A[0] @ A[0] @ B[0] + B[0] @ A[0] @ A[0] @ A[0]) @ dxyU[4] + (A[0] @ A[0] @ B[0] @ B[0] + B[0] @ B[0] @ A[0] @ A[0]) @ dxyU[3] + (B[0] @ B[0] @ B[0] @ A[0] + A[0] @ B[0] @ B[0] @ B[0]) @ dxyU[5])
 
                 if j % (l + L) > L:
-                    a1 = - data.dt* (A[1] @ dxU[1] + B[1] @ dyU[1]) 
+                    a1 = - data.dt* (A[1] @ dxU[1] + B[1] @ dyU[1])
                     a2 = data.dt**2/2 * (A[1] @ A[1] @ dxU[2] + (A[1] @ B[1] + B[1] @ A[1]) @ dxyU[0] + B[1] @ B[1] @ dyU[2])
                     a3 = - data.dt**3/6 * (A[1] @ A[1] @ A[1] @ dxU[3] + B[1] @ B[1] @ B[1] @ dyU[3] + (A[1] @ A[1] @ B[1] + B[1] @ A[1] @ A[1]) @ dxyU[2] + (B[1] @ B[1] @ A[1] + A[1] @ B[1] @ B[1]) @ dxyU[1])
-                    a4 = data.dt**4/24 * (A[1] @ A[1] @ A[1] @ A[1] @ dxU[4] + B[1] @ B[1] @ B[1] @ B[1] @ dyU[4] + (A[1] @ A[1] @ A[1] @ B[1] + B[1] @ A[1] @ A[1] @ A[1]) @ dxyU[4] + (A[1] @ A[1] @ B[1] @ B[1] + B[1] @ B[1] @ A[1] @ A[1]) @ dxyU[3] + (B[1] @ B[1] @ B[1] @ A[1] + A[1] @ B[1] @ B[1] @ B[1]) @ dxyU[5])                                  
-                
+                    a4 = data.dt**4/24 * (A[1] @ A[1] @ A[1] @ A[1] @ dxU[4] + B[1] @ B[1] @ B[1] @ B[1] @ dyU[4] + (A[1] @ A[1] @ A[1] @ B[1] + B[1] @ A[1] @ A[1] @ A[1]) @ dxyU[4] + (A[1] @ A[1] @ B[1] @ B[1] + B[1] @ B[1] @ A[1] @ A[1]) @ dxyU[3] + (B[1] @ B[1] @ B[1] @ A[1] + A[1] @ B[1] @ B[1] @ B[1]) @ dxyU[5])
+
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] + a1 + a2 + a3 + a4 + s
 
     data.E = np.zeros(data.N)
@@ -618,6 +620,16 @@ def LaxWendroff_ms_mt(data, l, L):
     :param L: float, correspond à la largeur de la deuxieème couche, en m
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    l, L = l//data.dy, L//data.dy
+    data.ps = [(data.Mx//2, data.My//2 + L//2)]
+    rho1 = data.rho_mt[0](data, data.eps_r[0])
+    rho2 = data.rho_mt[1](data, data.eps_r[1])
+    kappa1 = data.kappa_mt[0](data, data.eps_kappa[0])
+    kappa2 = data.kappa_mt[1](data, data.eps_kappa[1])
+    c1 = np.array([np.sqrt(data.kappa[0]*kappa1(data.t[n])[0]/(data.rho[0]*rho1(data.t[n])[0])) for n in range(data.N)])
+    c2 = np.array([np.sqrt(data.kappa[1]*kappa2(data.t[n])[0]/(data.rho[1]*rho2(data.t[n])[0])) for n in range(data.N)])
+    c = max(np.max(c1), np.max(c2))
+    data.CFL_maj(c = c)
 
     def G(i, j):
         sigma, R = 5 * data.dx, 10 * data.dx
@@ -625,15 +637,10 @@ def LaxWendroff_ms_mt(data, l, L):
         return (1 / (np.pi * sigma ** 2) * np.exp(-(x ** 2 + y ** 2) / sigma ** 2)) * (0 <= x ** 2 + y ** 2 <= R ** 2)
 
     print("\nLaxWendroff Micro Structuré Modulation Temporelle()")
-    l, L = l//data.dy, L//data.dy
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
 
     for n in trange(0, data.N - 1, ncols=ncols):
         t = data.dt * n
-        rho1 = data.rho_mt[0](data, data.eps_r[0])
-        rho2 = data.rho_mt[1](data, data.eps_r[1])
-        kappa1 = data.kappa_mt[0](data, data.eps_kappa[0])
-        kappa2 = data.kappa_mt[1](data, data.eps_kappa[1])
         #ATTENTION A_ et B_ SONT LES MATRICES DANS LE MILIEU 2, PAS LA DERIVEE TEMPORELLE COMME AVANT !!!!
         A, A_ = A2D_ms(data)(t)[0], A2D_ms(data)(t)[1]
         B, B_ = B2D_ms(data)(t)[0], B2D_ms(data)(t)[1]
@@ -644,13 +651,13 @@ def LaxWendroff_ms_mt(data, l, L):
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
         for i in range(0, data.Mx):
             for j in range(0, data.My):
-                if j % (l + L) >= L: U_temp[i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ data.U[n, i, j, :]
+                if (j + L//2) % (l + L) <= L: U_temp[i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ data.U[n, i, j, :]
                 else: U_temp[i, j, :] = np.diag([np.exp(-S_[0] * data.dt / 2), np.exp(-S_[1] * data.dt / 2), np.exp(-S_[2] * data.dt / 2)]) @ data.U[n, i, j, :]
 
         for i in range(1, data.Mx - 1):
             for j in range(1, data.My - 1):
                 s = data.dt / (np.sqrt(data.dx)) * data.S(data.f, (n + 1) * data.dt) * G(i, j) * np.array([0, 0, 1]).transpose()
-                if j % (l + L) >= L:
+                if (j + L//2) % (l + L) <= L:
                     a1 = (1 / (2 * data.dx)) * (data.dt* A[0] + data.dt**2/2*A[1]) @ (U_temp[i + 1, j, :] - U_temp[i - 1, j, :])
                     a2 = (1 / (2 * data.dy)) * (data.dt* B[0] + data.dt**2/2*B[1]) @ (U_temp[i, j + 1, :] - U_temp[i, j - 1, :])
                     b1 = (0.5 * data.dt ** 2 * A[0] @ A[0]) @ ((U_temp[i + 1, j, :] + U_temp[i - 1, j, :] - 2 * U_temp[i, j, :]) / data.dx ** 2)
@@ -669,7 +676,7 @@ def LaxWendroff_ms_mt(data, l, L):
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
         for i in range(0, data.Mx):
             for j in range(0, data.My):
-                if j % (l + L) >= L: data.U[n + 1, i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ U_temp_[i, j, :]
+                if (j + L//2) % (l + L) <= L: data.U[n + 1, i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ U_temp_[i, j, :]
                 else: data.U[n + 1, i, j, :] = np.diag([np.exp(-S_[0] * data.dt / 2), np.exp(-S_[1] * data.dt / 2), np.exp(-S_[2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
     rho1 = [data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(data.dt * n)[0] for n in range(data.N)]
@@ -678,8 +685,9 @@ def LaxWendroff_ms_mt(data, l, L):
     kappa2 = [data.kappa[1] * data.kappa_mt[1](data, data.eps_kappa[1])(data.dt * n)[0] for n in range(data.N)]
     data.E = np.zeros(data.N)
     for j in range(data.My):
-        if j % (l + L) >= L: data.E += np.sum(0.5 * rho1 * (data.U[..., j, 0] ** 2 + data.U[..., j, 1] ** 2) + 0.5 * data.U[..., j, 2] ** 2/kappa1, axis = 1)
-        else: data.E += np.sum(0.5 * rho2[:] * (data.U[..., j, 0] ** 2 + data.U[..., j, 1] ** 2) + 0.5 * data.U[..., j, 2] ** 2/kappa2[:], axis = 1)
+        for n in range(data.N):
+            if j % (l + L) <= L: data.E[n] += np.sum(0.5 * rho1[n] * (data.U[n, :, j, 0] ** 2 + data.U[n, :, j, 1] ** 2) + 0.5 * data.U[n, :, j, 2] ** 2/kappa1[n], axis = 0)
+            else: data.E[n] += np.sum(0.5 * rho2[n] * (data.U[n, :, j, 0] ** 2 + data.U[n, :, j, 1] ** 2) + 0.5 * data.U[n, :, j, 2] ** 2/kappa2[n], axis = 0)
 
 def ADER4_ms_mt(data):
     """

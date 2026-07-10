@@ -76,7 +76,7 @@ def compresser(instance):
     instance_lite.label += " compressé"
     return instance_lite
 
-def sauvegarder_lite(instance, nom_fichier = "", opt = False):
+def sauvegarder_compresser(instance, nom_fichier = "", opt = False):
     """
     Sauvegarde une instance uniquement de Donnee1D ou Donnee2D dans un fichier binaire (.pkl) en version lite
     :param instance: Donnee1D ou Donnee2D à sauvegarder.

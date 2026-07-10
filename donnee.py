@@ -271,13 +271,16 @@ class Donnee2D:
         Permet de corriger la CFL dans un milieu modulé en temps
         :return: None
         """
-        rho, kappa = [],[]
-        for t in self.t:
-            rho.append(self.rho*self.rho_mt(self)(t)[0])
-            kappa.append(self.kappa*self.kappa_mt(self)(t)[0])
-        rho,kappa = np.array(rho),np.array(kappa)
-        if "c" in kwargs.keys(): self.c = kwargs["c"]
-        else: self.c: float = np.max(np.sqrt(kappa/rho))
+        if "c" in kwargs.keys():
+            self.c = kwargs["c"]
+        else:
+            rho, kappa = [], []
+            for t in self.t:
+                rho.append(self.rho * self.rho_mt(self)(t)[0])
+                kappa.append(self.kappa * self.kappa_mt(self)(t)[0])
+            rho, kappa = np.array(rho), np.array(kappa)
+            self.c: float = np.max(np.sqrt(kappa/rho))
+
         self.dt : float = self.CFL * self.dx / self.c
         self.N: int = int(self.tc[1] / self.dt)
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)

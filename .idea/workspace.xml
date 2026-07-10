@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle de la résolution en milieu micro structuré">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle de la résolution en milieu micro structuré mt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sauvegarde.py" beforeDir="false" afterPath="$PROJECT_DIR$/sauvegarde.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,14 +177,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00052" summary="Implémentation de la modulation temporelle">
-      <option name="closed" value="true" />
-      <created>1781517912722</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1781517912722</updated>
     </task>
     <task id="LOCAL-00053" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -572,7 +562,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783589541490</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="Version fonctionnelle de la résolution en milieu micro structuré mt">
+      <option name="closed" value="true" />
+      <created>1783670691127</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1783670691127</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -587,7 +585,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ajout de la diversification en modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
     <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
@@ -612,7 +609,8 @@
     <MESSAGE value="Résolution du problème anisotrope modulé en temps" />
     <MESSAGE value="Résolution du problème anisotrope non homogéneisé" />
     <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle de la résolution en milieu micro structuré" />
+    <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré mt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle de la résolution en milieu micro structuré mt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

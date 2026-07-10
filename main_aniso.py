@@ -21,11 +21,11 @@ from sauvegarde import *
 from tracer import *
 
 alpha = 0.25
-rho = (500, 1000)
+rho = (100, 1000)
 c = (500, 1000)                                                                                                # c[0] < c[1]
 kappa = (rho[0] * c[0] ** 2, rho[1] * c[1] ** 2)
 M = 200
-f_mt = 1/0.2
+f_mt = 1/0.15
 modulation = "echelon"
 param = 0.5
 eps = 0.3                            # |eps| << 1, eps = 0 -> pas de modulation
@@ -127,7 +127,7 @@ LW2D_ms = Donnee2D(label ="LW_ms", kappa = kappa, rho = rho, Mx = M, My = M, S =
 L, l = 15 * LW2D_ms.dy, 5 * LW2D_ms.dy
 # LaxWendroff_ms(LW2D_ms, l, L)
 # sauvegarder(LW2D_ms, opt = True)
-# LW2D_ms = charger('.save/LW_ms_07-09_19-05-08.pkl')
+# LW2D_ms = charger('.save/LW_ms_07-10_10-46-00.pkl')
 # anim2D_ms(LW2D_ms, l, L, interval = 0.005, param=0.15)
 
 # data_x, data_y = LW2D_ms.projection((M//2,0)), LW2D_ms.projection((0, M//2))
@@ -148,15 +148,29 @@ L, l = 15 * ADER42D_ms.dy, 5 * ADER42D_ms.dy
 
 
 LW2D_ms_mt = Donnee2D(label ="LW_ms_mt", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
-                   xc = (0, 200), yc = (0, 200), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000,
+                   xc = (0, 200), yc = (0, 200), tc = (0, 0.3), f = 10, CFL = 0.6, c = 1000,
                    rho_mt = (rho_, rho_), kappa_mt = (kappa_, kappa_), eps_r = (eps,0), eps_kappa = (-eps, 0), omega = 2*np.pi*f_mt, param = param)
 L, l = 15 * LW2D_ms_mt.dy, 5 * LW2D_ms_mt.dy
 LaxWendroff_ms_mt(LW2D_ms_mt, l, L)
 sauvegarder(LW2D_ms_mt, opt = True)
-# LW2D_ms_mt = charger('.save/LW_ms_mt_07-09_19-23-36.pkl')
+# LW2D_ms_mt = charger('.save/LW_ms_mt_07-10_15-11-13.pkl')
 anim2D_ms(LW2D_ms_mt, l, L, interval = 5, param=0.15, tf = 0.2)
 
 tracer_energie(LW2D_ms_mt)
 data_x, data_y = LW2D_ms_mt.projection((M//2,0)), LW2D_ms_mt.projection((0, M//2))
+anim1D(data_x)
+anim1D(data_y)
+
+ADER42D_ms_mt = Donnee2D(label ="ADER4_ms_mt", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
+                   xc = (0, 200), yc = (0, 200), tc = (0, 0.3), f = 10, CFL = 0.95, c = 1000,
+                   rho_mt = (rho_, rho_), kappa_mt = (kappa_, kappa_), eps_r = (eps,0), eps_kappa = (-eps, 0), omega = 2*np.pi*f_mt, param = param)
+L, l = 15 * ADER42D_ms_mt.dy, 5 * ADER42D_ms_mt.dy
+ADER4_ms_mt(ADER42D_ms_mt, l, L)
+sauvegarder(ADER42D_ms_mt, opt = True)
+# ADER42D_ms_mt = charger('.save/LW_ms_mt_07-10_10-31-42.pkl')
+anim2D_ms(ADER42D_ms_mt, l, L, interval = 5, param=0.15, tf = 0.2)
+
+tracer_energie(ADER42D_ms_mt)
+data_x, data_y = ADER42D_ms_mt.projection((M//2,0)), ADER42D_ms_mt.projection((0, M//2))
 anim1D(data_x)
 anim1D(data_y)

@@ -356,7 +356,7 @@ def LaxWendroff_ms(data, l, L):
     for j in range(0, data.My):
         if 1 <= (j + L//2) % (l + L) < L - 1: data.E[:] += np.sum(0.5*rho0*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa0, axis = 1)
         elif l + L - 2 >= (j + L//2) % (l + L) > L + 1:  data.E[:] += np.sum(0.5*rho1*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa1, axis = 1)
-        else : data.E[:] += np.sum(0.5*rho3*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa3, axis = 1)
+        else : data.E[:] += np.sum(0.5*rho2*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa2, axis = 1)
             
 def ADER4_ms(data, l, L):
     """
@@ -722,6 +722,7 @@ def ADER4_ms_mt(data, l, L):
     :param L: float, correspond à la largeur de la deuxieème couche, en m
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
+    l, L = l // data.dy, L // data.dy
 
     def G(i, j):
         sigma, R = 5 * data.dx, 10 * data.dx
@@ -731,20 +732,21 @@ def ADER4_ms_mt(data, l, L):
     sleep(0.01)
     print("\nADER4 2D Ansiotrope Modulation Temporelle()")
     sleep(0.01)
-    #data.aniso()
-    c = cmax_mt(data, opt = False)
-    data.CFL_aniso(c)
+    rho1 = rho_echelon(data, data.eps_r[0])
+    rho2 = rho_echelon(data, data.eps_r[1])
+    rho3 = rho_echelon_moy(data)
+    kappa1 = kappa_echelon(data, data.eps_kappa[0])
+    kappa2 = kappa_echelon(data, data.eps_kappa[1])
+    kappa3 = kappa_echelon_moy(data)
+    c1 = np.array([np.sqrt(data.kappa[0]*kappa1(data.t[n])[0]/(data.rho[0]*rho1(data.t[n])[0])) for n in range(data.N)])
+    c2 = np.array([np.sqrt(data.kappa[1]*kappa2(data.t[n])[0]/(data.rho[1]*rho2(data.t[n])[0])) for n in range(data.N)])
+    c = max(np.max(c1), np.max(c2))
+    data.CFL_maj(c = c)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2),1/(24*data.dx**3*data.dy)]
 
     for n in trange(0, data.N - 1, ncols = ncols):
         t = n * data.dt
-        rho1 = rho_echelon(data, data.eps_r[0])
-        rho2 = rho_echelon(data, data.eps_r[1])
-        rho3 = rho_echelon_moy(data)
-        kappa1 = kappa_echelon(data, data.eps_kappa[0])
-        kappa2 = kappa_echelon(data, data.eps_kappa[1])
-        kappa3 = kappa_echelon_moy(data)
         A, A_, _A  = A2D_ms(data)(t)[0],A2D_ms(data)(t)[1],A2D_ms(data)(t)[2]
         B, B_, _B  = B2D_ms(data)(t)[0],B2D_ms(data)(t)[1],B2D_ms(data)(t)[2]
         U_temp = data.U[n, ...]

@@ -250,7 +250,7 @@ class Donnee2D:
             retour.x = self.y
             if type(self.rho) == tuple:
                 ec = 0.5 * (self.rho[0] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa[0]
+                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
                 retour.E = np.sum(ec + ep, axis = 1)
             else:
                 retour.calcul_energie()
@@ -260,7 +260,7 @@ class Donnee2D:
             retour.x = self.x
             if type(self.rho) == tuple:
                 ec = 0.5 * (self.rho[1] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa[0]
+                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
                 retour.E = np.sum(ec + ep, axis = 1)
             else:
                 retour.calcul_energie()

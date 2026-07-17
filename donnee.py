@@ -117,7 +117,7 @@ class Donnee1D:
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
 
     def calcul_energie(self):
-        self.E = np.array([sum([0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (2*self.rho * self.c ** 2) for i in range(self.M)]) for n in range(0, self.N)])
+        self.E = np.array([sum([(0.5 * self.rho * self.U[n, i, 0] ** 2 + self.U[n, i, 1] ** 2 / (2*self.rho * self.c ** 2))*self.dx for i in range(self.M)]) for n in range(0, self.N)])
 
 class Donnee2D:
     def __init__(self, c, rho, kappa, f=20, xc=(0, 300), yc = (0, 300), tc=(0, 0.25), Mx = 150, My = 150, opt = False, CFL = 0.6, **kwargs):
@@ -247,21 +247,21 @@ class Donnee2D:
         if coupe[0] != 0:  # coupe selon l'axe y
             retour.U = self.U[:, coupe[0], :, 1:]
             retour.xc = self.yc
-            retour.x = self.y
+            retour.x = self.y + self.yc[1]/2
             if type(self.rho) == tuple:
                 ec = 0.5 * (self.rho[0] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
-                retour.E = np.sum(ec + ep, axis = 1)
+                ep = 0.5 * retour.U[..., 1] ** 2 / (2*self.kappa)
+                retour.E = np.sum((ec + ep)*self.dx, axis = 1)
             else:
                 retour.calcul_energie()
         if coupe[1] != 0:  # coupe selon l'axe x
             retour.U = self.U[:, :, coupe[1], ::2]
             retour.xc = self.xc
-            retour.x = self.x
+            retour.x = self.x + self.xc[1]/2
             if type(self.rho) == tuple:
                 ec = 0.5 * (self.rho[1] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / self.kappa
-                retour.E = np.sum(ec + ep, axis = 1)
+                ep = 0.5 * retour.U[..., 1] ** 2 / (2*self.kappa)
+                retour.E = np.sum((ec + ep)*self.dx, axis = 1)
             else:
                 retour.calcul_energie()
         return retour

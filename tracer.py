@@ -157,28 +157,47 @@ def anim1D_comparaison(data1, data2, **kwargs):
 def tracer1D_comparaison(t, data1, data2):
     """
     Compare la vitesse, pression et énergie des deux solutions à un temps t fixé
-    :param t: int, indice entre 0 et N
+    :param t: float en secondes
     :param data1: Donnee1D, regroupe l'ensemble des données du problème tracé en trait plein
     :param data2: Donnee1D, regroupe l'ensemble des données du problème tracé avec des markers transparents
     :return: plot
     """
     assert data1 == data2, "Les paramètres sont différents"
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    t = int(data1.N*t/data1.tc[1])
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
     ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'dodgerblue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax1.set_xlim(data1.x[0], data1.x[-1])
+    ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
     ax1.legend()
     ax1.grid(True)
+    ax1.set_box_aspect(1)
+
 
     ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
     ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'deeppink', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax2.set_xlim(data1.x[0], data1.x[-1])
+    ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')
     ax2.legend()
     ax2.grid(True)
+    ax2.set_box_aspect(1)
+
+    ax3.plot(data1.t[:t+1], data1.E[:t+1],c = 'gold', ls = '-', lw=2, label=data1.label)
+    ax3.plot(data2.t[:t+1], data2.E[:t+1], marker = '.',mec = 'darkorange', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
+    ax3.set_xlabel('Temps t (s)')
+    ax3.set_xlim(data1.t[0], data1.t[-1])
+    ax3.set_ylim(0, max(np.max(data1.E), np.max(data2.E))*1.1)
+    ax3.set_ylabel(r'Energie $(J.m^{-2})$')
+    ax3.set_title("Energie de l'onde")
+    ax3.legend()
+    ax3.grid(True)
+    ax3.set_box_aspect(1)
 
     plt.show()
 
@@ -292,7 +311,49 @@ def anim2D(data, **kwargs):
     plt.show()
     return anim
 
-def tracer2D(data,t, y):
+def tracer2D(data, t):
+    """
+    Trace les vitesses selon l'axe x et y, ainsi que la pression et l'énergie à un temps t fixé
+    :param data: Donnee2D, regroupe l'ensemble des donnees du problème
+    :param t: float, temps en s
+    :return: plot
+    """
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+    ax1, ax2 = axs[0, 0], axs[0, 1]
+    ax3, ax4 = axs[1, 0], axs[1, 1]
+    t = int(data.N*t/data.tc[1])
+    extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
+    v_min, v_max = min(np.min(data.U[t, ...,0]),np.min(data.U[t,...,1])), max(np.max(data.U[t,...,0]),np.max(data.U[t,...,1]))
+    im1 = ax1.imshow(data.U[t, ..., 0].transpose(), cmap='seismic', origin='lower', extent=extent, norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Position y (m)')
+    ax1.set_title(r'Champ des vitesses vx ($m.s^{-1}$)')
+    fig.colorbar(im1, ax=ax1)
+
+    im2 = ax2.imshow(data.U[t, ..., 1].transpose(), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=v_min, vmax=v_max, vcenter = 0))
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Position y (m)')
+    ax2.set_title(r'Champ des vitesses vy ($m.s^{-1}$)')
+    fig.colorbar(im2, ax=ax2)
+
+    im3 = ax3.imshow(data.U[t, ..., 2].transpose(), cmap='seismic', origin='lower', extent=extent,norm = colors.TwoSlopeNorm(vmin=np.min(data.U[t, ..., 2]), vmax=np.max(data.U[t, ..., 2]), vcenter = 0))
+    ax3.set_xlabel('Position x (m)')
+    ax3.set_ylabel('Position y (m)')
+    ax3.set_title('Champ des pressions (Pa)')
+    fig.colorbar(im3, ax=ax3)
+
+    line4, = ax4.plot(data.t[:t+1], data.E[:t+1], color='gold', lw=2)
+    ax4.set_xlim(data.tc[0], data.tc[1])
+    ax4.set_ylim(0, np.max(data.E) * 1.1)
+    ax4.set_xlabel('Temps t (s)')
+    ax4.set_ylabel(r'Energie ($J.m^{-1}$)')
+    ax4.set_title(r"Evolution de l'energie ($J.m^{-1}$)")
+    ax4.grid(True)
+    title = fig.suptitle('', fontsize=14)
+
+    plt.show()
+
+def tracer2D_coupe(data,t, y):
     """
     Trace la vitesse et la pression selon x à un temps t fixé
     :param data: Donnee2D, regroupe l'ensemble des données du problème
@@ -322,6 +383,57 @@ def tracer2D(data,t, y):
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
     plt.show()
+
+def tracer_cauchy_comparaison(data1, data2, data3, t):
+    """
+    Trace la comparaison de la résolution du problème de Cauchy, superposant la solution analytique, le cas 1D et le cas 2D projeté
+    :param data1: Donnee2D, regroupe l'ensemble des données du problème
+    :param data2: Donnee2D, regroupe l'ensemble des données du problème
+    :param data3: Donnee2D, regroupe l'ensemble des données du problème
+    :param t: float, temps en s
+    :return: plot
+    """
+    t = int(data1.N*t/data1.tc[1])
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
+    ax1.plot(data1.x, data1.U[t, :, 0], 'b-', lw=2, label=data1.label)
+    ax1.plot(data2.x, data2.U[t, :, 0], marker = '.',mec = 'black', mew = 0.5, ms = 9,mfc = 'dodgerblue', lw=0, linestyle='', label=data2.label,markevery=2)
+    ax1.plot(data3.x, data3.U[t, :, 0], mec = 'midnightblue', ms = 5,mew= 2, lw=0, marker = 'x', linestyle='', label=data3.label,markevery=2)
+    ax1.set_xlim(data1.x[0], data1.x[-1])
+    ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
+    ax1.set_xlabel('Position x (m)')
+    ax1.set_ylabel('Vitesse v (m/s)')
+    ax1.set_title('Champ des vitesses')
+    ax1.legend()
+    ax1.grid(True)
+    ax1.set_box_aspect(1)
+
+
+    ax2.plot(data1.x, data1.U[t, :, 1], 'r-', lw=2, label=data1.label)
+    ax2.plot(data2.x, data2.U[t, :, 1], marker = '.',mec = 'black', mew = 0.5, ms = 9,mfc = 'deeppink', lw=0, linestyle='', label=data2.label,markevery=2)
+    ax2.plot(data3.x, data3.U[t, :, 1], mec = 'purple', ms = 5,mew= 2, lw=0, marker = 'x', linestyle='', label=data3.label,markevery=2)
+    ax2.set_xlim(data1.x[0], data1.x[-1])
+    ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
+    ax2.set_xlabel('Position x (m)')
+    ax2.set_ylabel('Pression p (Pa)')
+    ax2.set_title('Champ des pressions')
+    ax2.legend()
+    ax2.grid(True)
+    ax2.set_box_aspect(1)
+
+    ax3.plot(data1.t[:t+1], data1.E[:t+1],c = 'gold', ls = '-', lw=2, label=data1.label)
+    ax3.plot(data2.t[:t+1], data2.E[:t+1], marker = '.',mec = 'black', mew = 0.5, ms = 9,mfc = 'darkorange', lw=0, linestyle='', label=data2.label,markevery=2)
+    ax3.plot(data3.t[:t+1], data3.E[:t+1], mec = 'saddlebrown',ms = 5,mew= 2, lw=0, marker = 'x', linestyle='', label=data3.label,markevery=2)
+    ax3.set_xlabel('Temps t (s)')
+    ax3.set_xlim(data1.t[0], data1.t[-1])
+    ax3.set_ylim(0, max(np.max(data1.E), np.max(data2.E))*1.1)
+    ax3.set_ylabel(r'Energie $(J.m^{-2})$')
+    ax3.set_title("Energie de l'onde")
+    ax3.legend()
+    ax3.grid(True)
+    ax3.set_box_aspect(1)
+
+    plt.show()
+
 
 """
 Fonctions de tracé pour la modulation temporelle, avec l'impédance

@@ -166,7 +166,7 @@ def ADER41D_cauchy(data):
             a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
             data.U[n + 1, i, :] = data.U[n, i, :] - a1
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
  
 
 """
@@ -202,7 +202,7 @@ def LaxWendroff2D(data):
 
 
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
-    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
     data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))
 
 def ADER42D(data):
@@ -255,7 +255,7 @@ def ADER42D(data):
                 s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
                 data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
-    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
     data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))
 
 """
@@ -312,7 +312,7 @@ def LaxWendroff2D_cauchy(data):
 
     data.U = data.U[:,1:data.Mx + 1, :,:]
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
-    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
     data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))
 
 def ADER42D_cauchy(data):
@@ -482,5 +482,5 @@ def ADER42D_cauchy(data):
     data.U[...,0] = np.round(data.U[...,0], 16)
 
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
-    ep = data.U[..., 2] ** 2 / (data.rho * data.c ** 2)
+    ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
     data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))

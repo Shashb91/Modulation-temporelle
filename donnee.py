@@ -45,14 +45,14 @@ class Donnee1D:
 
         if "eps_r" in kwargs.keys(): self.eps_r = kwargs["eps_r"]                #Modulation temporelle
         else: self.eps_r = 0
-        if "eps_E" in kwargs.keys(): self.eps_kappa = kwargs["eps_E"]
+        if "eps_kappa" in kwargs.keys(): self.eps_kappa = kwargs["eps_kappa"]
         else: self.eps_kappa = 0
         if "omega" in kwargs.keys(): self.omega = kwargs["omega"]
         else: self.omega = 0
 
         if "rho_mt" in kwargs.keys(): self.rho_mt = kwargs["rho_mt"]
         else: self.rho_mt = rho_sinus
-        if "E_mt" in kwargs.keys(): self.kappa_mt = kwargs["E_mt"]
+        if "kappa_mt" in kwargs.keys(): self.kappa_mt = kwargs["kappa_mt"]
         else: self.kappa_mt = kappa_sinus
 
         if "alpha" in kwargs.keys(): self.alpha = kwargs["alpha"]
@@ -106,12 +106,12 @@ class Donnee1D:
         Permet de corriger la CFL dans un milieu modulé en temps
         :return: None
         """
-        rho, E = [],[]
+        rho, kappa = [],[]
         for t in self.t:
-            rho.append(self.rho_mt(self)(t)[0])
-            E.append(self.kappa_mt(self)(t)[0])
-        rho,E = np.array(rho),np.array(E)
-        self.c: float = np.max(np.sqrt(E/rho))
+            rho.append(self.rho*self.rho_mt(self, self.eps_r)(t)[0])
+            kappa.append(self.kappa*self.kappa_mt(self, self.eps_kappa)(t)[0])
+        rho,E = np.array(rho),np.array(kappa)
+        self.c: float = np.max(np.sqrt(kappa/rho))
         self.dt : float = self.CFL * self.dx / self.c
         self.N: int = int(self.tc[1] / self.dt)
         self.t = np.linspace(self.tc[0], self.tc[1], self.N)
@@ -276,8 +276,8 @@ class Donnee2D:
         else:
             rho, kappa = [], []
             for t in self.t:
-                rho.append(self.rho * self.rho_mt(self)(t)[0])
-                kappa.append(self.kappa * self.kappa_mt(self)(t)[0])
+                rho.append(self.rho * self.rho_mt(self, self.eps_r)(t)[0])
+                kappa.append(self.kappa * self.kappa_mt(self, self.eps_kappa)(t)[0])
             rho, kappa = np.array(rho), np.array(kappa)
             self.c: float = np.max(np.sqrt(kappa/rho))
 

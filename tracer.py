@@ -12,6 +12,16 @@ def anim1D(data, **kwargs):
     """
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
+    if "interval" in kwargs.keys(): interval = kwargs["interval"]
+    else: interval = 5
+
+    if "tf" in kwargs.keys():
+        tf = kwargs["tf"]
+        N = int(data.N * tf/data.tc[1])
+    else:
+        tf = data.tc[1]
+        N = data.N
+
     line1, = ax1.plot([], [], color='darkblue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
     ax1.set_ylim(np.min(data.U[:, :, 0]) * 1.1, np.max(data.U[:, :, 0]) * 1.1)
@@ -29,7 +39,7 @@ def anim1D(data, **kwargs):
     ax2.grid(True)
 
     line3, = ax3.plot([], [], color='gold', lw=2)
-    ax3.set_xlim(data.t[0], data.t[-1])
+    ax3.set_xlim(data.t[0], tf)
     ax3.set_ylim(0, np.max(data.E)*1.1)
     ax3.set_xlabel('Position x (m)')
     ax3.set_xlabel('Temps t (s)')
@@ -54,10 +64,9 @@ def anim1D(data, **kwargs):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
+    plt.tight_layout()
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 5
-    anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
+    anim = FuncAnimation(fig, update, init_func=init, frames=N, interval=interval, blit=True)
     plt.show()
     return anim
 
@@ -65,21 +74,42 @@ def tracer1D(data,t):
     """
     Trace la vitesse et la pression selon x à un temps t fixé
     :param data: Donnee1D, regroupe l'ensemble des données du problème
-    :param t: int, indice entre 0 et N
+    :param t: float
     :return: plot
     """
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    ax1.plot(data.x, data.U[t, :, 0], 'b-', lw=2)
+    t = int(data.N*t/data.tc[1])
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
+    ax1.plot(data.x, data.U[t, :, 0], 'b-', lw=2, label=data.label)
+    ax1.set_xlim(data.x[0], data.x[-1])
+    ax1.set_ylim(np.min(data.U[t, :, 0]) * 1.1, np.max(data.U[t, :, 0]) * 1.1)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
+    ax1.legend()
     ax1.grid(True)
+    ax1.set_box_aspect(1)
 
-    ax2.plot(data.x, data.U[t, :, 1], 'r-', lw=2)
+
+    ax2.plot(data.x, data.U[t, :, 1], 'r-', lw=2, label=data.label)
+    ax2.set_xlim(data.x[0], data.x[-1])
+    ax2.set_ylim(np.min(data.U[t, :, 1]) * 1.1, np.max(data.U[t, :, 1]) * 1.1)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')
+    ax2.legend()
     ax2.grid(True)
+    ax2.set_box_aspect(1)
+
+    ax3.plot(data.t[:t+1], data.E[:t+1],c = 'gold', ls = '-', lw=2, label=data.label)
+    ax3.set_xlabel('Temps t (s)')
+    ax3.set_xlim(data.t[0], data.t[-1])
+    ax3.set_ylim(0, np.max(data.E[:t+1])*1.1)
+    ax3.set_ylabel(r'Energie $(J.m^{-2})$')
+    ax3.set_title("Energie de l'onde")
+    ax3.legend()
+    ax3.grid(True)
+    ax3.set_box_aspect(1)
+    plt.tight_layout()
 
     plt.show()
     
@@ -147,6 +177,7 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
+    plt.tight_layout()
 
     if "interval" in kwargs.keys(): interval = kwargs["interval"]
     else: interval = 20
@@ -198,6 +229,7 @@ def tracer1D_comparaison(t, data1, data2):
     ax3.legend()
     ax3.grid(True)
     ax3.set_box_aspect(1)
+    plt.tight_layout()
 
     plt.show()
 
@@ -351,6 +383,12 @@ def tracer2D(data, t):
     ax4.grid(True)
     title = fig.suptitle('', fontsize=14)
 
+    ax1.set_box_aspect(1)
+    ax2.set_box_aspect(1)
+    ax3.set_box_aspect(1)
+    ax4.set_box_aspect(1)
+
+    plt.tight_layout()
     plt.show()
 
 def tracer2D_coupe(data,t, y):
@@ -382,6 +420,7 @@ def tracer2D_coupe(data,t, y):
     ax1.set_box_aspect(1)
     ax2.set_box_aspect(1)
     ax3.set_box_aspect(1)
+    plt.tight_layout()
     plt.show()
 
 def tracer_cauchy_comparaison(data1, data2, data3, t):
@@ -431,7 +470,7 @@ def tracer_cauchy_comparaison(data1, data2, data3, t):
     ax3.legend()
     ax3.grid(True)
     ax3.set_box_aspect(1)
-
+    plt.tight_layout()
     plt.show()
 
 
@@ -450,10 +489,10 @@ def tracer_mt(data):
     ax3, ax4 = axs[1,0], axs[1,1]
     r, e, c, Z = [], [], [], []
     for i in range(data.N):
-        r.append(data.rho_mt(data, data.eps_r)(data.dt * i)[0])
-        e.append(data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0])
-        c.append(np.sqrt(data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0] / data.rho_mt(data, data.eps_r)(data.dt * i)[0]))
-        Z.append(data.rho_mt(data, data.eps_r)(data.dt * i)[0] * np.sqrt(data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0] / data.rho_mt(data, data.eps_r)(data.dt * i)[0]))
+        r.append(data.rho*data.rho_mt(data, data.eps_r)(data.dt * i)[0])
+        e.append(data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0])
+        c.append(np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0] / (data.rho*data.rho_mt(data, data.eps_r)(data.dt * i)[0])))
+        Z.append(data.rho*data.rho_mt(data, data.eps_r)(data.dt * i)[0] * np.sqrt(data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * i)[0] /(data.rho*data.rho_mt(data, data.eps_r)(data.dt * i)[0])))
 
     ax1.plot(data.t, r, lw=2, c='red')
     ax1.grid(True)
@@ -474,7 +513,7 @@ def tracer_mt(data):
     ax4.grid(True)
     ax4.set_xlabel('t (s)')
     ax4.set_ylabel(f'Impédance $(kg.m^{-2}.s^{-1})$')
-
+    plt.tight_layout()
     plt.show()
 
 def anim1D_mt(data, **kwargs):

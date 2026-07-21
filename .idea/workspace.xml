@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle de la résolution en milieu micro structuré mt">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle du code nmt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,6 +60,7 @@
     &quot;Python.main_aniso.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_mt.executor&quot;: &quot;Run&quot;,
     &quot;Python.python main.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rapport.executor&quot;: &quot;Run&quot;,
     &quot;Python.schema_mt.executor&quot;: &quot;Run&quot;,
     &quot;Python.source.executor&quot;: &quot;Run&quot;,
     &quot;Python.test.executor&quot;: &quot;Run&quot;,
@@ -82,7 +82,7 @@
       <command value="python main.py" />
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -179,14 +179,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00055" summary="Corrections mineures">
-      <option name="closed" value="true" />
-      <created>1781594730758</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1781594730758</updated>
     </task>
     <task id="LOCAL-00056" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -572,7 +564,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784114846870</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="Version fonctionnelle du code nmt">
+      <option name="closed" value="true" />
+      <created>1784291132035</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1784291132035</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -587,7 +587,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentation de la modulation temporelle" />
     <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
     <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
     <MESSAGE value="Version fonctionelle de la MT" />
@@ -612,7 +611,8 @@
     <MESSAGE value="Résolution du problème anisotrope non homogéneisé" />
     <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré" />
     <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré mt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle de la résolution en milieu micro structuré mt" />
+    <MESSAGE value="Version fonctionnelle du code nmt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle du code nmt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -35,7 +35,7 @@ Deux configurations d'émission sont proposées : par **terme source ponctuel** 
 
 L'ensemble des paramètres, de la grille, de la solution $\mathbf u$ et du bilan d'énergie $E$ est encapsulé dans une classe centrale (`Donnee1D` / `Donnee2D`). Le code s'articule autour des modules suivants :
 
-* **Schémas de calcul :** `schema.py` (homogène), `schema_mt.py` (modulations temporelles via splitting de Strang), `schema_aniso.py` (milieux stratifiés).
+* **Schémas de calcul :** `schema.py` (homogène), `schema_mt.py` (modulations temporelles via splitting), `schema_aniso.py` (milieux stratifiés).
 * **Physique & Source :** `modulation.py` (profils temporels et leurs dérivées), `source.py` (ondelettes).
 * **Analyse & Rendu :** `analytique.py`, `erreur.py` (convergence $L^1$), `tracer.py` (animations et profils), `sauvegarde.py` (sérialisation `pickle`).
 * **Scripts de pilotage :** `main.py`, `main_mt.py`, `main_aniso.py`.

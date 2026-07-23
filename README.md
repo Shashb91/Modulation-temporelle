@@ -1,5 +1,8 @@
 # Modélisation numérique de la propagation d'ondes en milieux 2D modulés en temps
 
+**Auteur** : Shashankan Balassoupramaniane (Centrale Méditerranée)
+**Encadrements** : Bruno Lombard, Michaël Darche, Marie Touboul (LMA)
+
 Ce dépôt rassemble les outils Python développés lors d'un stage de recherche au **Laboratoire de Mécanique et d'Acoustique (LMA)** (Centrale Méditerranée). Il est dédié à la simulation de la propagation d'ondes acoustiques 1D et 2D à l'aide de schémas aux différences finies d'ordre élevé.
 
 ---

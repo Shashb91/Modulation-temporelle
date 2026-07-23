@@ -23,7 +23,7 @@ La résolution repose sur deux familles de schémas explicites :
 * **Lax–Wendroff** (ordre 2 en espace et en temps) ;
 * **ADER4** (*Arbitrary DERivatives* ordre 4).
 
-Deux configurations d'émission sont proposées : par **terme source ponctuel** ou par **condition initiale de Cauchy** (front d'onde formé). Les solutions sont validées par comparaison avec des solutions analytiques et par analyse d'erreur en norme $\mathbb L^1$.
+Deux configurations d'émission sont proposées : par **terme source ponctuel** ou par **condition initiale de Cauchy** (front d'onde formé). Les solutions sont validées par comparaison avec des solutions analytiques et par analyse d'erreur en norme $\mathbf L^1$.
 
 ---
 

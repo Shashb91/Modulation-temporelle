@@ -7,7 +7,7 @@ Ce dépôt rassemble les outils Python développés lors d'un stage de recherche
 ## Contexte scientifique
 
 La propagation d'onde dans un milieu non dissipatif est décrite par le système hyperbolique du premier ordre :
-$$\frac{\partial \bm u}{\partial t} + \bm A \frac{\partial \bm u}{\partial x} + \bm B \frac{\partial \bm u}{\partial y} = \bm F$$
+$$\frac{\partial \mathbf u}{\partial t} + \mathbf A \frac{\partial \mathbf u}{\partial x} + \mathbf B \frac{\partial \mathbf u}{\partial y} = \mathbf F$$
 
 Le projet explore quatre régimes physiques de complexité croissante :
 1. **Homogène isotrope :** Paramètres mécaniques ($\rho$, $\kappa$) uniformes et constants.
@@ -29,7 +29,7 @@ Deux configurations d'émission sont proposées : par **terme source ponctuel** 
 
 ## Architecture du projet
 
-L'ensemble des paramètres, de la grille, de la solution $\bm u$ et du bilan d'énergie $E$ est encapsulé dans une classe centrale (`Donnee1D` / `Donnee2D`). Le code s'articule autour des modules suivants :
+L'ensemble des paramètres, de la grille, de la solution $\mathbf u$ et du bilan d'énergie $E$ est encapsulé dans une classe centrale (`Donnee1D` / `Donnee2D`). Le code s'articule autour des modules suivants :
 
 * **Schémas de calcul :** `schema.py` (homogène), `schema_mt.py` (modulations temporelles via splitting de Strang), `schema_aniso.py` (milieux stratifiés).
 * **Physique & Source :** `modulation.py` (profils temporels et leurs dérivées), `source.py` (ondelettes).

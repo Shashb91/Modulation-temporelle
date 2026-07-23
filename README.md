@@ -9,7 +9,7 @@ Ce dépôt rassemble les outils Python développés lors d'un stage de recherche
 
 ## Contexte scientifique
 
-La propagation d'onde dans un milieu non dissipatif est décrite par le système hyperbolique du premier ordre :
+La propagation d'onde dans un milieu non dissipatif est décrite par le système d'équations différentielles linéaires couplées du premier ordre :
 
 $$\displaystyle\frac{\partial \mathbf u}{\partial t} + \mathbf A \frac{\partial \mathbf u}{\partial x} + \mathbf B \frac{\partial \mathbf u}{\partial y} = \mathbf F$$
 

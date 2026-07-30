@@ -22,10 +22,10 @@ from sauvegarde import *
 from tracer import *
 
 alpha = 0.5
-rho = (1000, 1000)
-c = (1000, 1000)                                                                                                # c[0] < c[1]
+rho = (100, 1000)
+c = (500, 1000)                                                                                                # c[0] < c[1]
 kappa = (rho[0] * c[0] ** 2, rho[1] * c[1] ** 2)
-M = 400
+M = 200
 f_mt = 1/0.15
 modulation = "echelon"
 param = 0.5
@@ -78,9 +78,9 @@ ADER42D_ = Donnee2D(label ="ADER2D_aniso", kappa= kappa_eff, rho = rho, alpha=0.
 Anisotropie + modulation temporelle
 """
 
-LW2D_aniso_mt = Donnee2D(label ="LW_aniso_mt=", kappa = kappa_eff, rho = rho, alpha = alpha, Mx = M, My = M, S = pt_source_2D,
+LW2D_aniso_mt = Donnee2D(label ="LW_aniso_mt=", kappa = kappa, rho = rho, alpha = alpha, Mx = M, My = M, S = pt_source_2D,
                  xc = (0, 400), yc = (0, 400), tc = (0, 0.4), f = 10, CFL = 0.6, c = 1000,
-                 rho_mt = (rho_, rho_), kappa_mt = kappa_, eps_r = (0,eps), eps_kappa = 0, omega = 2*np.pi*f_mt, param = param)
+                 rho_mt = (rho_, rho_), kappa_mt = (kappa_, kappa_), eps_r = (0,eps), eps_kappa = (0, 0), omega = 2*np.pi*f_mt, param = param)
 # LaxWendroff_aniso_mt(LW2D_aniso_mt)
 # sauvegarder(LW2D_aniso_mt, opt = True)
 LW2D_aniso_mt = charger('.save/LW_aniso_mt=_07-12_16-20-15.pkl')
@@ -107,7 +107,7 @@ anim2D(LW2D_aniso_mt, interval = 0.5, param = 0.15, tf = 0.3)
 
 ADER42D_aniso_mt = Donnee2D(label ="ADER4_aniso_mt=", kappa = kappa, rho = rho, alpha = alpha, Mx = M, My = M, S = pt_source_2D,
                             xc = (0, 400), yc = (0, 400), tc = (0, 0.15), f = 10, CFL = 0.6, c = 1000,
-                            rho_mt = (rho_, rho_), kappa_mt = kappa_, eps_r = (eps,0), eps_kappa = -eps, omega = 2*np.pi*f_mt, param = param)
+                            rho_mt = (rho_, rho_), kappa_mt = (kappa_, kappa_), eps_r = (eps,0), eps_kappa = (-eps, -eps), omega = 2*np.pi*f_mt, param = param)
 # ADER4_aniso_mt(ADER42D_aniso_mt)
 # ADER42D_aniso_mt = charger('.save/ADER4_aniso_mt=echelon_07-07_15-52-09.pkl')
 # sauvegarder(ADER42D_aniso_mt, opt = True)
@@ -128,12 +128,12 @@ Micro Structuré
 """
 
 LW2D_ms = Donnee2D(label ="LW_ms", kappa = kappa, rho = rho, Mx = M, My = M, S = pt_source_2D,
-                   xc = (0, 400), yc = (0, 400), tc = (0, 0.4), f = 10, CFL = 0.6, c = 1000)
+                   xc = (0, 400), yc = (0, 400), tc = (0, 0.2), f = 10, CFL = 0.6, c = 1000)
 L,l = 15 * LW2D_ms.dy, 5 * LW2D_ms.dy
-# LaxWendroff_ms(LW2D_ms, l, L)
-# sauvegarder(LW2D_ms, opt = True)
+LaxWendroff_ms(LW2D_ms, l, L)
+sauvegarder(LW2D_ms, opt = True)
 # LW2D_ms = charger('.save/LW_ms_07-11_21-18-51.pkl')
-# anim2D_ms(LW2D_ms, l, L, interval = 0.5, param = 0.15, tf = 0.3)
+anim2D_ms(LW2D_ms, l, L, interval = 0.5, param = 0.15, tf = 0.3)
 
 # data_x, data_y = LW2D_ms.projection((M//2,0)), LW2D_ms.projection((0, M//2))
 # anim1D(data_x)

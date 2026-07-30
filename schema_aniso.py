@@ -8,10 +8,66 @@ from matplotlib import pyplot as plt
 from tqdm import trange
 ncols = 125
 
+
+def moyennes_aniso(data):
+    """
+    Calcule les valeurs homogénéisées du milieu stratifié à partir des paramètres des deux couches
+    :param data: Donnee2D, avec data.rho et data.kappa les couples (couche 0, couche 1)
+                 et data.alpha la proportion de la couche 0
+    :return: tuple (r00, r11, kappa) des valeurs moyennes homogénéisées
+    """
+    (rho0, rho1) = data.rho
+    (kappa0, kappa1) = data.kappa
+    alpha = data.alpha
+    r00 = alpha * rho0 + (1 - alpha) * rho1
+    r11 = 1 / (alpha / rho0 + (1 - alpha) / rho1)
+    kappa = 1 / (alpha / kappa0 + (1 - alpha) / kappa1)
+    return r00, r11, kappa
+
+
+def deriv_inv(a):
+    """
+    Calcule le développement (valeur + 3 premières dérivées temporelles) de 1/f à partir du développement a = [f, f', f'', f'''] de f.
+    :param a: np.ndarray de taille 4, [f, f', f'', f''']
+    :return: np.ndarray de taille 4, [1/f, (1/f)', (1/f)'', (1/f)''']
+    """
+    f, f1, f2, f3 = a[0], a[1], a[2], a[3]
+    h = 1 / f
+    h1 = -f1 / f ** 2
+    h2 = 2 * f1 ** 2 / f ** 3 - f2 / f ** 2
+    h3 = -6 * f1 ** 3 / f ** 4 + 6 * f1 * f2 / f ** 3 - f3 / f ** 2
+    return np.array([h, h1, h2, h3])
+
+
+def moyennes_aniso_mt(data, t):
+    """
+    Valeurs homogénéisées à l'instant t (ordre 0 uniquement), calculées à partir des paramètres des DEUX COUCHES modulés en temps, puis homogénéisés
+    :return: tuple (r00(t), r11(t), kappa(t)) des valeurs moyennes à l'instant t
+    """
+    (rho0, rho1) = data.rho
+    (kappa0, kappa1) = data.kappa
+    alpha = data.alpha
+    r0 = rho0 * data.rho_mt[0](data, data.eps_r[0])(t)[0]
+    r1 = rho1 * data.rho_mt[1](data, data.eps_r[1])(t)[0]
+    k0 = kappa0 * data.kappa_mt[0](data, data.eps_kappa[0])(t)[0]
+    k1 = kappa1 * data.kappa_mt[1](data, data.eps_kappa[1])(t)[0]
+    r00 = alpha * r0 + (1 - alpha) * r1
+    r11 = 1 / (alpha / r0 + (1 - alpha) / r1)
+    kappa = 1 / (alpha / k0 + (1 - alpha) / k1)
+    return r00, r11, kappa
+
+
 def A2D_aniso(data):
+    (rho0, rho1) = data.rho
+    (kappa0, kappa1) = data.kappa
+    alpha = data.alpha
     def f(t):
-        rho = data.rho[1]*data.rho_mt[1](data, data.eps_r[1])(t)
-        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
+        rho_c0 = rho0 * data.rho_mt[0](data, data.eps_r[0])(t)
+        rho_c1 = rho1 * data.rho_mt[1](data, data.eps_r[1])(t)
+        kappa_c0 = kappa0 * data.kappa_mt[0](data, data.eps_kappa[0])(t)
+        kappa_c1 = kappa1 * data.kappa_mt[1](data, data.eps_kappa[1])(t)
+        rho = deriv_inv(alpha * deriv_inv(rho_c0) + (1 - alpha) * deriv_inv(rho_c1))
+        kappa = deriv_inv(alpha * deriv_inv(kappa_c0) + (1 - alpha) * deriv_inv(kappa_c1))
         A = np.array([[0, 0, 1 / rho[0]],
                       [0, 0, 0],
                       [kappa[0], 0, 0]])
@@ -30,9 +86,16 @@ def A2D_aniso(data):
 
 
 def B2D_aniso(data):
+    (rho0, rho1) = data.rho
+    (kappa0, kappa1) = data.kappa
+    alpha = data.alpha
     def f(t):
-        rho = data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(t)
-        kappa = data.kappa*data.kappa_mt(data, data.eps_kappa)(t)
+        rho_c0 = rho0 * data.rho_mt[0](data, data.eps_r[0])(t)
+        rho_c1 = rho1 * data.rho_mt[1](data, data.eps_r[1])(t)
+        kappa_c0 = kappa0 * data.kappa_mt[0](data, data.eps_kappa[0])(t)
+        kappa_c1 = kappa1 * data.kappa_mt[1](data, data.eps_kappa[1])(t)
+        rho = alpha * rho_c0 + (1 - alpha) * rho_c1
+        kappa = deriv_inv(alpha * deriv_inv(kappa_c0) + (1 - alpha) * deriv_inv(kappa_c1))
         A = np.array([[0, 0, 0],
                       [0, 0, 1 / rho[0]],
                       [0, kappa[0], 0]])
@@ -108,8 +171,8 @@ def cmax(r00, r11, kappa, opt=True):
     x, y = np.cos(theta), np.sin(theta)
     if opt:
         plt.plot(Vp * y, Vp * x, c='blue', lw=2, label='Vitesse polaire', ms=0)
-        plt.plot(c0 * y, c0 * x, c='red', lw=2, label=f'$c_{0}$', ms=0)
-        plt.plot(c1 * y, c1 * x, c='green', lw=2, label=f'$c_{1}$', ms=0)
+        plt.plot(c0 * y, c0 * x, c='red', lw=2, label=f'$c_{1}$', ms=0)
+        plt.plot(c1 * y, c1 * x, c='green', lw=2, label=f'$c_{2}$', ms=0)
         plt.grid(True)
         plt.xlabel("Vitesse en x")
         plt.ylabel("Vitesse en y")
@@ -128,11 +191,11 @@ def cmax_mt(data, opt = True):
     :return: float: vitesse de phase maximale
     """
     rho0, rho1, kappa = [], [], []
-    (r00, r11) = data.rho
     for t in data.t:
-        rho0.append(r00 * data.rho_mt[0](data, data.eps_r[0])(t)[0])
-        rho1.append(r11 * data.rho_mt[1](data, data.eps_r[1])(t)[0])
-        kappa.append(data.kappa * data.kappa_mt(data, data.eps_kappa)(t)[0])
+        r00_t, r11_t, kappa_t = moyennes_aniso_mt(data, t)
+        rho0.append(r00_t)
+        rho1.append(r11_t)
+        kappa.append(kappa_t)
     rho0, rho1, kappa = np.array(rho0), np.array(rho1), np.array(kappa)
     c0, c1 = np.sqrt(kappa / rho0), np.sqrt(kappa / rho1)
     theta = np.linspace(0, 2 * np.pi, 300)
@@ -187,9 +250,7 @@ def LaxWendroff_aniso(data):
 
     print("\nLaxWendroff Anisotrope()")
     sleep(0.01)
-    data.aniso()
-    (r00, r11) = data.rho
-    kappa = data.kappa
+    r00, r11, kappa = moyennes_aniso(data)
     c = cmax(r00, r11, kappa)
     data.CFL_aniso(c)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
@@ -232,9 +293,7 @@ def ADER4_aniso(data):
     sleep(0.01)
     print("\nADER4 Anisotrope()")
     sleep(0.01)
-    data.aniso()
-    (r00, r11) = data.rho
-    kappa = data.kappa
+    r00, r11, kappa = moyennes_aniso(data)
     c = cmax(r00, r11, kappa, False)
     data.CFL_aniso(c)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
@@ -323,7 +382,7 @@ def LaxWendroff_ms(data, l, L):
     (rho0, rho1) = data.rho
     (kappa0, kappa1) = data.kappa
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
-    rho2, kappa2 = 0.5*(rho0 + rho1), 2*(1/kappa0 + 1/kappa1)**(-1)
+    rho2, kappa2 = alpha*rho0 + (1 -data.alpha)*rho1, 1/(data.alpha/kappa0 + (1-data.alpha)/kappa1)
     A = [np.array([[0, 0, 1 / rho0], [0, 0, 0], [kappa0, 0, 0]]), np.array([[0, 0, 1 / rho1], [0, 0, 0], [kappa1, 0, 0]]), np.array([[0,0,1/rho2],[0,0,0],[kappa2,0, 0]])]
     B = [np.array([[0, 0, 0], [0, 0, 1 / rho0], [0, kappa0, 0]]), np.array([[0, 0, 0], [0, 0, 1 / rho1], [0, kappa1, 0]]), np.array([[0,0,0],[0,0,1/rho2],[0, kappa2,0]])]
 
@@ -354,9 +413,9 @@ def LaxWendroff_ms(data, l, L):
 
     data.E = np.zeros(data.N)
     for j in range(0, data.My):
-        if 1 <= (j + L//2) % (l + L) < L - 1: data.E[:] += np.sum(0.5*rho0*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa0, axis = 1)
-        elif l + L - 2 >= (j + L//2) % (l + L) > L + 1:  data.E[:] += np.sum(0.5*rho1*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa1, axis = 1)
-        else : data.E[:] += np.sum(0.5*rho2*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa2, axis = 1)
+        if 1 <= (j + L//2) % (l + L) < L - 1: data.E[:] += np.sum((0.5*rho0*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa0)*data.dx*data.dy, axis = 1)
+        elif l + L - 2 >= (j + L//2) % (l + L) > L + 1:  data.E[:] += np.sum((0.5*rho1*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa1)*data.dx*data.dy, axis = 1)
+        else : data.E[:] += np.sum((0.5*rho2*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa2)*data.dx*data.dy, axis = 1)
             
 def ADER4_ms(data, l, L):
     """
@@ -367,6 +426,7 @@ def ADER4_ms(data, l, L):
     :return: Donnee2D, solution en vitesse et pression du problème 2D
     """
     l, L = l//data.dy, L//data.dy
+    data.alpha = L/(l+L)
 
     def G(i, j):
         sigma, R = 5 * data.dx, 10 * data.dx
@@ -379,7 +439,7 @@ def ADER4_ms(data, l, L):
     (rho0, rho1) = data.rho
     (kappa0, kappa1) = data.kappa
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
-    rho2, kappa2 = 0.5*(rho0 + rho1), 2*(1/kappa0 + 1/kappa1)**(-1)
+    rho2, kappa2 = alpha*rho0 + (1 -data.alpha)*rho1, 1/(data.alpha/kappa0 + (1-data.alpha)/kappa1)
     A = [np.array([[0, 0, 1 / rho0], [0, 0, 0], [kappa0, 0, 0]]), np.array([[0, 0, 1 / rho1], [0, 0, 0], [kappa1, 0, 0]]), np.array([[0,0,1/rho2],[0,0,0],[kappa2,0, 0]])]
     B = [np.array([[0, 0, 0], [0, 0, 1 / rho0], [0, kappa0, 0]]), np.array([[0, 0, 0], [0, 0, 1 / rho1], [0, kappa1, 0]]), np.array([[0,0,0],[0,0,1/rho2],[0, kappa2,0]])]
 
@@ -451,9 +511,9 @@ def ADER4_ms(data, l, L):
 
     data.E = np.zeros(data.N)
     for j in range(0, data.My):
-        if 1 <= (j + L//2) % (l + L) < L - 1: data.E[:] += np.sum(0.5*rho0*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa0, axis = 1)
-        elif l + L - 2 >= (j + L//2) % (l + L) > L + 1:  data.E[:] += np.sum(0.5*rho1*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa1, axis = 1)
-        else : data.E[:] += np.sum(0.5*rho3*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa3, axis = 1)
+        if 1 <= (j + L//2) % (l + L) < L - 1: data.E[:] += np.sum((0.5*rho0*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa0)*data.dx*data.dy, axis = 1)
+        elif l + L - 2 >= (j + L//2) % (l + L) > L + 1:  data.E[:] += np.sum((0.5*rho1*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa1)*data.dx*data.dy, axis = 1)
+        else : data.E[:] += np.sum((0.5*rho2*(data.U[:, :, j, 0] ** 2 + data.U[:, :, j, 1] ** 2) + 0.5 * data.U[:, :, j, 2]**2 / kappa2)*data.dx*data.dy, axis = 1)
 
 """
 Milieu anisotrope modulé en temps
@@ -473,22 +533,29 @@ def LaxWendroff_aniso_mt(data):
 
     print("\nLaxWendroff Anisotrope Modulation Temporelle()")
     sleep(0.01)
-    #data.aniso()
     c = cmax_mt(data, opt = False)
     data.CFL_aniso(c)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
 
+    (rho01, rho02) = data.rho
+    (kappa01, kappa02) = data.kappa
+    alpha = data.alpha
+
     for n in trange(0, data.N - 1, ncols=ncols):
         t = data.dt * n
-        rho1 = data.rho_mt[0](data, data.eps_r[0])
-        rho2 = data.rho_mt[1](data, data.eps_r[1])
-        kappa = data.kappa_mt(data, data.eps_kappa)
+        rho_c1 = rho01 * data.rho_mt[0](data, data.eps_r[0])(t)
+        rho_c2 = rho02 * data.rho_mt[1](data, data.eps_r[1])(t)
+        kappa_c1 = kappa01 * data.kappa_mt[0](data, data.eps_kappa[0])(t)
+        kappa_c2 = kappa02 * data.kappa_mt[1](data, data.eps_kappa[1])(t)
+        rho1 = deriv_inv(alpha * deriv_inv(rho_c1) + (1 - alpha) * deriv_inv(rho_c2))
+        rho2 = alpha * rho_c1 + (1 - alpha) * rho_c2
+        kappa = deriv_inv(alpha * deriv_inv(kappa_c1) + (1 - alpha) * deriv_inv(kappa_c2))
         A, A_ = A2D_aniso(data)(t)[0], A2D_aniso(data)(t)[1]
         B, B_ = B2D_aniso(data)(t)[0], B2D_aniso(data)(t)[1]
         U_temp = data.U[n, ...]
         U_temp_ = np.zeros(data.U[n,...].shape)
 
-        S = [-rho1(t)[1]/rho1(t)[0], -rho2(t)[1]/rho2(t)[0], kappa(t)[1]/kappa(t)[0]]
+        S = [-rho1[1]/rho1[0], -rho2[1]/rho2[0], kappa[1]/kappa[0]]
         for i in range(0, data.Mx):
             for j in range(0, data.My):
                 U_temp[i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ data.U[n, i, j, :]
@@ -503,14 +570,24 @@ def LaxWendroff_aniso_mt(data):
                 b3 = 1 / (4 * data.dx * data.dy) * (0.5 * data.dt ** 2 * (A @ B + B @ A)) @ (U_temp[i + 1, j + 1] - U_temp[i + 1, j - 1] - U_temp[i - 1, j + 1] + U_temp[i - 1, j - 1])
                 U_temp_[ i, j, :] = U_temp[i, j, :] - a1 - a2 + b1 + b2 + b3 + s
 
-        S = [-rho1(t+data.dt)[1]/rho1(t+data.dt)[0], -rho2(t+data.dt)[1]/rho2(t+data.dt)[0], kappa(t+data.dt)[1]/kappa(t+data.dt)[0]]
+        t += data.dt
+        rho_c1 = rho01 * data.rho_mt[0](data, data.eps_r[0])(t)
+        rho_c2 = rho02 * data.rho_mt[1](data, data.eps_r[1])(t)
+        kappa_c1 = kappa01 * data.kappa_mt[0](data, data.eps_kappa[0])(t)
+        kappa_c2 = kappa02 * data.kappa_mt[1](data, data.eps_kappa[1])(t)
+        rho1 = deriv_inv(alpha * deriv_inv(rho_c1) + (1 - alpha) * deriv_inv(rho_c2))
+        rho2 = alpha * rho_c1 + (1 - alpha) * rho_c2
+        kappa = deriv_inv(alpha * deriv_inv(kappa_c1) + (1 - alpha) * deriv_inv(kappa_c2))
+
+        S = [-rho1[1]/rho1[0], -rho2[1]/rho2[0], kappa[1]/kappa[0]]
         for i in range(0, data.Mx):
             for j in range(0, data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-    rho0 = [data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(data.dt * n)[0] for n in range(data.N)]
-    rho1 = [data.rho[1]*data.rho_mt[1](data, data.eps_r[1])(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
+    moy = [moyennes_aniso_mt(data, data.dt * n) for n in range(data.N)]
+    rho0 = [m[0] for m in moy]
+    rho1 = [m[1] for m in moy]
+    kappa = [m[2] for m in moy]
     data.E = [np.sum((0.5 * (rho0[n] * data.U[n, ..., 0] ** 2 + rho1[n] * data.U[n, ..., 1]**2) + data.U[n,..., 2]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def ADER4_aniso_mt(data):
@@ -528,7 +605,6 @@ def ADER4_aniso_mt(data):
     sleep(0.01)
     print("\nADER4 2D Ansiotrope Modulation Temporelle()")
     sleep(0.01)
-    #data.aniso()
     c = cmax_mt(data, opt = False)
     data.CFL_aniso(c)
     data.U = np.zeros((data.N, data.Mx, data.My, 3))
@@ -538,7 +614,8 @@ def ADER4_aniso_mt(data):
         t = n * data.dt
         rho1 = data.rho_mt[0](data, data.eps_r[0])
         rho2 = data.rho_mt[1](data, data.eps_r[1])
-        kappa = data.kappa_mt(data, data.eps_kappa)
+        kappa1 = data.kappa_mt[0](data, data.eps_kappa[0])
+        kappa2 = data.kappa_mt[1](data, data.eps_kappa[1])
         A = A2D_aniso(data)(t)
         B = B2D_aniso(data)(t)
         U_temp = data.U[n, ...]
@@ -616,9 +693,10 @@ def ADER4_aniso_mt(data):
             for j in range(data.My):
                 data.U[n + 1, i, j, :] = np.diag([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)]) @ U_temp_[i, j, :]
 
-    rho0 = [data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(data.dt * n)[0] for n in range(data.N)]
-    rho1 = [data.rho[1]*data.rho_mt[1](data, data.eps_r[1])(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
+    moy = [moyennes_aniso_mt(data, data.dt * n) for n in range(data.N)]
+    rho0 = [m[0] for m in moy]
+    rho1 = [m[1] for m in moy]
+    kappa = [m[2] for m in moy]
     data.E = [np.sum((0.5 * (rho0[n] * data.U[n, ..., 0] ** 2 + rho1[n] * data.U[n, ..., 1]**2) + data.U[n,..., 2]**2 /(2*kappa[n]))*data.dx*data.dy, axis = (0,1)) for n in range(data.N)]
 
 def LaxWendroff_ms_mt(data, l, L):
@@ -643,7 +721,7 @@ def LaxWendroff_ms_mt(data, l, L):
     data.CFL_maj(c = c)
 
     def G(i, j):
-        sigma, R = 5 * data.dx, 10 * data.dx
+        sigma, R = 3 * data.dx, 6 * data.dx
         x, y = np.abs(data.ps[0][0] - i) * data.dx, np.abs(data.ps[0][1] - j) * data.dy
         return (1 / (np.pi * sigma ** 2) * np.exp(-(x ** 2 + y ** 2) / sigma ** 2)) * (0 <= x ** 2 + y ** 2 <= R ** 2)
 

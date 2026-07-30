@@ -230,15 +230,15 @@ class Donnee2D:
 
     def projection(self, coupe):
         """
-        Réalise la projection d'une variable de Donnee2D en une variable de Donnee1D
+        Réalise la projection selon x OU selon y d'une variable de Donnee2D en une variable de Donnee1D
         :param coupe: (int,int), correspond à la positon de la coupe. Attention, une des deux coordonnées doit forcément être nulle !!
         :return: Donnee1D
         """
         coupe = (int(coupe[0]), int(coupe[1]))
         pos = "-(x:" + str(coupe[0]) + ",y:" + str(coupe[1]) + ")"
         try:
-            retour = Donnee1D(c=self.c, rho= self.rho, kappa= self.kappa, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_E = self.eps_kappa, omega = self.omega,
-                              M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, E_mt = self.kappa_mt,
+            retour = Donnee1D(c=self.c, rho= self.rho, kappa= self.kappa, f=self.f, tc=self.tc, eps_r = self.eps_r, alpha = self.alpha, eps_kappa = self.eps_kappa, omega = self.omega,
+                              M=self.Mx, CFL = self.CFL, xc = self.xc, rho_mt = self.rho_mt, kappa_mt = self.kappa_mt,
                               fmax=self.f * 10, opt=self.opt, label=self.label + pos, S=self.S, t = self.t)
         except:
             retour = Donnee1D(c=self.c, rho=self.rho, kappa=self.kappa, f=self.f, tc=self.tc,
@@ -248,22 +248,11 @@ class Donnee2D:
             retour.U = self.U[:, coupe[0], :, 1:]
             retour.xc = self.yc
             retour.x = self.y + self.yc[1]/2
-            if type(self.rho) == tuple:
-                ec = 0.5 * (self.rho[0] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / (2*self.kappa)
-                retour.E = np.sum((ec + ep)*self.dx, axis = 1)
-            else:
-                retour.calcul_energie()
         if coupe[1] != 0:  # coupe selon l'axe x
             retour.U = self.U[:, :, coupe[1], ::2]
             retour.xc = self.xc
             retour.x = self.x + self.xc[1]/2
-            if type(self.rho) == tuple:
-                ec = 0.5 * (self.rho[1] * retour.U[..., 0] ** 2)
-                ep = 0.5 * retour.U[..., 1] ** 2 / (2*self.kappa)
-                retour.E = np.sum((ec + ep)*self.dx, axis = 1)
-            else:
-                retour.calcul_energie()
+        retour.E = np.zeros(self.N)
         return retour
 
     def CFL_maj(self, **kwargs):

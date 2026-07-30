@@ -44,8 +44,8 @@ def rho_echelon(data, eps):
 def rho_echelon_moy(data):
     def f(t):
         T, alpha = (data.omega != 0) * (2*np.pi)/data.omega, data.param
-        r = 0.5*(data.rho[0] + data.rho[1])
-        reps = 0.5*(data.rho[0]*data.eps_r[0] + data.rho[1]*data.eps_r[1])
+        r = data.alpha*data.rho[0] + (1-data.alpha)*data.rho[1]
+        reps = data.alpha*data.rho[0]*data.eps_r[0] + (1-data.alpha)*data.rho[1]*data.eps_r[1]
         return np.array([r + reps*(int(0 <= modulo(t,T) < alpha*T) - int(alpha*T <= modulo(t,T) < T)),0,0,0])
     return f
 
@@ -58,8 +58,7 @@ def kappa_echelon(data, eps):
 def kappa_echelon_moy(data):
     def f(t):
         T, alpha = (data.omega != 0) * (2 * np.pi) / data.omega, data.param
-        echelon = int(0 <= modulo(t, T) < alpha * T) - int(alpha * T <= modulo(t, T) < T)
-        return np.array([2*((1 + data.eps_kappa[0] * echelon)/data.kappa[0] + (1 + data.eps_kappa[1] * echelon)/data.kappa[1])**(-1), 0, 0, 0])
+        return np.array([(data.alpha/(data.kappa[0]*kappa_echelon(data, data.eps_kappa[0])(t)[0])+ (1-data.alpha)/(data.kappa[1]*kappa_echelon(data, data.eps_kappa[1])(t)[0]))**(-1), 0, 0, 0])
     return f
 
 def rho_triangle(data, eps):

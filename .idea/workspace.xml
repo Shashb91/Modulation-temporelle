@@ -11,7 +11,9 @@
       <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,6 +29,7 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
@@ -88,7 +91,7 @@
       <command value="python main.py" />
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.main_aniso">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -185,14 +188,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00057" summary="Corrections mineures">
-      <option name="closed" value="true" />
-      <created>1781615594733</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1781615594733</updated>
     </task>
     <task id="LOCAL-00058" summary="Implémentation de la modulation temporelle fonctionelle">
       <option name="closed" value="true" />
@@ -578,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784625463579</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="Version fonctionnelle du code nmt">
+      <option name="closed" value="true" />
+      <created>1785398020004</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1785398020004</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

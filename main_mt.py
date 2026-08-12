@@ -1,172 +1,100 @@
 """
 ============================================================
 Auteur : Shashankan BALASSOUPRAMANIANE
-Date : 01/06/2026
-Implementation de Lax-Wendroff et d'ADER4 1D/2D en mileu
-modulé en temps
+Date   : 01/06/2026
 
-Les modules concernant la modulation temporelle sont indicés
-par _mt
+Résolution EXHAUSTIVE en milieu homogène isotrope MODULÉ EN
+TEMPS (modules suffixés par _mt).
 
-Parametres :
-- CFL = 0.6
-- e = 2.25e9 Pa
+Pour chaque configuration on effectue les résolutions sous
+Lax-Wendroff et ADER4 (il n'existe pas de solution analytique
+en milieu modulé), puis on trace SOIT la comparaison des deux
+schémas, SOIT la solution elle-même.
+
+Un unique cas de modulation est utilisé pour toutes les
+résolutions, afin que Lax-Wendroff et ADER4 résolvent
+exactement le même problème.
+
+Paramètres physiques : rho = 1000, kappa = 2.25e9 (c = 1500).
+Paramètres numériques : CFL = 0.6.
 ============================================================
 """
-
+from donnee import *
 from schema_mt import *
-from schema import LaxWendroff2D, LaxWendroff1D_cauchy, ADER42D, ADER41D_cauchy
-from source import pt_source_1D
-from sauvegarde import *
+from schema import LaxWendroff2D, ADER42D
+from source import pt_source_1D, pt_source_2D
 from tracer import *
 
-"""
-============================================================
-Implémentation de la résolution 1D modulée en temps
-============================================================
-"""
-#Les valeurs sont ajustés
-#Paramètres
+# ---------- Paramètres physiques et numériques communs ----------
+c, rho, kappa = 1500, 1000, 2.25e9
+CFL = 0.6
+
+# ---------- Cas de modulation UNIQUE (identique pour LW et ADER4) ----------
 f_mt = 30
-modulation = "echelon"
 param = 0.5
-eps = 0.3                            # |eps| << 1, eps = 0 -> pas de modulation
+eps = 0.3                                   # |eps| << 1
+modulation = "echelon"
+rho_mod, kappa_mod = rho_echelon, kappa_echelon
+omega = 2 * np.pi * f_mt
+mod = dict(eps_r=-eps, eps_kappa=eps, omega=omega, rho_mt=rho_mod, kappa_mt=kappa_mod, param=param)
 
-if modulation == "echelon":
-    rho = rho_echelon
-    kappa = kappa_echelon
-elif modulation == "sinus":
-    rho = rho_sinus
-    kappa = kappa_sinus
-elif modulation == "triangle":
-    rho = rho_triangle
-    kappa = kappa_triangle
+# ============================================================
+# 1D — source ponctuelle, modulée en temps
+#   -> profils de modulation + COMPARAISON Lax-Wendroff / ADER4
+# ============================================================
+M1, xc1, tc1, f1 = 300, (0, 600), (0, 0.2), 20
+LaxWendroff_1D_mt = Donnee1D(label="Lax-Wendroff", c=c, rho=rho, kappa=kappa, f=f1, M=M1, CFL=CFL, xc=xc1, tc=tc1, **mod)
+ADER4_1D_mt       = Donnee1D(label="ADER4",         c=c, rho=rho, kappa=kappa, f=f1, M=M1, CFL=CFL, xc=xc1, tc=tc1, **mod)
 
-if eps == 0: modulation = "0"
+LaxWendroff1D_mt(LaxWendroff_1D_mt)
+ADER41D_mt(ADER4_1D_mt)
 
-data1 = Donnee1D(M = 2000, label ="LW_mt=" + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi,
-                 tc = (0, 1), xc = (0,1200), c=1500, rho=1000, CFL=0.6, kappa=2.25e9, f = 20, rho_mt=rho, kappa_mt=kappa, param = param)
-# data2 = Donnee1D(M = 200, label = "ADER4_mt=" + modulation, eps_r = -eps, eps_E=eps, omega = f_mt*2*np.pi,
-#                  tc = (0, 0.5), xc = (0,1200), CFL = 0.95, f = 20, rho_mt=rho, kappa_mt=kappa, param = param)
+tracer_mt(LaxWendroff_1D_mt)                              # profils rho(t), kappa(t), c(t)
+tracer1D_comparaison(0.1, LaxWendroff_1D_mt, ADER4_1D_mt)
+# anim1D_mt_comparaison(LaxWendroff_1D_mt, ADER4_1D_mt, interval=10)
 
-#Resolution
-# LaxWendroff1D_mt(data1)
-# sauvegarder(data1)
-# data1 = charger('.save/LW_mt=echelon_07-03_16-38-14.pkl')
-# print(data1)
-# anim1D_mt(data1, interval = 10)
-# tracer_energie(data1)
+# ============================================================
+# 1D — problème de Cauchy / onde plane, modulée en temps
+#   -> COMPARAISON Lax-Wendroff / ADER4
+# ============================================================
+M2, xc2, tc2, f2 = 200, (0, 500), (0, 0.2), 10
+LaxWendroff_1D_cauchy_mt = Donnee1D(label="Lax-Wendroff", c=c, rho=rho, kappa=kappa, f=f2, M=M2, CFL=CFL,
+                                    xc=xc2, tc=tc2, S=pt_source_1D, **mod)
+ADER4_1D_cauchy_mt       = Donnee1D(label="ADER4",         c=c, rho=rho, kappa=kappa, f=f2, M=M2, CFL=CFL,
+                                    xc=xc2, tc=tc2, S=pt_source_1D, **mod)
 
-# ADER41D_mt(data2)
-# sauvegarder(data2)
-# print(data2)
-# data2 = charger('.save/ADER4_mt=sinus_06-24_16-27-51.pkl')
-# anim1D_mt(data2, interval = 10)
-# anim1D_mt_comparaison(data1, data2, interval = 10)
+LaxWendroff1D_cauchy_mt(LaxWendroff_1D_cauchy_mt)
+ADER41D_cauchy_mt(ADER4_1D_cauchy_mt)
 
-#Problème de Cauchy sans modulation
-LW1D_cauchy_mt = Donnee1D(M = 100, label ="LW1D_mt=0", eps_r = 0, eps_E=0, omega =f_mt * 2 * np.pi, S=pt_source_1D,
-                          c=1500, rho=1000, CFL=0.6, kappa=2.25e9, tc = (0, 0.2), xc = (0, 500), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-# LaxWendroff1D_cauchy_mt(LW1D_cauchy_mt)
-# anim1D_mt(LW1D_cauchy_mt)
+tracer1D_comparaison(0.1, LaxWendroff_1D_cauchy_mt, ADER4_1D_cauchy_mt)
 
-# LW1D_cauchy = Donnee1D(M = 100, label ="LW", tc = (0, 0.2), xc = (0,400), CFL = 0.6, f = 10, c=1500, rho=1000)
-# LaxWendroff1D_cauchy(LW1D_cauchy)
-# anim1D_comparaison(LW1D_cauchy, LW1D_cauchy_mt)
+# ============================================================
+# 2D — source ponctuelle, modulée en temps
+#   -> tracé de la SOLUTION (chaque schéma) + comparaison des coupes
+# ============================================================
+Mxy, xc3, tc3, f3 = 300, (0, 400), (0, 0.2), 10
+LaxWendroff_2D_mt = Donnee2D(label="Lax-Wendroff 2D", c=c, rho=rho, kappa=kappa, f=f3, Mx=Mxy, My=Mxy, CFL=CFL,
+                             xc=xc3, yc=xc3, tc=tc3, **mod)
+ADER4_2D_mt       = Donnee2D(label="ADER4 2D",         c=c, rho=rho, kappa=kappa, f=f3, Mx=Mxy, My=Mxy, CFL=CFL,
+                             xc=xc3, yc=xc3, tc=tc3, **mod)
 
-# ADER4_1D_cauchy_mt = Donnee1D(M = 100, label ="ADER4_1D_mt=0", eps_r = 0, eps_E=0, omega =f_mt * 2 * np.pi, S=pt_source_1D,
-#                               c=1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-# ADER41D_cauchy_mt(ADER4_1D_cauchy_mt)
-# anim1D_mt(ADER4_1D_cauchy_mt)
-
-# ADER4_1D_cauchy = Donnee1D(M = 100, label ="ADER4_", eps_r = 0, eps_E=0, omega = 0, S=pt_source_1D,
-#                            c = 1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-# ADER41D_cauchy(ADER4_1D_cauchy)
-# anim1D_comparaison(ADER4_1D_cauchy, ADER4_1D_cauchy_mt)
-
-#Problème de Cauchy avec modulation
-# LW1D_cauchy_mt_ = Donnee1D(M = 100, label ="LW1D_mt=0"+modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, S=pt_source_1D,
-#                           c=1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-# LaxWendroff1D_cauchy_mt(LW1D_cauchy_mt_)
-# anim1D_mt(LW1D_cauchy_mt_)
-# sauvegarder(LW1D_cauchy_mt_)
-
-# ADER4_1D_cauchy_mt_ = Donnee1D(M = 100, label ="ADER4_1D_mt="+modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, S=pt_source_1D,
-#                               c=1500, rho=1000, CFL=0.6, e=2.25e9,tc = (0, 0.2), xc = (0,400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-# ADER41D_cauchy_mt(ADER4_1D_cauchy_mt_)
-# anim1D_mt(ADER4_1D_cauchy_mt_)
-# sauvegarder(ADER4_1D_cauchy_mt_)
-# anim1D_mt_comparaison(ADER4_1D_cauchy_mt_, LW1D_cauchy_mt_)
-"""
-============================================================
-Implémentation de la résolution 2D modulée en temps
-============================================================
-"""
-LW2D = Donnee2D(Mx = 100, My = 100, label ="LW2D", tc = (0, 0.2), xc = (0,400), yc = (0, 400), c=1500, rho=1000, CFL=0.6, kappa=2.25e9, f = 10)
-
-# LaxWendroff2D(LW2D)
-# LW2D = charger('.save/LaxWendroff2D_p.pkl')
-# anim2D(LW2D)
-# sauvegarder(LW2D)
-
-# LW2D_x = LW2D.projection((75, 0))
-# LW2D_y = LW2D.projection((0, 75))
-
-LW2D_mt = Donnee2D(Mx = 100, My = 100, label ="LW2D_mt=", eps_r = -eps, eps_E = eps, omega =f_mt * 2 * np.pi, c=1500, rho=1000, kappa=2.25e9,
-                   tc = (0, 0.2), xc = (0,400), yc = (0, 400), CFL = 0.6, f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-LaxWendroff2D_mt(LW2D_mt)
-# LW2D_mt = charger('.save/LW2D_mt=echelon_06-26_12-03-28.pkl')
-anim2D(LW2D_mt)
-# sauvegarder(LW2D_mt)
-
-# LW2D_mt_x = LW2D_mt.projection((75, 0))
-# LW2D_mt_y = LW2D_mt.projection((0, 75))
-
-# anim1D_comparaison(LW2D_mt_x, LW2D_x)
-# anim1D_comparaison(LW2D_mt_y, LW2D_y)
-
-ADER4_2D = Donnee2D(Mx = 100, My = 100, label ="ADER4",tc = (0, 0.2), xc = (0,400), yc = (0, 400), CFL = 0.6, f = 10)
-ADER42D(ADER4_2D)
-# ADER4_2D = charger('.save/ADER4_06-29_10-49-44.pkl')
-anim2D(ADER4_2D)
-sauvegarder(ADER4_2D)
-#
-ADER4_2D_x = ADER4_2D.projection((75, 0))
-ADER4_2D_y = ADER4_2D.projection((0, 75))
-
-ADER4_2D_mt = Donnee2D(Mx = 100, My = 100, label ="ADER4_mt=0", eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi,
-                       tc = (0, 0.2), xc = (0,400), yc = (0, 400), CFL = 0.6, f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
+LaxWendroff2D_mt(LaxWendroff_2D_mt)
 ADER42D_mt(ADER4_2D_mt)
-# ADER4_2D_mt = charger('.save/ADER4_mt=0_06-29_11-03-13.pkl')
-anim2D(ADER4_2D_mt)
-sauvegarder(ADER4_2D_mt)
 
-ADER4_2D_mt_x = ADER4_2D_mt.projection((75, 0))
-ADER4_2D_mt_y = ADER4_2D_mt.projection((0, 75))
+tracer2D(LaxWendroff_2D_mt, 0.1)
+tracer2D(ADER4_2D_mt, 0.1)
 
+# ============================================================
+# 2D — problème de Cauchy / onde plane, modulée en temps
+#   -> tracé de la SOLUTION (chaque schéma) + comparaison des coupes
+# ============================================================
+LaxWendroff_2D_cauchy_mt = Donnee2D(label="Lax-Wendroff 2D", c=c, rho=rho, kappa=kappa, f=f3, Mx=Mxy, My=Mxy, CFL=CFL,
+                                    xc=xc3, yc=xc3, tc=tc3, S=pt_source_1D, **mod)
+ADER4_2D_cauchy_mt       = Donnee2D(label="ADER4 2D",         c=c, rho=rho, kappa=kappa, f=f3, Mx=Mxy, My=Mxy, CFL=CFL,
+                                    xc=xc3, yc=xc3, tc=tc3, S=pt_source_1D, **mod)
 
-anim1D_comparaison(ADER4_2D_mt_x, ADER4_2D_x, interval = 40)
-anim1D_comparaison(ADER4_2D_mt_y, ADER4_2D_y, interval = 40)
-
-#Problème de Cauchy
-LW2D_cauchy_mt = Donnee2D(label = 'LW2D_mt=' + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, Mx = 100, My = 100, S=pt_source_1D,
-                          c=1500, rho=1000, CFL=0.6, kappa=2.25e9, tc = (0, 0.2), xc = (0, 400), yc = (0, 400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-
-LaxWendroff2D_cauchy_mt(LW2D_cauchy_mt)
-sauvegarder(LW2D_cauchy_mt)
-# LW2D_cauchy_mt = charger('.save/LW2D_mt=echelon_06-26_12-03-28.pkl')
-anim2D(LW2D_cauchy_mt)
-
-LW2D_cauchy_mt_x = LW2D_cauchy_mt.projection((75, 0))
-anim1D_mt_comparaison(LW2D_cauchy_mt_x, LW1D_cauchy_mt_)
-
-ADER4_2D_cauchy_mt = Donnee2D(label = 'ADER4_2D_mt=' + modulation, eps_r = -eps, eps_E=eps, omega =f_mt * 2 * np.pi, Mx = 100, My = 100, S=pt_source_1D,
-                              c=1500, rho=1000, CFL=0.6, kappa=2.25e9, tc = (0, 0.2), xc = (0, 400), yc = (0, 400), f = 10, rho_mt=rho, kappa_mt=kappa, param = param)
-
+LaxWendroff2D_cauchy_mt(LaxWendroff_2D_cauchy_mt)
 ADER42D_cauchy_mt(ADER4_2D_cauchy_mt)
-sauvegarder(ADER4_2D_cauchy_mt)
-# ADER4_2D_cauchy_mt = charger('.save/ADER4_2D_mt=echelon_06-29_13-56-35.pkl')
-anim2D(ADER4_2D_cauchy_mt)
 
-ADER4_2D_cauchy_mt_x = ADER4_2D_cauchy_mt.projection((50, 0))
-anim1D_mt_comparaison(ADER4_2D_cauchy_mt_x, ADER4_1D_cauchy_mt_, interval = 40)
+tracer2D(LaxWendroff_2D_cauchy_mt, 0.1)
+tracer2D(ADER4_2D_cauchy_mt, 0.1)

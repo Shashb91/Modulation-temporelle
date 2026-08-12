@@ -185,7 +185,7 @@ class Donnee2D:
 
     def __str__(self):
         f = self.omega / (2 * np.pi)
-        crit = self.c / ((f * 4 + self.f) * self.dx)
+        crit = self.c / (self.f * self.dx)
         mess = ""
         if crit <= 25:
             mess = " -> ATTENTION ! TROP PETIT, AUGEMENTER M"

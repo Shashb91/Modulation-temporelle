@@ -19,14 +19,21 @@ def LaxWendroff1D(data):
     sleep(0.001)
     data.U = np.zeros((data.N, data.M, 2))
     A = np.array([[0, 1/data.rho], [data.rho * data.c**2, 0]])
+    A2 = A @ A
+    coef1 = data.dt / (2 * data.dx)
+    coef2 = 0.5 * (data.dt / data.dx) ** 2
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(1, data.M - 1):
-            a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, :] - data.U[n, i-1, :])
-            a2 = (0.5 * (data.dt / data.dx)**2) * (A @ A) @ (data.U[n, i+1, :] + data.U[n, i-1, :] - 2 * data.U[n, i, :])
-            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2 + data.dt/data.dx * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([1,0]).transpose()
+        Un = data.U[n]
+        diff = Un[2:, :] - Un[:-2, :]                     # i+1 - i-1
+        lap = Un[2:, :] + Un[:-2, :] - 2 * Un[1:-1, :]    # i+1 + i-1 - 2i
+        a1 = coef1 * (diff @ A.T)
+        a2 = coef2 * (lap @ A2.T)
+        data.U[n+1, 1:-1, :] = Un[1:-1, :] - a1 + a2
+        if 1 <= data.xs <= data.M - 2:
+            data.U[n+1, data.xs, :] += data.dt/data.dx * data.S(data.f,(n+1)*data.dt) * np.array([1,0]).transpose()
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.sum((0.5 * data.rho * data.U[..., 0] ** 2 + data.U[..., 1] ** 2 / (2*data.rho * data.c ** 2)) * data.dx, axis=1)
 
 def ADER21D(data):
     """
@@ -53,12 +60,13 @@ def ADER21D(data):
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(1, data.M - 1):
-            a1 = sum([C[s] @ data.U[n, i + s - 1, :] for s in range(0, s_max)])
-            a2 = (data.dt / data.dx) * data.S(data.f,(n+1)*data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
+        Un = data.U[n]
+        a1 = sum(Un[s:data.M - 2 + s, :] @ C[s].T for s in range(0, s_max))
+        data.U[n + 1, 1:-1, :] = Un[1:-1, :] - a1
+        if 1 <= data.xs <= data.M - 2:
+            data.U[n + 1, data.xs, :] += (data.dt / data.dx) * data.S(data.f,(n+1)*data.dt) * np.array([data.opt, not data.opt])
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.sum((0.5 * data.rho * data.U[..., 0] ** 2 + data.U[..., 1] ** 2 / (2*data.rho * data.c ** 2)) * data.dx, axis=1)
 
 def ADER41D(data):
     """
@@ -87,12 +95,13 @@ def ADER41D(data):
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(2, data.M - 2):
-            a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
-            a2 = (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * (i == data.xs) * np.array([data.opt, not data.opt])
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1 + a2
+        Un = data.U[n]
+        a1 = sum(Un[s:data.M - 4 + s, :] @ C[s].T for s in range(0, s_max))
+        data.U[n + 1, 2:-2, :] = Un[2:-2, :] - a1
+        if 2 <= data.xs <= data.M - 3:
+            data.U[n + 1, data.xs, :] += (data.dt / data.dx) * data.S(data.f, (n + 1) * data.dt) * np.array([data.opt, not data.opt])
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.sum((0.5 * data.rho * data.U[..., 0] ** 2 + data.U[..., 1] ** 2 / (2*data.rho * data.c ** 2)) * data.dx, axis=1)
 
 """
 Schémas numériques pour la résolution du problème de Cauchy de propagation en 1D non modulé en temps
@@ -109,22 +118,28 @@ def LaxWendroff1D_cauchy(data):
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
-        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
+        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * ((0 < t) & (t < 1 / f))
 
     data.U = np.zeros((data.N, data.M, 2))
     A = np.array([[0, 1/data.rho], [data.rho * data.c**2, 0]])
+    A2 = A @ A
+    coef1 = data.dt / (2 * data.dx)
+    coef2 = 0.5 * (data.dt / data.dx) ** 2
 
     # init
-    for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/data.c) * np.array([1, data.c*data.rho])
+    i = np.arange(data.M)
+    arg = 1/data.f + data.tc[0] - data.dx * (i - 1) / data.c
+    data.U[0] = (1/data.c * fct(data.f, arg))[:, None] * np.array([1, data.c*data.rho])
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(1, data.M - 1):
-            a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i+1, :] - data.U[n, i-1, :])
-            a2 = (0.5 * (data.dt / data.dx)**2) * (A @ A) @ (data.U[n, i+1, :] + data.U[n, i-1, :] - 2 * data.U[n, i, :])
-            data.U[n+1, i, :] = data.U[n, i, :] - a1 + a2
+        Un = data.U[n]
+        diff = Un[2:, :] - Un[:-2, :]
+        lap = Un[2:, :] + Un[:-2, :] - 2 * Un[1:-1, :]
+        a1 = coef1 * (diff @ A.T)
+        a2 = coef2 * (lap @ A2.T)
+        data.U[n+1, 1:-1, :] = Un[1:-1, :] - a1 + a2
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
+    data.E = np.sum((0.5 * data.rho * data.U[..., 0] ** 2 + data.U[..., 1] ** 2 / (2*data.rho * data.c ** 2)) * data.dx, axis=1)
 
 def ADER41D_cauchy(data):
     """
@@ -137,7 +152,7 @@ def ADER41D_cauchy(data):
     def fct(f,t):
         omega = 2 * np.pi * f
         coeff = [1, -21 / 32, 63 / 768, -1 / 512]
-        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * (0 < t < 1 / f)
+        return (coeff[0] * np.sin(omega * t) + coeff[1] * np.sin(omega * 2 * t) + coeff[2] * np.sin(omega * 4 * t) + coeff[3] * np.sin(omega * 8 * t)) * ((0 < t) & (t < 1 / f))
 
     gamma = np.array([[1 / 12, 1 / 24, -1 / 12, -1 / 24],
                       [-2 / 3, -2 / 3, 1 / 6, 1 / 6],
@@ -152,8 +167,9 @@ def ADER41D_cauchy(data):
     C = np.zeros((s_max, 2, 2))
 
     # init
-    for i in range(0, data.M):
-        data.U[0,i,:] = 1/data.c * fct(data.f, 1/data.f +  data.tc[0] - data.dx*(i-1)/data.c) * np.array([1, data.c*data.rho])
+    i = np.arange(data.M)
+    arg = 1/data.f + data.tc[0] - data.dx * (i - 1) / data.c
+    data.U[0] = (1/data.c * fct(data.f, arg))[:, None] * np.array([1, data.c*data.rho])
 
     for s in range(0, s_max):
         a = np.zeros((2, 2))
@@ -162,12 +178,12 @@ def ADER41D_cauchy(data):
         C[s, :, :] = a
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(2, data.M - 2):
-            a1 = sum([C[s] @ data.U[n, i + s - 2, :] for s in range(0, s_max)])
-            data.U[n + 1, i, :] = data.U[n, i, :] - a1
+        Un = data.U[n]
+        a1 = sum(Un[s:data.M - 4 + s, :] @ C[s].T for s in range(0, s_max))
+        data.U[n + 1, 2:-2, :] = Un[2:-2, :] - a1
 
-    data.E = np.array([sum([(0.5 * data.rho * data.U[n, i, 0] ** 2 + data.U[n, i, 1] ** 2 / (2*data.rho * data.c ** 2))*data.dx for i in range(data.M)]) for n in range(0, data.N)])
- 
+    data.E = np.sum((0.5 * data.rho * data.U[..., 0] ** 2 + data.U[..., 1] ** 2 / (2*data.rho * data.c ** 2)) * data.dx, axis=1)
+
 
 """
 Schémas numériques pour la résolution du problème de propagation en 2D non modulé en temps, avec un point source ponctuel
@@ -189,17 +205,25 @@ def LaxWendroff2D(data):
     B = np.array([[0,0,0],
                   [0,0,1/data.rho],
                   [0, rc2, 0]])
+    ca = data.dt / (2 * data.dx)
+    cb = data.dt / (2 * data.dy)
+    cc = 0.5 * (data.dt * data.c) ** 2 / data.dx ** 2
+    cd = 0.5 * (data.dt * data.c) ** 2 / data.dy ** 2
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(1, data.Mx - 1):
-            for j in range(1, data.My - 1):
-                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
-                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
-                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
-                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
-                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2 + s
-
+        Un = data.U[n]
+        xp, xm = Un[2:, 1:-1, :], Un[:-2, 1:-1, :]       # (i+1,j), (i-1,j)
+        yp, ym = Un[1:-1, 2:, :], Un[1:-1, :-2, :]       # (i,j+1), (i,j-1)
+        c0 = Un[1:-1, 1:-1, :]                             # (i,j)
+        a1 = ca * ((xp - xm) @ A.T)
+        a2 = cb * ((yp - ym) @ B.T)
+        b1 = cc * (xp + xm - 2 * c0)
+        b2 = cd * (yp + ym - 2 * c0)
+        data.U[n + 1, 1:-1, 1:-1, :] = c0 - a1 - a2 + b1 + b2
+        sval = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * np.array([0, 0, 1]).transpose()
+        for (pi, pj) in data.ps:
+            if 1 <= pi <= data.Mx - 2 and 1 <= pj <= data.My - 2:
+                data.U[n + 1, pi, pj, :] += sval
 
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
@@ -227,33 +251,41 @@ def ADER42D(data):
 
     c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*(data.dx*data.dy)**2)]
     for n in trange(0, data.N - 1, ncols = ncols):
-        for i in range(2, data.Mx - 2):
-            for j in range(2, data.My - 2):
-                a1 = data.dt * (c[0] * A @ (data.U[n,i-2,j,:] - 8*data.U[n,i-1,j,:] + 8*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                                c[0] * B @ (data.U[n,i,j-2,:] - 8*data.U[n,i,j-1,:] + 8*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a2 = b2 * (c[1] * (- data.U[n,i-2,j,:] + 16*data.U[n,i-1,j,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                           c[1] * (- data.U[n,i,j-2,:] + 16*data.U[n,i,j-1,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a3 = b3 * (A @ (c[2] * (- data.U[n,i-2,j,:] + 2*data.U[n,i-1,j,:] - 2*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-1,j-2,:] - 8*data.U[n,i+1,j-2,:] + data.U[n,i+2,j-2,:]+
-                                        16*data.U[n,i-2,j-1,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i+1,j-1,:] - 16*data.U[n,i+2,j-1,:]
-                                        -30*data.U[n,i-2,j,:] + 240*data.U[n,i-1,j,:] - 240*data.U[n,i+1,j,:] + 30*data.U[n,i+2,j,:]+
-                                        16*data.U[n,i-2,j+1,:] - 128*data.U[n,i-1,j+1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+2,j+1,:]
-                                        - data.U[n,i-2,j+2,:] + 8*data.U[n,i-1,j+2,:] - 8*data.U[n,i+1,j+2,:] + data.U[n,i+2,j+2,:])) +
-                           B @ (c[2] * (- data.U[n,i,j-2,:] + 2*data.U[n,i,j-1,:] - 2*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-2,j-1,:] - 8*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                        + 16*data.U[n,i-1,j-2,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                        - 30*data.U[n,i,j-2,:] + 240*data.U[n,i,j-1,:] - 240*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                        + 16*data.U[n,i+1,j-2,:] - 128*data.U[n,i+1,j-1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                        - data.U[n,i+2,j-2,:] + 8*data.U[n,i+2,j-1,:] - 8*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:])))
-                a4 = b4 * (c[4] * (data.U[n,i-2,j,:] - 4*data.U[n,i-1,j,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                           c[4] * (data.U[n,i,j-2,:] - 4*data.U[n,i,j-1,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                           2 * c[5] * (data.U[n,i-2,j-2,:] -16*data.U[n,i-2,j-1,:] +30 * data.U[n,i-2,j,:] - 16*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                   -16*data.U[n,i-1,j-2,:] +256*data.U[n,i-1,j-1,:]-480*data.U[n,i-1,j,:] + 256*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                   +30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                   -16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                   + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                s = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * ((i,j) in data.ps) * np.array([0, 0, 1]).transpose()
-                data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4 + s
+        Un = data.U[n]
+        def sh(p, q):
+            return Un[2 + p:data.Mx - 2 + p, 2 + q:data.My - 2 + q, :]
+        X1 = sh(-2,0) - 8*sh(-1,0) + 8*sh(1,0) - sh(2,0)
+        Y1 = sh(0,-2) - 8*sh(0,-1) + 8*sh(0,1) - sh(0,2)
+        a1 = data.dt * (c[0] * (X1 @ A.T) + c[0] * (Y1 @ B.T))
+        X2 = - sh(-2,0) + 16*sh(-1,0) - 30*sh(0,0) + 16*sh(1,0) - sh(2,0)
+        Y2 = - sh(0,-2) + 16*sh(0,-1) - 30*sh(0,0) + 16*sh(0,1) - sh(0,2)
+        a2 = b2 * (c[1] * X2 + c[1] * Y2)
+        X3 = - sh(-2,0) + 2*sh(-1,0) - 2*sh(1,0) + sh(2,0)
+        Xmix = (- sh(-2,-2) + 8*sh(-1,-2) - 8*sh(1,-2) + sh(2,-2)
+                + 16*sh(-2,-1) -128*sh(-1,-1) + 128*sh(1,-1) - 16*sh(2,-1)
+                - 30*sh(-2,0) + 240*sh(-1,0) - 240*sh(1,0) + 30*sh(2,0)
+                + 16*sh(-2,1) - 128*sh(-1,1) + 128*sh(1,1) - 16*sh(2,1)
+                - sh(-2,2) + 8*sh(-1,2) - 8*sh(1,2) + sh(2,2))
+        Y3 = - sh(0,-2) + 2*sh(0,-1) - 2*sh(0,1) + sh(0,2)
+        Ymix = (- sh(-2,-2) + 8*sh(-2,-1) - 8*sh(-2,1) + sh(-2,2)
+                + 16*sh(-1,-2) -128*sh(-1,-1) + 128*sh(-1,1) - 16*sh(-1,2)
+                - 30*sh(0,-2) + 240*sh(0,-1) - 240*sh(0,1) + 30*sh(0,2)
+                + 16*sh(1,-2) - 128*sh(1,-1) + 128*sh(1,1) - 16*sh(1,2)
+                - sh(2,-2) + 8*sh(2,-1) - 8*sh(2,1) + sh(2,2))
+        a3 = b3 * ((c[2] * X3 + c[3] * Xmix) @ A.T + (c[2] * Y3 + c[3] * Ymix) @ B.T)
+        X4 = sh(-2,0) - 4*sh(-1,0) + 6*sh(0,0) - 4*sh(1,0) + sh(2,0)
+        Y4 = sh(0,-2) - 4*sh(0,-1) + 6*sh(0,0) - 4*sh(0,1) + sh(0,2)
+        XYmix = (sh(-2,-2) -16*sh(-2,-1) +30*sh(-2,0) - 16*sh(-2,1) + sh(-2,2)
+                 -16*sh(-1,-2) +256*sh(-1,-1) -480*sh(-1,0) + 256*sh(-1,1) - 16*sh(-1,2)
+                 +30*sh(0,-2) -480*sh(0,-1) +900*sh(0,0) -480*sh(0,1) + 30*sh(0,2)
+                 -16*sh(1,-2) +256*sh(1,-1) -480*sh(1,0) + 256*sh(1,1) - 16*sh(1,2)
+                 + sh(2,-2) -16*sh(2,-1) +30*sh(2,0) - 16*sh(2,1) + sh(2,2))
+        a4 = b4 * (c[4] * X4 + c[4] * Y4 + 2 * c[5] * XYmix)
+        data.U[n + 1, 2:-2, 2:-2, :] = sh(0,0) - a1 - a2 - a3 - a4
+        sval = data.dt / np.sqrt(data.dx) * data.S(data.f, (n + 1) * data.dt) * np.array([0, 0, 1]).transpose()
+        for (pi, pj) in data.ps:
+            if 2 <= pi <= data.Mx - 3 and 2 <= pj <= data.My - 3:
+                data.U[n + 1, pi, pj, :] += sval
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
     ep = data.U[..., 2] ** 2 / (2*data.rho * data.c ** 2)
     data.E = np.sum((ec + ep)*data.dx*data.dy, axis=(1, 2))
@@ -281,34 +313,29 @@ def LaxWendroff2D_cauchy(data):
                   [0, 0, 1 / data.rho],
                   [0, rc2, 0]])
 
-    # init
-    for i in range(0, data.Mx + 2):
-        for j in range(0, data.My):
-            data.U[0, i, j, :] = 1/data.c * data.S(data.f,1/data.f + data.tc[0] - data.dy * (j-1) / data.c) * np.array([np.sin(theta), np.cos(theta), data.rho * data.c]).transpose()
+    ca = data.dt / (2 * data.dx)
+    cb = data.dt / (2 * data.dy)
+    cc = 0.5 * (data.dt * data.c) ** 2 / data.dx ** 2
+    cd = 0.5 * (data.dt * data.c) ** 2 / data.dy ** 2
 
+    # init : la valeur ne dépend que de j (identique sur tout i)
+    j = np.arange(data.My)
+    Sj = np.array([data.S(data.f, 1/data.f + data.tc[0] - data.dy * (jj - 1) / data.c) for jj in j])
+    vec = np.array([np.sin(theta), np.cos(theta), data.rho * data.c])
+    data.U[0, :, :, :] = (1/data.c) * Sj[None, :, None] * vec[None, None, :]
 
     for n in trange(0, data.N - 1, ncols=ncols):
-        for j in range(1, data.My - 1):
-            #condition de periodicité gauche
-            a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 1, j, :] - data.U[n, - 1, j, :])
-            a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, 0, j + 1, :] - data.U[n, 0, j - 1, :])
-            b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 1, j, :] + data.U[n, - 1, j, :] - 2 * data.U[n, 0, j, :]) / data.dx ** 2)
-            b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j + 1, :] + data.U[n, 0, j - 1, :] - 2 * data.U[n, 0, j, :]) / data.dy ** 2)
-            data.U[n + 1, 0, j, :] = data.U[n, 0, j, :] - a1 - a2 + b1 + b2
-
-            # condition de periodicité droite
-            a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, 0, j, :] - data.U[n, -2, j, :])
-            a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, -1, j + 1, :] - data.U[n, -1, j - 1, :])
-            b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, 0, j, :] + data.U[n, -2, j, :] - 2 * data.U[n, -1, j, :]) / data.dx ** 2)
-            b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, -1, j + 1, :] + data.U[n, -1, j - 1, :] - 2 * data.U[n, -1, j, :]) / data.dy ** 2)
-            data.U[n + 1, -1, j, :] = data.U[n, -1, j, :] - a1 - a2 + b1 + b2
-            for i in range(1, data.Mx + 1):
-                # Lax-Wendroff 2D
-                a1 = (data.dt / (2 * data.dx)) * A @ (data.U[n, i + 1, j, :] - data.U[n, i - 1, j, :])
-                a2 = (data.dt / (2 * data.dy)) * B @ (data.U[n, i, j + 1, :] - data.U[n, i, j - 1, :])
-                b1 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i + 1, j, :] + data.U[n, i - 1, j, :] - 2 * data.U[n, i, j, :]) / data.dx ** 2)
-                b2 = (0.5 * (data.dt * data.c) ** 2) * ((data.U[n, i, j + 1, :] + data.U[n, i, j - 1, :] - 2 * data.U[n, i, j, :]) / data.dy ** 2)
-                data.U[n + 1, i, j, :] = data.U[n, i, j, :] - a1 - a2 + b1 + b2
+        Un = data.U[n]
+        xp = np.roll(Un, -1, axis=0)[:, 1:-1, :]     # U[i+1, j] (périodique en x)
+        xm = np.roll(Un, 1, axis=0)[:, 1:-1, :]      # U[i-1, j]
+        c0 = Un[:, 1:-1, :]                            # U[i, j]
+        yp = Un[:, 2:, :]                              # U[i, j+1]
+        ym = Un[:, :-2, :]                             # U[i, j-1]
+        a1 = ca * ((xp - xm) @ A.T)
+        a2 = cb * ((yp - ym) @ B.T)
+        b1 = cc * (xp + xm - 2 * c0)
+        b2 = cd * (yp + ym - 2 * c0)
+        data.U[n + 1, :, 1:-1, :] = c0 - a1 - a2 + b1 + b2
 
     data.U = data.U[:,1:data.Mx + 1, :,:]
     ec = 0.5 * data.rho * (data.U[..., 0] ** 2 + data.U[..., 1] ** 2)
@@ -342,142 +369,45 @@ def ADER42D_cauchy(data):
     b4 = - (data.c*data.dt)**4/24
     c = [1/(12*data.dx),1/data.dx**2,1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,2/(144*(data.dx*data.dy)**2)]
 
-    #init
-    for i in range(0, data.Mx+4):
-        for j in range(0, data.My):
-            data.U[0,i,j,:] = 1/data.c * fct(data.f,1/data.f + data.tc[0] - data.dy*(j-1)/data.c)* np.array([np.sin(theta), np.cos(theta), data.rho*data.c]).transpose()
-
+    # init : la valeur ne depend que de j (identique sur tout i)
+    j = np.arange(data.My)
+    Sj = np.array([fct(data.f, 1/data.f + data.tc[0] - data.dy * (jj - 1) / data.c) for jj in j])
+    vec = np.array([np.sin(theta), np.cos(theta), data.rho * data.c])
+    data.U[0, :, :, :] = (1/data.c) * Sj[None, :, None] * vec[None, None, :]
 
     for n in trange(0, data.N - 1, ncols = ncols):
-        for j in range(2,data.My-2):
-            #condition periodicité gauche
-            a1 = data.dt * (c[0] * A @ (data.U[n,-2,j,:] - 8*data.U[n,-1,j,:] + 8*data.U[n,1,j,:] - data.U[n,2,j,:]) +
-                            c[0] * B @ (data.U[n,0,j-2,:] - 8*data.U[n,0,j-1,:] + 8*data.U[n,0,j+1,:] - data.U[n,0,j+2,:]))
-            a2 = b2 * (c[1] * (- data.U[n,-2,j,:] + 16*data.U[n,-1,j,:] - 30*data.U[n,0,j,:] + 16*data.U[n,1,j,:] - data.U[n,2,j,:]) +
-                       c[1] * (- data.U[n,0,j-2,:] + 16*data.U[n,0,j-1,:] - 30*data.U[n,0,j,:] + 16*data.U[n,0,j+1,:] - data.U[n,0,j+2,:]))
-            a3 = b3 * (A @ (c[2] * (- data.U[n,-2,j,:] + 2*data.U[n,-1,j,:] - 2*data.U[n,1,j,:] + data.U[n,2,j,:]) +
-                            c[3] * (- data.U[n,-2,j-2,:] + 8*data.U[n,-1,j-2,:] - 8*data.U[n,1,j-2,:] + data.U[n,2,j-2,:]+
-                                    16*data.U[n,-2,j-1,:] -128*data.U[n,-1,j-1,:] + 128*data.U[n,1,j-1,:] - 16*data.U[n,2,j-1,:]
-                                    -30*data.U[n,-2,j,:] + 240*data.U[n,-1,j,:] - 240*data.U[n,1,j,:] + 30*data.U[n,2,j,:]+
-                                    16*data.U[n,-2,j+1,:] - 128*data.U[n,-1,j+1,:] + 128*data.U[n,1,j+1,:] - 16*data.U[n,2,j+1,:]
-                                    - data.U[n,-2,j+2,:] + 8*data.U[n,-1,j+2,:] - 8*data.U[n,1,j+2,:] + data.U[n,2,j+2,:])) +
-                       B @ (c[2] * (- data.U[n,0,j-2,:] + 2*data.U[n,0,j-1,:] - 2*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]) +
-                            c[3] * (- data.U[n,-2,j-2,:] + 8*data.U[n,-2,j-1,:] - 8*data.U[n,-2,j+1,:] + data.U[n,-2,j+2,:]
-                                    + 16*data.U[n,-1,j-2,:] -128*data.U[n,-1,j-1,:] + 128*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
-                                    - 30*data.U[n,0,j-2,:] + 240*data.U[n,0,j-1,:] - 240*data.U[n,0,j+1,:] + 30*data.U[n,0,j+2,:]
-                                    + 16*data.U[n,1,j-2,:] - 128*data.U[n,1,j-1,:] + 128*data.U[n,1,j+1,:] - 16*data.U[n,1,j+2,:]
-                                    - data.U[n,2,j-2,:] + 8*data.U[n,2,j-1,:] - 8*data.U[n,2,j+1,:] + data.U[n,2,j+2,:])))
-            a4 = b4 * (c[4] * (data.U[n,-2,j,:] - 4*data.U[n,-1,j,:] + 6*data.U[n,0,j,:] - 4*data.U[n,1,j,:] + data.U[n,2,j,:]) +
-                       c[4] * (data.U[n,0,j-2,:] - 4*data.U[n,0,j-1,:] + 6*data.U[n,0,j,:] - 4*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]) +
-                       c[5] * (data.U[n,-2,j-2,:] -16*data.U[n,-2,j-1,:] +30 * data.U[n,-2,j,:] - 16*data.U[n,-2,j+1,:] + data.U[n,-2,j+2,:]
-                               - 16*data.U[n,-1,j-2,:] +256*data.U[n,-1,j-1,:]-480*data.U[n,-1,j,:] + 256*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
-                               + 30*data.U[n,0,j-2,:] -480*data.U[n,0,j-1,:] +900*data.U[n,0,j,:] -480*data.U[n,0,j+1,:] + 30*data.U[n,0,j+2,:]
-                               - 16*data.U[n,1,j-2,:] +256*data.U[n,1,j-1,:]-480*data.U[n,1,j,:] + 256*data.U[n,1,j+1,:] - 16*data.U[n,1,j+2,:]
-                               + data.U[n,2,j-2,:] -16*data.U[n,2,j-1,:] +30*data.U[n,2,j,:] - 16*data.U[n,2,j+1,:] + data.U[n,2,j+2,:]))
-            data.U[n + 1, 0, j, :] = data.U[n,0,j,:] - a1 - a2 - a3 - a4
+        Un = data.U[n]
+        def sh(p, q):
+            return np.roll(Un, -p, axis=0)[:, 2 + q:data.My - 2 + q, :]
+        X1 = sh(-2,0) - 8*sh(-1,0) + 8*sh(1,0) - sh(2,0)
+        Y1 = sh(0,-2) - 8*sh(0,-1) + 8*sh(0,1) - sh(0,2)
+        a1 = data.dt * (c[0] * (X1 @ A.T) + c[0] * (Y1 @ B.T))
+        X2 = - sh(-2,0) + 16*sh(-1,0) - 30*sh(0,0) + 16*sh(1,0) - sh(2,0)
+        Y2 = - sh(0,-2) + 16*sh(0,-1) - 30*sh(0,0) + 16*sh(0,1) - sh(0,2)
+        a2 = b2 * (c[1] * X2 + c[1] * Y2)
+        X3 = - sh(-2,0) + 2*sh(-1,0) - 2*sh(1,0) + sh(2,0)
+        Xmix = (- sh(-2,-2) + 8*sh(-1,-2) - 8*sh(1,-2) + sh(2,-2)
+                + 16*sh(-2,-1) -128*sh(-1,-1) + 128*sh(1,-1) - 16*sh(2,-1)
+                - 30*sh(-2,0) + 240*sh(-1,0) - 240*sh(1,0) + 30*sh(2,0)
+                + 16*sh(-2,1) - 128*sh(-1,1) + 128*sh(1,1) - 16*sh(2,1)
+                - sh(-2,2) + 8*sh(-1,2) - 8*sh(1,2) + sh(2,2))
+        Y3 = - sh(0,-2) + 2*sh(0,-1) - 2*sh(0,1) + sh(0,2)
+        Ymix = (- sh(-2,-2) + 8*sh(-2,-1) - 8*sh(-2,1) + sh(-2,2)
+                + 16*sh(-1,-2) -128*sh(-1,-1) + 128*sh(-1,1) - 16*sh(-1,2)
+                - 30*sh(0,-2) + 240*sh(0,-1) - 240*sh(0,1) + 30*sh(0,2)
+                + 16*sh(1,-2) - 128*sh(1,-1) + 128*sh(1,1) - 16*sh(1,2)
+                - sh(2,-2) + 8*sh(2,-1) - 8*sh(2,1) + sh(2,2))
+        a3 = b3 * ((c[2] * X3 + c[3] * Xmix) @ A.T + (c[2] * Y3 + c[3] * Ymix) @ B.T)
+        X4 = sh(-2,0) - 4*sh(-1,0) + 6*sh(0,0) - 4*sh(1,0) + sh(2,0)
+        Y4 = sh(0,-2) - 4*sh(0,-1) + 6*sh(0,0) - 4*sh(0,1) + sh(0,2)
+        XYmix = (sh(-2,-2) -16*sh(-2,-1) +30*sh(-2,0) - 16*sh(-2,1) + sh(-2,2)
+                 -16*sh(-1,-2) +256*sh(-1,-1) -480*sh(-1,0) + 256*sh(-1,1) - 16*sh(-1,2)
+                 +30*sh(0,-2) -480*sh(0,-1) +900*sh(0,0) -480*sh(0,1) + 30*sh(0,2)
+                 -16*sh(1,-2) +256*sh(1,-1) -480*sh(1,0) + 256*sh(1,1) - 16*sh(1,2)
+                 + sh(2,-2) -16*sh(2,-1) +30*sh(2,0) - 16*sh(2,1) + sh(2,2))
+        a4 = b4 * (c[4] * X4 + c[4] * Y4 + c[5] * XYmix)
+        data.U[n + 1, :, 2:-2, :] = sh(0,0) - a1 - a2 - a3 - a4
 
-            a1 = data.dt * (c[0] * A @ (data.U[n,-1,j,:] - 8*data.U[n,0,j,:] + 8*data.U[n,2,j,:] - data.U[n,3,j,:]) +
-                            c[0] * B @ (data.U[n,1,j-2,:] - 8*data.U[n,1,j-1,:] + 8*data.U[n,1,j+1,:] - data.U[n,1,j+2,:]))
-            a2 = b2 * (c[1] * (- data.U[n,-1,j,:] + 16*data.U[n,0,j,:] - 30*data.U[n,1,j,:] + 16*data.U[n,2,j,:] - data.U[n,3,j,:]) +
-                       c[1] * (- data.U[n,1,j-2,:] + 16*data.U[n,1,j-1,:] - 30*data.U[n,1,j,:] + 16*data.U[n,1,j+1,:] - data.U[n,1,j+2,:]))
-            a3 = b3 * (A @ (c[2] * (- data.U[n,-1,j,:] + 2*data.U[n,0,j,:] - 2*data.U[n,2,j,:] + data.U[n,3,j,:]) +
-                            c[3] * (- data.U[n,-1,j-2,:] + 8*data.U[n,0,j-2,:] - 8*data.U[n,2,j-2,:] + data.U[n,3,j-2,:]+
-                                    16*data.U[n,-1,j-1,:] -128*data.U[n,0,j-1,:] + 128*data.U[n,2,j-1,:] - 16*data.U[n,3,j-1,:]
-                                    -30*data.U[n,-1,j,:] + 240*data.U[n,0,j,:] - 240*data.U[n,2,j,:] + 30*data.U[n,3,j,:]+
-                                    16*data.U[n,-1,j+1,:] - 128*data.U[n,0,j+1,:] + 128*data.U[n,2,j+1,:] - 16*data.U[n,3,j+1,:]
-                                    - data.U[n,-1,j+2,:] + 8*data.U[n,0,j+2,:] - 8*data.U[n,2,j+2,:] + data.U[n,3,j+2,:])) +
-                       B @ (c[2] * (- data.U[n,1,j-2,:] + 2*data.U[n,1,j-1,:] - 2*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]) +
-                            c[3] * (- data.U[n,-1,j-2,:] + 8*data.U[n,-1,j-1,:] - 8*data.U[n,-1,j+1,:] + data.U[n,-1,j+2,:]
-                                    + 16*data.U[n,0,j-2,:] -128*data.U[n,0,j-1,:] + 128*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
-                                    - 30*data.U[n,1,j-2,:] + 240*data.U[n,1,j-1,:] - 240*data.U[n,1,j+1,:] + 30*data.U[n,1,j+2,:]
-                                    + 16*data.U[n,2,j-2,:] - 128*data.U[n,2,j-1,:] + 128*data.U[n,2,j+1,:] - 16*data.U[n,2,j+2,:]
-                                    - data.U[n,3,j-2,:] + 8*data.U[n,3,j-1,:] - 8*data.U[n,3,j+1,:] + data.U[n,3,j+2,:])))
-            a4 = b4 * (c[4] * (data.U[n,-1,j,:] - 4*data.U[n,0,j,:] + 6*data.U[n,1,j,:] - 4*data.U[n,2,j,:] + data.U[n,3,j,:]) +
-                       c[4] * (data.U[n,1,j-2,:] - 4*data.U[n,1,j-1,:] + 6*data.U[n,1,j,:] - 4*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]) +
-                       c[5] * (data.U[n,-1,j-2,:] -16*data.U[n,-1,j-1,:] +30 * data.U[n,-1,j,:] - 16*data.U[n,-1,j+1,:] + data.U[n,-1,j+2,:]
-                               - 16*data.U[n,0,j-2,:] +256*data.U[n,0,j-1,:]-480*data.U[n,0,j,:] + 256*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
-                               + 30*data.U[n,1,j-2,:] -480*data.U[n,1,j-1,:] +900*data.U[n,1,j,:] -480*data.U[n,1,j+1,:] + 30*data.U[n,1,j+2,:]
-                               - 16*data.U[n,2,j-2,:] +256*data.U[n,2,j-1,:]-480*data.U[n,2,j,:] + 256*data.U[n,2,j+1,:] - 16*data.U[n,2,j+2,:]
-                               + data.U[n,3,j-2,:] -16*data.U[n,3,j-1,:] +30*data.U[n,3,j,:] - 16*data.U[n,3,j+1,:] + data.U[n,3,j+2,:]))
-            data.U[n + 1, 1, j, :] = data.U[n,1,j,:] - a1 - a2 - a3 - a4
-
-            #conditon de periodicité droite
-            a1 = data.dt * (c[0] * A @ (data.U[n,-3,j,:] - 8*data.U[n,-2,j,:] + 8*data.U[n,0,j,:] - data.U[n,1,j,:]) +
-                            c[0] * B @ (data.U[n,-1,j-2,:] - 8*data.U[n,-1,j-1,:] + 8*data.U[n,-1,j+1,:] - data.U[n,-1,j+2,:]))
-            a2 = b2 * (c[1] * (- data.U[n,-3,j,:] + 16*data.U[n,-2,j,:] - 30*data.U[n,-1,j,:] + 16*data.U[n,0,j,:] - data.U[n,1,j,:]) +
-                       c[1] * (- data.U[n,-1,j-2,:] + 16*data.U[n,-1,j-1,:] - 30*data.U[n,-1,j,:] + 16*data.U[n,-1,j+1,:] - data.U[n,-1,j+2,:]))
-            a3 = b3 * (A @ (c[2] * (- data.U[n,-3,j,:] + 2*data.U[n,-2,j,:] - 2*data.U[n,0,j,:] + data.U[n,1,j,:]) +
-                            c[3] * (- data.U[n,-3,j-2,:] + 8*data.U[n,-2,j-2,:] - 8*data.U[n,0,j-2,:] + data.U[n,1,j-2,:]+
-                                    16*data.U[n,-3,j-1,:] -128*data.U[n,-2,j-1,:] + 128*data.U[n,0,j-1,:] - 16*data.U[n,1,j-1,:]
-                                    -30*data.U[n,-3,j,:] + 240*data.U[n,-2,j,:] - 240*data.U[n,0,j,:] + 30*data.U[n,1,j,:]+
-                                    16*data.U[n,-3,j+1,:] - 128*data.U[n,-2,j+1,:] + 128*data.U[n,0,j+1,:] - 16*data.U[n,1,j+1,:]
-                                    - data.U[n,-3,j+2,:] + 8*data.U[n,-2,j+2,:] - 8*data.U[n,0,j+2,:] + data.U[n,1,j+2,:])) +
-                       B @ (c[2] * (- data.U[n,-1,j-2,:] + 2*data.U[n,-1,j-1,:] - 2*data.U[n,-1,j+1,:] + data.U[n,-1,j+2,:]) +
-                            c[3] * (- data.U[n,-3,j-2,:] + 8*data.U[n,-3,j-1,:] - 8*data.U[n,-3,j+1,:] + data.U[n,-3,j+2,:]
-                                    + 16*data.U[n,-2,j-2,:] -128*data.U[n,-2,j-1,:] + 128*data.U[n,-2,j+1,:] - 16*data.U[n,-2,j+2,:]
-                                    - 30*data.U[n,-1,j-2,:] + 240*data.U[n,-1,j-1,:] - 240*data.U[n,-1,j+1,:] + 30*data.U[n,-1,j+2,:]
-                                    + 16*data.U[n,0,j-2,:] - 128*data.U[n,0,j-1,:] + 128*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
-                                    - data.U[n,1,j-2,:] + 8*data.U[n,1,j-1,:] - 8*data.U[n,1,j+1,:] + data.U[n,1,j+2,:])))
-            a4 = b4 * (c[4] * (data.U[n,-3,j,:] - 4*data.U[n,-2,j,:] + 6*data.U[n,-1,j,:] - 4*data.U[n,0,j,:] + data.U[n,1,j,:]) +
-                       c[4] * (data.U[n,-1,j-2,:] - 4*data.U[n,-1,j-1,:] + 6*data.U[n,-1,j,:] - 4*data.U[n,-1,j+1,:] + data.U[n,-1,j+2,:]) +
-                       c[5] * (data.U[n,-3,j-2,:] -16*data.U[n,-3,j-1,:] +30 * data.U[n,-3,j,:] - 16*data.U[n,-3,j+1,:] + data.U[n,-3,j+2,:]
-                               - 16*data.U[n,-2,j-2,:] +256*data.U[n,-2,j-1,:]-480*data.U[n,-2,j,:] + 256*data.U[n,-2,j+1,:] - 16*data.U[n,-2,j+2,:]
-                               + 30*data.U[n,-1,j-2,:] -480*data.U[n,-1,j-1,:] +900*data.U[n,-1,j,:] -480*data.U[n,-1,j+1,:] + 30*data.U[n,-1,j+2,:]
-                               - 16*data.U[n,0,j-2,:] +256*data.U[n,0,j-1,:]-480*data.U[n,0,j,:] + 256*data.U[n,0,j+1,:] - 16*data.U[n,0,j+2,:]
-                               + data.U[n,1,j-2,:] -16*data.U[n,1,j-1,:] +30*data.U[n,1,j,:] - 16*data.U[n,1,j+1,:] + data.U[n,1,j+2,:]))
-            data.U[n + 1, -1, j, :] = data.U[n,-1,j,:] - a1 - a2 - a3 - a4
-            
-            a1 = data.dt * (c[0] * A @ (data.U[n,-4,j,:] - 8*data.U[n,-3,j,:] + 8*data.U[n,-1,j,:] - data.U[n,0,j,:]) +
-                            c[0] * B @ (data.U[n,-2,j-2,:] - 8*data.U[n,-2,j-1,:] + 8*data.U[n,-2,j+1,:] - data.U[n,-2,j+2,:]))
-            a2 = b2 * (c[1] * (- data.U[n,-4,j,:] + 16*data.U[n,-3,j,:] - 30*data.U[n,-2,j,:] + 16*data.U[n,-1,j,:] - data.U[n,0,j,:]) +
-                       c[1] * (- data.U[n,-2,j-2,:] + 16*data.U[n,-2,j-1,:] - 30*data.U[n,-2,j,:] + 16*data.U[n,-2,j+1,:] - data.U[n,-2,j+2,:]))
-            a3 = b3 * (A @ (c[2] * (- data.U[n,-4,j,:] + 2*data.U[n,-3,j,:] - 2*data.U[n,-1,j,:] + data.U[n,0,j,:]) +
-                            c[3] * (- data.U[n,-4,j-2,:] + 8*data.U[n,-3,j-2,:] - 8*data.U[n,-1,j-2,:] + data.U[n,0,j-2,:]+
-                                    16*data.U[n,-4,j-1,:] -128*data.U[n,-3,j-1,:] + 128*data.U[n,-1,j-1,:] - 16*data.U[n,0,j-1,:]
-                                    -30*data.U[n,-4,j,:] + 240*data.U[n,-3,j,:] - 240*data.U[n,-1,j,:] + 30*data.U[n,0,j,:]+
-                                    16*data.U[n,-4,j+1,:] - 128*data.U[n,-3,j+1,:] + 128*data.U[n,-1,j+1,:] - 16*data.U[n,0,j+1,:]
-                                    - data.U[n,-4,j+2,:] + 8*data.U[n,-3,j+2,:] - 8*data.U[n,-1,j+2,:] + data.U[n,0,j+2,:])) +
-                       B @ (c[2] * (- data.U[n,-2,j-2,:] + 2*data.U[n,-2,j-1,:] - 2*data.U[n,-2,j+1,:] + data.U[n,-2,j+2,:]) +
-                            c[3] * (- data.U[n,-4,j-2,:] + 8*data.U[n,-4,j-1,:] - 8*data.U[n,-4,j+1,:] + data.U[n,-4,j+2,:]
-                                    + 16*data.U[n,-3,j-2,:] -128*data.U[n,-3,j-1,:] + 128*data.U[n,-3,j+1,:] - 16*data.U[n,-3,j+2,:]
-                                    - 30*data.U[n,-2,j-2,:] + 240*data.U[n,-2,j-1,:] - 240*data.U[n,-2,j+1,:] + 30*data.U[n,-2,j+2,:]
-                                    + 16*data.U[n,-1,j-2,:] - 128*data.U[n,-1,j-1,:] + 128*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
-                                    - data.U[n,0,j-2,:] + 8*data.U[n,0,j-1,:] - 8*data.U[n,0,j+1,:] + data.U[n,0,j+2,:])))
-            a4 = b4 * (c[4] * (data.U[n,-4,j,:] - 4*data.U[n,-3,j,:] + 6*data.U[n,-2,j,:] - 4*data.U[n,-1,j,:] + data.U[n,0,j,:]) +
-                       c[4] * (data.U[n,-2,j-2,:] - 4*data.U[n,-2,j-1,:] + 6*data.U[n,-2,j,:] - 4*data.U[n,-2,j+1,:] + data.U[n,-2,j+2,:]) +
-                       c[5] * (data.U[n,-4,j-2,:] -16*data.U[n,-4,j-1,:] +30 * data.U[n,-4,j,:] - 16*data.U[n,-4,j+1,:] + data.U[n,-4,j+2,:]
-                               - 16*data.U[n,-3,j-2,:] +256*data.U[n,-3,j-1,:]-480*data.U[n,-3,j,:] + 256*data.U[n,-3,j+1,:] - 16*data.U[n,-3,j+2,:]
-                               + 30*data.U[n,-2,j-2,:] -480*data.U[n,-2,j-1,:] +900*data.U[n,-2,j,:] -480*data.U[n,-2,j+1,:] + 30*data.U[n,-2,j+2,:]
-                               - 16*data.U[n,-1,j-2,:] +256*data.U[n,-1,j-1,:]-480*data.U[n,-1,j,:] + 256*data.U[n,-1,j+1,:] - 16*data.U[n,-1,j+2,:]
-                               + data.U[n,0,j-2,:] -16*data.U[n,0,j-1,:] +30*data.U[n,0,j,:] - 16*data.U[n,0,j+1,:] + data.U[n,0,j+2,:]))
-            data.U[n + 1, -2, j, :] = data.U[n,-2,j,:] - a1 - a2 - a3 - a4
-            
-            for i in range(2, data.Mx + 2):
-                #ADER4 2D
-                a1 = data.dt * (c[0] * A @ (data.U[n,i-2,j,:] - 8*data.U[n,i-1,j,:] + 8*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                                c[0] * B @ (data.U[n,i,j-2,:] - 8*data.U[n,i,j-1,:] + 8*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a2 = b2 * (c[1] * (- data.U[n,i-2,j,:] + 16*data.U[n,i-1,j,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i+1,j,:] - data.U[n,i+2,j,:]) +
-                           c[1] * (- data.U[n,i,j-2,:] + 16*data.U[n,i,j-1,:] - 30*data.U[n,i,j,:] + 16*data.U[n,i,j+1,:] - data.U[n,i,j+2,:]))
-                a3 = b3 * (A @ (c[2] * (- data.U[n,i-2,j,:] + 2*data.U[n,i-1,j,:] - 2*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-1,j-2,:] - 8*data.U[n,i+1,j-2,:] + data.U[n,i+2,j-2,:]+
-                                        16*data.U[n,i-2,j-1,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i+1,j-1,:] - 16*data.U[n,i+2,j-1,:]
-                                        -30*data.U[n,i-2,j,:] + 240*data.U[n,i-1,j,:] - 240*data.U[n,i+1,j,:] + 30*data.U[n,i+2,j,:]+
-                                        16*data.U[n,i-2,j+1,:] - 128*data.U[n,i-1,j+1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+2,j+1,:]
-                                        - data.U[n,i-2,j+2,:] + 8*data.U[n,i-1,j+2,:] - 8*data.U[n,i+1,j+2,:] + data.U[n,i+2,j+2,:])) +
-                           B @ (c[2] * (- data.U[n,i,j-2,:] + 2*data.U[n,i,j-1,:] - 2*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                                c[3] * (- data.U[n,i-2,j-2,:] + 8*data.U[n,i-2,j-1,:] - 8*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                        + 16*data.U[n,i-1,j-2,:] -128*data.U[n,i-1,j-1,:] + 128*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                        - 30*data.U[n,i,j-2,:] + 240*data.U[n,i,j-1,:] - 240*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                        + 16*data.U[n,i+1,j-2,:] - 128*data.U[n,i+1,j-1,:] + 128*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                        - data.U[n,i+2,j-2,:] + 8*data.U[n,i+2,j-1,:] - 8*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:])))
-                a4 = b4 * (c[4] * (data.U[n,i-2,j,:] - 4*data.U[n,i-1,j,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i+1,j,:] + data.U[n,i+2,j,:]) +
-                           c[4] * (data.U[n,i,j-2,:] - 4*data.U[n,i,j-1,:] + 6*data.U[n,i,j,:] - 4*data.U[n,i,j+1,:] + data.U[n,i,j+2,:]) +
-                           c[5] * (data.U[n,i-2,j-2,:] -16*data.U[n,i-2,j-1,:] +30 * data.U[n,i-2,j,:] - 16*data.U[n,i-2,j+1,:] + data.U[n,i-2,j+2,:]
-                                   - 16*data.U[n,i-1,j-2,:] +256*data.U[n,i-1,j-1,:]-480*data.U[n,i-1,j,:] + 256*data.U[n,i-1,j+1,:] - 16*data.U[n,i-1,j+2,:]
-                                   + 30*data.U[n,i,j-2,:] -480*data.U[n,i,j-1,:] +900*data.U[n,i,j,:] -480*data.U[n,i,j+1,:] + 30*data.U[n,i,j+2,:]
-                                   - 16*data.U[n,i+1,j-2,:] +256*data.U[n,i+1,j-1,:]-480*data.U[n,i+1,j,:] + 256*data.U[n,i+1,j+1,:] - 16*data.U[n,i+1,j+2,:]
-                                   + data.U[n,i+2,j-2,:] -16*data.U[n,i+2,j-1,:] +30*data.U[n,i+2,j,:] - 16*data.U[n,i+2,j+1,:] + data.U[n,i+2,j+2,:]))
-                data.U[n + 1, i, j, :] = data.U[n,i,j,:] - a1 - a2 - a3 - a4
     data.U = data.U[:,2:data.Mx,:,:]
     data.U[...,0] = np.round(data.U[...,0], 16)
 

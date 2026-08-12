@@ -13,7 +13,7 @@ def anim1D(data, **kwargs):
     opt = kwargs.get("opt", False)
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
 
-    interval = kwargs.get("interval", 5)
+    duree = kwargs.get("duree", 3)
 
     if "tf" in kwargs.keys():
         tf = kwargs["tf"]
@@ -21,6 +21,8 @@ def anim1D(data, **kwargs):
     else:
         tf = data.tc[1]
         N = data.N
+
+    interval = duree * 1000 / N
 
     x_center = (data.x[0] + data.x[-1]) / 2
     x_half_width_init = (data.x[-1] - data.x[0]) / 10 if opt else (data.x[-1] - data.x[0]) / 2
@@ -862,7 +864,7 @@ def anim2D_ms(data, l, L, **kwargs):
 
     if "tf" in kwargs.keys():
         tf = kwargs["tf"]
-        N = int(kwargs["tf"]*data.N/data.tc[1])
+        N = int(kwargs["tf"]*data.N/data.tc[1]) - 1
     else:
         tf = data.tc[1]
         N = data.N

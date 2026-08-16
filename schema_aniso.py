@@ -7,6 +7,7 @@ from donnee import Donnee2D
 from matplotlib import pyplot as plt
 from tqdm import trange
 ncols = 125
+pas_sauvegarde = 25
 
 
 def moyennes_aniso(data):
@@ -666,7 +667,16 @@ def ADER4_aniso_mt(data):
     sleep(0.01)
     c = cmax_mt(data, opt = False)
     data.CFL_aniso(c)
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+
+
+    sous_echantillonnage = data.N > 1000
+    if sous_echantillonnage:
+        N_frames = data.N // pas_sauvegarde
+        data.U = np.zeros((N_frames, data.Mx, data.My, 3))
+        Un = np.zeros((data.Mx, data.My, 3))          # solution au pas de temps n
+        Un1 = np.zeros((data.Mx, data.My, 3))         # solution au pas de temps n+1
+    else:
+        data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2),1/(24*data.dx**3*data.dy)]
 
     sigma, R = 5 * data.dx, 10 * data.dx
@@ -685,8 +695,13 @@ def ADER4_aniso_mt(data):
         kappa = kappa_moy(data)   # module homogeneise module en temps (cf. A2D_aniso)
         A = A2D_aniso(data)(t)
         B = B2D_aniso(data)(t)
-        U_temp = data.U[n, ...]
-        U_temp_ = np.zeros(data.U[n, ...].shape)
+        if sous_echantillonnage:
+            if n % pas_sauvegarde == 0 and n // pas_sauvegarde < N_frames:
+                data.U[n // pas_sauvegarde, ...] = Un
+            U_temp = Un
+        else:
+            U_temp = data.U[n, ...]
+        U_temp_ = np.zeros((data.Mx, data.My, 3))
 
         S = [-rho1(t)[1]/rho1(t)[0], -rho2(t)[1]/rho2(t)[0], kappa(t)[1]/kappa(t)[0]]
         d0 = np.array([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)])
@@ -755,9 +770,19 @@ def ADER4_aniso_mt(data):
 
         S = [-rho1(t+data.dt)[1]/rho1(t+data.dt)[0], -rho2(t+data.dt)[1]/rho2(t+data.dt)[0], kappa(t+data.dt)[1]/kappa(t+data.dt)[0]]
         d1 = np.array([np.exp(-S[0] * data.dt / 2), np.exp(-S[1] * data.dt / 2), np.exp(-S[2] * data.dt / 2)])
-        data.U[n + 1, ...] = U_temp_ * d1
+        if sous_echantillonnage:
+            Un1[...] = U_temp_ * d1
+            Un, Un1 = Un1, Un
+        else:
+            data.U[n + 1, ...] = U_temp_ * d1
 
-    moy = [moyennes_aniso_mt(data, data.dt * n) for n in range(data.N)]
+    if sous_echantillonnage:
+        data.t = data.t[:N_frames * pas_sauvegarde:pas_sauvegarde]
+        data.dt = data.dt * pas_sauvegarde
+        data.N = N_frames
+        moy = [moyennes_aniso_mt(data, data.t[n]) for n in range(data.N)]
+    else:
+        moy = [moyennes_aniso_mt(data, data.dt * n) for n in range(data.N)]
     rho0 = [m[0] for m in moy]
     rho1 = [m[1] for m in moy]
     kappa = [m[2] for m in moy]
@@ -790,7 +815,17 @@ def LaxWendroff_ms_mt(data, l, L):
         return (1 / (np.pi * sigma ** 2) * np.exp(-(x ** 2 + y ** 2) / sigma ** 2)) * (0 <= x ** 2 + y ** 2 <= R ** 2)
 
     print("\nLaxWendroff Micro Structuré Modulation Temporelle()")
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+    print(data.N)
+
+
+    sous_echantillonnage = data.N > 1000
+    if sous_echantillonnage:
+        N_frames = data.N // pas_sauvegarde
+        data.U = np.zeros((N_frames, data.Mx, data.My, 3))
+        Un = np.zeros((data.Mx, data.My, 3))          # solution au pas de temps n
+        Un1 = np.zeros((data.Mx, data.My, 3))         # solution au pas de temps n+1
+    else:
+        data.U = np.zeros((data.N, data.Mx, data.My, 3))
 
     m_all = (np.arange(data.My) + L // 2) % (l + L)
     band_in = np.where(m_all <= L, 0, np.where((m_all > L + 1) & (m_all <= l + L - 2), 1, 2))
@@ -809,8 +844,13 @@ def LaxWendroff_ms_mt(data, l, L):
         #ATTENTION A_ et B_ SONT LES MATRICES DANS LE MILIEU 2, PAS LA DERIVEE TEMPORELLE COMME AVANT !!!!
         A, A_, _A = A2D_ms(data)(t)[0], A2D_ms(data)(t)[1], A2D_ms(data)(t)[2]
         B, B_, _B = B2D_ms(data)(t)[0], B2D_ms(data)(t)[1], B2D_ms(data)(t)[2]
-        U_temp = data.U[n, ...]
-        U_temp_ = np.zeros(data.U[n,...].shape)
+        if sous_echantillonnage:
+            if n % pas_sauvegarde == 0 and n // pas_sauvegarde < N_frames:
+                data.U[n // pas_sauvegarde, ...] = Un
+            U_temp = Un
+        else:
+            U_temp = data.U[n, ...]
+        U_temp_ = np.zeros((data.Mx, data.My, 3))
 
         S = [-rho1(t)[1]/rho1(t)[0], -rho1(t)[1]/rho1(t)[0], kappa1(t)[1]/kappa1(t)[0]]
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
@@ -840,14 +880,25 @@ def LaxWendroff_ms_mt(data, l, L):
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
         _S = [-rho3(t)[1]/rho3(t)[0], -rho3(t)[1]/rho3(t)[0], kappa3(t)[1]/kappa3(t)[0]]
         d_out = np.exp(-np.array([S, S_, _S]) * data.dt / 2)
-        data.U[n + 1, ...] = U_temp_ * d_out[band_out][None, :, :]
+        if sous_echantillonnage:
+            Un1[...] = U_temp_ * d_out[band_out][None, :, :]
+            Un, Un1 = Un1, Un
+        else:
+            data.U[n + 1, ...] = U_temp_ * d_out[band_out][None, :, :]
 
-    rho1 = np.array([data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(data.dt * n)[0] for n in range(data.N)])
-    rho2 = np.array([data.rho[1]*data.rho_mt[1](data, data.eps_r[1])(data.dt * n)[0] for n in range(data.N)])
-    rho3 = np.array([rho_moy(data)(data.dt * n)[0] for n in range(data.N)])
-    kappa1 = np.array([data.kappa[0] * data.kappa_mt[0](data, data.eps_kappa[0])(data.dt * n)[0] for n in range(data.N)])
-    kappa2 = np.array([data.kappa[1] * data.kappa_mt[1](data, data.eps_kappa[1])(data.dt * n)[0] for n in range(data.N)])
-    kappa3 = np.array([kappa_moy(data)(data.dt * n)[0] for n in range(data.N)])
+    if sous_echantillonnage:
+        data.t = data.t[:N_frames * pas_sauvegarde:pas_sauvegarde]
+        data.dt = data.dt * pas_sauvegarde
+        data.N = N_frames
+        temps = data.t
+    else:
+        temps = data.dt * np.arange(data.N)
+    rho1 = np.array([data.rho[0]*data.rho_mt[0](data, data.eps_r[0])(temps[n])[0] for n in range(data.N)])
+    rho2 = np.array([data.rho[1]*data.rho_mt[1](data, data.eps_r[1])(temps[n])[0] for n in range(data.N)])
+    rho3 = np.array([rho_moy(data)(temps[n])[0] for n in range(data.N)])
+    kappa1 = np.array([data.kappa[0] * data.kappa_mt[0](data, data.eps_kappa[0])(temps[n])[0] for n in range(data.N)])
+    kappa2 = np.array([data.kappa[1] * data.kappa_mt[1](data, data.eps_kappa[1])(temps[n])[0] for n in range(data.N)])
+    kappa3 = np.array([kappa_moy(data)(temps[n])[0] for n in range(data.N)])
     band_e = np.where((1 <= m_all) & (m_all <= L), 0, np.where((m_all > L + 1) & (m_all <= l + L - 2), 1, 2))
     rho_col = np.stack([rho1, rho2, rho3])[band_e].T
     kap_col = np.stack([kappa1, kappa2, kappa3])[band_e].T
@@ -883,7 +934,16 @@ def ADER4_ms_mt(data, l, L):
     c2 = np.array([np.sqrt(data.kappa[1]*kappa2(data.t[n])[0]/(data.rho[1]*rho2(data.t[n])[0])) for n in range(data.N)])
     c = max(np.max(c1), np.max(c2))
     data.CFL_maj(c = c)
-    data.U = np.zeros((data.N, data.Mx, data.My, 3))
+
+
+    sous_echantillonnage = data.N > 1000
+    if sous_echantillonnage:
+        N_frames = data.N // pas_sauvegarde
+        data.U = np.zeros((N_frames, data.Mx, data.My, 3))
+        Un = np.zeros((data.Mx, data.My, 3))          # solution au pas de temps n
+        Un1 = np.zeros((data.Mx, data.My, 3))         # solution au pas de temps n+1
+    else:
+        data.U = np.zeros((data.N, data.Mx, data.My, 3))
     coeff = [1/(12*data.dx),1/(12*data.dx**2),1/(2*data.dx**3),1/(144*data.dx*data.dy**2),1/data.dx**4,1/(144*data.dx*data.dy),1/(144*(data.dx*data.dy)**2),1/(24*data.dx**3*data.dy)]
 
     m_all = (np.arange(data.My) + L // 2) % (l + L)
@@ -902,8 +962,13 @@ def ADER4_ms_mt(data, l, L):
         t = n * data.dt
         A, A_, _A  = A2D_ms(data)(t)[0],A2D_ms(data)(t)[1],A2D_ms(data)(t)[2]
         B, B_, _B  = B2D_ms(data)(t)[0],B2D_ms(data)(t)[1],B2D_ms(data)(t)[2]
-        U_temp = data.U[n, ...]
-        U_temp_ = np.zeros(data.U[n, ...].shape)
+        if sous_echantillonnage:
+            if n % pas_sauvegarde == 0 and n // pas_sauvegarde < N_frames:
+                data.U[n // pas_sauvegarde, ...] = Un
+            U_temp = Un
+        else:
+            U_temp = data.U[n, ...]
+        U_temp_ = np.zeros((data.Mx, data.My, 3))
 
         S = [-rho1(t)[1]/rho1(t)[0], -rho1(t)[1]/rho1(t)[0], kappa1(t)[1]/kappa1(t)[0]]
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
@@ -980,14 +1045,25 @@ def ADER4_ms_mt(data, l, L):
         S_ = [-rho2(t)[1]/rho2(t)[0], -rho2(t)[1]/rho2(t)[0], kappa2(t)[1]/kappa2(t)[0]]
         _S = [-rho3(t)[1]/rho3(t)[0], -rho3(t)[1]/rho3(t)[0], kappa3(t)[1]/kappa3(t)[0]]
         d_out = np.exp(-np.array([S, S_, _S]) * data.dt / 2)
-        data.U[n + 1, ...] = U_temp_ * d_out[band_out][None, :, :]
+        if sous_echantillonnage:
+            Un1[...] = U_temp_ * d_out[band_out][None, :, :]
+            Un, Un1 = Un1, Un
+        else:
+            data.U[n + 1, ...] = U_temp_ * d_out[band_out][None, :, :]
 
-    rho1 = np.array([data.rho[0]*rho_echelon(data, data.eps_r[0])(data.dt * n)[0] for n in range(data.N)])
-    rho2 = np.array([data.rho[1]*rho_echelon(data, data.eps_r[1])(data.dt * n)[0] for n in range(data.N)])
-    rho3 = np.array([rho_moy(data)(data.dt * n)[0] for n in range(data.N)])
-    kappa1 = np.array([data.kappa[0] * kappa_echelon(data, data.eps_kappa[0])(data.dt * n)[0] for n in range(data.N)])
-    kappa2 = np.array([data.kappa[1] * kappa_echelon(data, data.eps_kappa[1])(data.dt * n)[0] for n in range(data.N)])
-    kappa3 = np.array([kappa_moy(data)(data.dt * n)[0] for n in range(data.N)])
+    if sous_echantillonnage:
+        data.t = data.t[:N_frames * pas_sauvegarde:pas_sauvegarde]
+        data.dt = data.dt * pas_sauvegarde
+        data.N = N_frames
+        temps = data.t
+    else:
+        temps = data.dt * np.arange(data.N)
+    rho1 = np.array([data.rho[0]*rho_echelon(data, data.eps_r[0])(temps[n])[0] for n in range(data.N)])
+    rho2 = np.array([data.rho[1]*rho_echelon(data, data.eps_r[1])(temps[n])[0] for n in range(data.N)])
+    rho3 = np.array([rho_moy(data)(temps[n])[0] for n in range(data.N)])
+    kappa1 = np.array([data.kappa[0] * kappa_echelon(data, data.eps_kappa[0])(temps[n])[0] for n in range(data.N)])
+    kappa2 = np.array([data.kappa[1] * kappa_echelon(data, data.eps_kappa[1])(temps[n])[0] for n in range(data.N)])
+    kappa3 = np.array([kappa_moy(data)(temps[n])[0] for n in range(data.N)])
     band_e = np.where((1 <= m_all) & (m_all <= L), 0, np.where((m_all > L + 1) & (m_all <= l + L - 2), 1, 2))
     rho_col = np.stack([rho1, rho2, rho3])[band_e].T
     kap_col = np.stack([kappa1, kappa2, kappa3])[band_e].T

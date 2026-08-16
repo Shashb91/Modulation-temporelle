@@ -191,8 +191,8 @@ def anim1D_comparaison(data1, data2, **kwargs):
     ax3.set_box_aspect(1)
     plt.tight_layout()
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 20
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / data1.N
     anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     plt.show()
     return anim
@@ -302,8 +302,8 @@ def anim2D(data, **kwargs):
         assert param[0] < param[1] < N, "Les temps en calibrage ne sont pas dans l'intervale de temps"
     else: param = (int(data.N*0.5), N)
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / N
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
     v_min, v_max = min(np.min(data.U[param[0]:param[1], ...,0]),np.min(data.U[param[0]:param[1],...,1])), max(np.max(data.U[param[0]:param[1],...,0]),np.max(data.U[param[0]:param[1],...,1]))
@@ -514,8 +514,8 @@ def anim1D_cauchy_comparaison(data1, data2, data3, **kwargs):
     ax3.set_box_aspect(1)
     plt.tight_layout()
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 20
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / data1.N
     anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     plt.show()
     return anim
@@ -622,8 +622,8 @@ def anim1D_mt(data, **kwargs):
     fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
     ax1, ax2 = axs[0, 0], axs[1, 0]
     ax3, ax4 = axs[0, 1], axs[1, 1]
-    rho = [data.rho*data.rho_mt(data)(data.dt * n)[0] for n in range(data.N)]
-    kappa = [data.kappa*data.kappa_mt(data)(data.dt * n)[0] for n in range(data.N)]
+    rho = [data.rho*data.rho_mt(data, data.eps_r)(data.dt * n)[0] for n in range(data.N)]
+    kappa = [data.kappa*data.kappa_mt(data, data.eps_kappa)(data.dt * n)[0] for n in range(data.N)]
 
     line1, = ax1.plot([], [], color='darkblue', lw=2)
     ax1.set_xlim(data.x[0], data.x[-1])
@@ -676,8 +676,8 @@ def anim1D_mt(data, **kwargs):
         return line1, line2, line3, line4
 
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 5
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / data.N
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
     plt.show()
     return anim
@@ -702,8 +702,8 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
     fig, (axs) = plt.subplots(2, 2, figsize=(12, 5))
     ax1, ax2 = axs[0, 0], axs[1, 0]
     ax3, ax4 = axs[0, 1], axs[1, 1]
-    rho = [data1.rho_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
-    E = [data1.kappa_mt(data1)(data1.dt * n)[0] for n in range(data1.N)]
+    rho = [data1.rho*data1.rho_mt(data1, data1.eps_r)(data1.dt * n)[0] for n in range(data1.N)]
+    E = [data1.kappa*data1.kappa_mt(data1, data1.eps_kappa)(data1.dt * n)[0] for n in range(data1.N)]
 
     line1_1, = ax1.plot([], [], color='darkblue', lw=2  , label = data1.label, ls = '-')
     line1_2, = ax1.plot([], [], color='dodgerblue', lw=2, label = data2.label, ls = '--')
@@ -768,8 +768,8 @@ def anim1D_mt_comparaison(data1, data2, **kwargs):
         return line1_1, line1_2, line2_1, line2_2, line3_1, line3_2, line4
 
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 5
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / data1.N
     anim = FuncAnimation(fig, update, init_func=init, frames=data1.N, interval=interval, blit=True)
     plt.show()
     return anim
@@ -841,8 +841,8 @@ def anim2D_EAP(data, **kwargs):
     ax4.set_box_aspect(1)
 
     plt.tight_layout()
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / data.N
     anim = FuncAnimation(fig, update, init_func=init, frames=data.N, interval=interval, blit=True)
     plt.show()
     return anim
@@ -877,8 +877,8 @@ def anim2D_ms(data, l, L, **kwargs):
         assert param[0] < param[1] < N, "Les temps en calibrage ne sont pas dans l'intervale de temps"
     else: param = (int(data.N*0.5), N)
 
-    if "interval" in kwargs.keys(): interval = kwargs["interval"]
-    else: interval = 30 * (not data.label.endswith("compressé")) + int(data.label.endswith("compressé"))
+    duree = kwargs.get("duree", 3)
+    interval = duree * 1000 / N
 
     extent = [data.x[0], data.x[-1], data.y[0], data.y[-1]]
     v_min, v_max = min(np.min(data.U[param[0]:param[1], ...,0]),np.min(data.U[param[0]:param[1],...,1])), max(np.max(data.U[param[0]:param[1],...,0]),np.max(data.U[param[0]:param[1],...,1]))

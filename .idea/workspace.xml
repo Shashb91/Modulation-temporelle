@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle du code nmt">
+    <list default="true" id="2ea1af14-6802-440d-a87f-32ba7c97e859" name="Changes" comment="Version fonctionnelle du code avec une résolution vectorielle">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/donnee.py" beforeDir="false" afterPath="$PROJECT_DIR$/donnee.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_aniso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_mt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schema_aniso.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_aniso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schema_mt.py" beforeDir="false" afterPath="$PROJECT_DIR$/schema_mt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tracer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +87,7 @@
       <command value="python main.py" />
     </option>
   </component>
-  <component name="RunManager" selected="Python.main_aniso">
+  <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Code Python" />
       <option name="ENV_FILES" value="" />
@@ -188,14 +184,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780314656388</updated>
-    </task>
-    <task id="LOCAL-00058" summary="Implémentation de la modulation temporelle fonctionelle">
-      <option name="closed" value="true" />
-      <created>1781621363304</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1781621363304</updated>
     </task>
     <task id="LOCAL-00059" summary="Corrections mineures">
       <option name="closed" value="true" />
@@ -581,7 +569,15 @@
       <option name="project" value="LOCAL" />
       <updated>1785398020004</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="Version fonctionnelle du code avec une résolution vectorielle">
+      <option name="closed" value="true" />
+      <created>1786542138562</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1786542138563</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -596,7 +592,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implémentation de la modulation temporelle fonctionelle" />
     <MESSAGE value="Ajout de fonctions de tracer pour la mt" />
     <MESSAGE value="Version fonctionelle de la MT" />
     <MESSAGE value="Version fonctionelle de la propagation en onde plane 2D nmt" />
@@ -621,7 +616,8 @@
     <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré" />
     <MESSAGE value="Version fonctionnelle de la résolution en milieu micro structuré mt" />
     <MESSAGE value="Version fonctionnelle du code nmt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle du code nmt" />
+    <MESSAGE value="Version fonctionnelle du code avec une résolution vectorielle" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version fonctionnelle du code avec une résolution vectorielle" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

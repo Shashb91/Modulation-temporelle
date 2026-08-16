@@ -36,6 +36,7 @@ CFL = 0.6
 xc = (0, 400)
 tc = (0, 0.2)
 c0 = max(c_couches)                                                 # placeholder, recalculé par CFL_aniso
+duree_anim = 3                                            # durée (s) de TOUTES les animations
 
 # ---------- Cas de modulation UNIQUE (échelon, identique pour LW et ADER4) ----------
 f_mt = 1 / 0.15
@@ -57,8 +58,8 @@ ADER4_aniso_       = Donnee2D(label="ADER4 aniso",         kappa=kappa, rho=rho,
 LaxWendroff_aniso(LaxWendroff_aniso_)
 ADER4_aniso(ADER4_aniso_)
 
-tracer2D(LaxWendroff_aniso_, 0.15)
-tracer2D(ADER4_aniso_, 0.15)
+anim2D(LaxWendroff_aniso_, duree=duree_anim)
+anim2D(ADER4_aniso_, duree=duree_anim)
 
 # ============================================================
 # 2) Milieu HOMOGÉNÉISÉ anisotrope + MODULATION TEMPORELLE
@@ -72,8 +73,8 @@ ADER4_aniso_mt_       = Donnee2D(label="ADER4 aniso mt",         kappa=kappa, rh
 LaxWendroff_aniso_mt(LaxWendroff_aniso_mt_)
 ADER4_aniso_mt(ADER4_aniso_mt_)
 
-tracer2D(LaxWendroff_aniso_mt_, 0.15)
-tracer2D(ADER4_aniso_mt_, 0.15)
+anim2D(LaxWendroff_aniso_mt_, duree=duree_anim)
+anim2D(ADER4_aniso_mt_, duree=duree_anim)
 
 # ============================================================
 # 3) Milieu MICRO-STRUCTURÉ (constant en temps)
@@ -83,13 +84,13 @@ LaxWendroff_ms_ = Donnee2D(label="Lax-Wendroff ms", kappa=kappa, rho=rho, alpha=
                            S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0)
 l, L = 5 * LaxWendroff_ms_.dy, 15 * LaxWendroff_ms_.dy
 LaxWendroff_ms(LaxWendroff_ms_, l, L)
-tracer2D_ms(LaxWendroff_ms_, l, L, 0.15)
+anim2D_ms(LaxWendroff_ms_, l, L, duree=duree_anim)
 
 ADER4_ms_ = Donnee2D(label="ADER4 ms", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                      S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0)
 l, L = 5 * ADER4_ms_.dy, 15 * ADER4_ms_.dy
 ADER4_ms(ADER4_ms_, l, L)
-tracer2D_ms(ADER4_ms_, l, L, 0.15)
+anim2D_ms(ADER4_ms_, l, L, duree=duree_anim)
 
 # ============================================================
 # 4) Milieu MICRO-STRUCTURÉ + MODULATION TEMPORELLE (échelon)
@@ -99,10 +100,10 @@ LaxWendroff_ms_mt_ = Donnee2D(label="Lax-Wendroff ms mt", kappa=kappa, rho=rho, 
                               S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0, **mod)
 l, L = 5 * LaxWendroff_ms_mt_.dy, 15 * LaxWendroff_ms_mt_.dy
 LaxWendroff_ms_mt(LaxWendroff_ms_mt_, l, L)
-tracer2D_ms(LaxWendroff_ms_mt_, l, L, 0.15)
+anim2D_ms(LaxWendroff_ms_mt_, l, L, duree=duree_anim)
 
 ADER4_ms_mt_ = Donnee2D(label="ADER4 ms mt", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                         S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0, **mod)
 l, L = 5 * ADER4_ms_mt_.dy, 15 * ADER4_ms_mt_.dy
 ADER4_ms_mt(ADER4_ms_mt_, l, L)
-tracer2D_ms(ADER4_ms_mt_, l, L, 0.15)
+anim2D_ms(ADER4_ms_mt_, l, L, duree=duree_anim)

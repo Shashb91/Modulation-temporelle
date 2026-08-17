@@ -150,8 +150,8 @@
   .sub-note{color:var(--muted);font-size:.9rem;margin:0 0 16px}
 
   .video-grid{
-    display:grid;gap:22px;
-    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    display:grid;gap:26px;
+    grid-template-columns:1fr;
     margin-top:16px;
   }
   figure.video-card{
@@ -162,7 +162,7 @@
   }
   figure.video-card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(20,20,20,.06),0 16px 40px rgba(31,45,90,.12)}
   figure.video-card:target{outline-color:var(--navy);box-shadow:0 0 0 4px rgba(31,45,90,.14),0 16px 40px rgba(31,45,90,.16)}
-  .video-card video,.video-card img{display:block;width:100%;height:auto;background:#0d1024;aspect-ratio:16/10;object-fit:cover}
+  .video-card video,.video-card img{display:block;width:100%;height:auto;background:#0d1024;object-fit:contain}
   .video-card figcaption{padding:13px 17px 15px;font-size:.86rem;color:#2c2f37}
   .video-card figcaption .cap-title{display:flex;align-items:center;gap:7px;font-weight:600;color:var(--navy);margin-bottom:2px}
   .video-card .permalink{

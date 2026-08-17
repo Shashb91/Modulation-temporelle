@@ -65,10 +65,11 @@
   .masthead-inner{padding:38px 0 30px}
   .masthead-grid{display:flex;justify-content:space-between;align-items:center;gap:30px 44px;flex-wrap:wrap}
   .mast-text{flex:1 1 480px;min-width:280px}
-  .logos{display:flex;flex-direction:row;gap:28px;align-items:center;flex:0 0 auto}
+  .logos{display:flex;flex-direction:column;gap:16px;align-items:flex-start;flex:0 0 auto}
   .logos img{width:auto;object-fit:contain;display:block}
-  .logos .logo-centrale{height:78px;max-width:360px}
-  .logos .logo-lma{height:123px;max-width:360px}
+  .logos .logo-centrale{height:52px;max-width:220px}
+  .logos .logo-labs{display:flex;flex-direction:row;gap:22px;align-items:center}
+  .logos .logo-labs img{height:66px;max-width:200px}
   .eyebrow{
     display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
     font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
@@ -161,7 +162,7 @@
   }
   figure.video-card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(20,20,20,.06),0 16px 40px rgba(31,45,90,.12)}
   figure.video-card:target{outline-color:var(--navy);box-shadow:0 0 0 4px rgba(31,45,90,.14),0 16px 40px rgba(31,45,90,.16)}
-  .video-card video{display:block;width:100%;height:auto;background:#0d1024;aspect-ratio:16/10;object-fit:cover}
+  .video-card video,.video-card img{display:block;width:100%;height:auto;background:#0d1024;aspect-ratio:16/10;object-fit:cover}
   .video-card figcaption{padding:13px 17px 15px;font-size:.86rem;color:#2c2f37}
   .video-card figcaption .cap-title{display:flex;align-items:center;gap:7px;font-weight:600;color:var(--navy);margin-bottom:2px}
   .video-card .permalink{
@@ -213,7 +214,10 @@
       </div>
       <div class="logos">
         <img class="logo-centrale" src="assets/logo-centrale-mediterranee.png" alt="Centrale Méditerranée">
-        <img class="logo-lma" src="assets/logo-lma.png" alt="Laboratoire de Mécanique et d'Acoustique">
+        <div class="logo-labs">
+          <img src="assets/poems.png" alt="POEMS">
+          <img src="assets/logo-lma.png" alt="Laboratoire de Mécanique et d'Acoustique">
+        </div>
       </div>
     </div>
   </div>
@@ -235,12 +239,14 @@
               <ul>
                 <li><a href="#ch1-1d">Résolution 1D</a></li>
                 <li><a href="#ch1-2d">Résolution 2D</a></li>
+                <li><a href="#ch1-comp">Comparaison 1D / 2D</a></li>
               </ul>
             </li>
             <li>
               <a class="chap" href="#ch2"><span class="num">2</span>Milieu homogène — modulé en temps</a>
               <ul>
                 <li><a href="#ch2-1d">Résolution 1D</a></li>
+                <li><a href="#ch2-ampli">Amplification paramétrique</a></li>
                 <li><a href="#ch2-2d">Résolution 2D</a></li>
               </ul>
             </li>
@@ -296,43 +302,59 @@
       <p class="section-intro">Résolution de l'équation de propagation dans un milieu aux paramètres mécaniques uniformes, constants et isotropes, en 1D puis en 2D.</p>
 
       <h3 class="sub" id="ch1-1d">Résolution 1D</h3>
-      <p class="sub-note">Propagation du front d'onde en une dimension, résolue par les deux schémas.</p>
+      <p class="sub-note">Point source et problème de Cauchy, résolus par les deux schémas et comparés à la solution analytique.</p>
       <div class="video-grid">
         <figure class="video-card" id="ch1-1d-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch1_homogene_1D_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch1-1d-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — schéma Lax-Wendroff.</figcaption>
+          <img src="videos/LW1D_nmt_pointsource.gif" alt="Lax-Wendroff 1D, point source" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff · point source<a class="permalink" href="#ch1-1d-lw" title="Lien direct vers cette vidéo">🔗</a></span>Comparaison à la solution analytique — schéma Lax-Wendroff.</figcaption>
         </figure>
         <figure class="video-card" id="ch1-1d-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch1_homogene_1D_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">ADER 4<a class="permalink" href="#ch1-1d-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — schéma ADER 4.</figcaption>
+          <img src="videos/ADER41D_nmt_pointsource.gif" alt="ADER4 1D, point source" loading="lazy">
+          <figcaption><span class="cap-title">ADER 4 · point source<a class="permalink" href="#ch1-1d-ader" title="Lien direct vers cette vidéo">🔗</a></span>Comparaison à la solution analytique — schéma ADER 4.</figcaption>
+        </figure>
+        <figure class="video-card" id="ch1-1d-cauchy-lw">
+          <img src="videos/CauchyLW1D_nmt.gif" alt="Lax-Wendroff 1D, problème de Cauchy" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff · Cauchy<a class="permalink" href="#ch1-1d-cauchy-lw" title="Lien direct vers cette vidéo">🔗</a></span>Problème de Cauchy — schéma Lax-Wendroff.</figcaption>
+        </figure>
+        <figure class="video-card" id="ch1-1d-cauchy-ader">
+          <img src="videos/CauchyADER41D_nmt.gif" alt="ADER4 1D, problème de Cauchy" loading="lazy">
+          <figcaption><span class="cap-title">ADER 4 · Cauchy<a class="permalink" href="#ch1-1d-cauchy-ader" title="Lien direct vers cette vidéo">🔗</a></span>Problème de Cauchy — schéma ADER 4.</figcaption>
         </figure>
       </div>
 
       <h3 class="sub" id="ch1-2d">Résolution 2D</h3>
-      <p class="sub-note">Propagation du front d'onde en deux dimensions, résolue par les deux schémas.</p>
+      <p class="sub-note">Point source et problème de Cauchy (onde plane, condition de périodicité), résolus par les deux schémas.</p>
       <div class="video-grid">
         <figure class="video-card" id="ch1-2d-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch1_homogene_2D_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch1-2d-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — schéma Lax-Wendroff.</figcaption>
+          <img src="videos/LW2D_nmt_pointsource.gif" alt="Lax-Wendroff 2D, point source" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff · point source<a class="permalink" href="#ch1-2d-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — schéma Lax-Wendroff.</figcaption>
         </figure>
         <figure class="video-card" id="ch1-2d-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch1_homogene_2D_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">ADER 4<a class="permalink" href="#ch1-2d-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — schéma ADER 4.</figcaption>
+          <img src="videos/ADER42D_nmt_pointsource.gif" alt="ADER4 2D, point source" loading="lazy">
+          <figcaption><span class="cap-title">ADER 4 · point source<a class="permalink" href="#ch1-2d-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — schéma ADER 4.</figcaption>
+        </figure>
+        <figure class="video-card" id="ch1-2d-cauchy-lw">
+          <img src="videos/CauchyLW2D_nmt.gif" alt="Lax-Wendroff 2D, problème de Cauchy" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff · Cauchy (onde plane)<a class="permalink" href="#ch1-2d-cauchy-lw" title="Lien direct vers cette vidéo">🔗</a></span>Problème de Cauchy 2D — schéma Lax-Wendroff.</figcaption>
+        </figure>
+        <figure class="video-card" id="ch1-2d-cauchy-ader">
+          <img src="videos/CauchyADER42D_nmt.gif" alt="ADER4 2D, problème de Cauchy" loading="lazy">
+          <figcaption><span class="cap-title">ADER 4 · Cauchy (onde plane)<a class="permalink" href="#ch1-2d-cauchy-ader" title="Lien direct vers cette vidéo">🔗</a></span>Problème de Cauchy 2D — schéma ADER 4.</figcaption>
         </figure>
       </div>
-      <p class="placeholder-hint">💡 Remplacez les <code>src="videos/…"</code> par vos fichiers réels. Chaque carte possède un identifiant (ex&nbsp;: <code>#ch1-2d-ader</code>) : ajoutez-le à l'URL pour ouvrir la page directement sur cette vidéo.</p>
+
+      <h3 class="sub" id="ch1-comp">Comparaison 1D / 2D</h3>
+      <p class="sub-note">Superposition de la solution analytique, de la résolution 1D et d'une coupe de la solution 2D — validation croisée des deux implémentations.</p>
+      <div class="video-grid">
+        <figure class="video-card" id="ch1-comp-lw">
+          <img src="videos/CauchyLW2D_nmt_comp.gif" alt="Comparaison analytique / 1D / coupe 2D, Lax-Wendroff" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch1-comp-lw" title="Lien direct vers cette vidéo">🔗</a></span>Analytique vs. 1D vs. coupe de la solution 2D.</figcaption>
+        </figure>
+        <figure class="video-card" id="ch1-comp-ader">
+          <img src="videos/CauchyADER42D_nmt_comp.gif" alt="Comparaison analytique / 1D / coupe 2D, ADER4" loading="lazy">
+          <figcaption><span class="cap-title">ADER 4<a class="permalink" href="#ch1-comp-ader" title="Lien direct vers cette vidéo">🔗</a></span>Analytique vs. 1D vs. coupe de la solution 2D (projection ADER4).</figcaption>
+        </figure>
+      </div>
     </section>
 
     <!-- ---------- Chapitre 2 ---------- -->
@@ -342,71 +364,39 @@
       <p class="section-intro">Introduction d'une dépendance temporelle des paramètres mécaniques. Étude de son effet sur la propagation, en 1D puis en 2D.</p>
 
       <h3 class="sub" id="ch2-1d">Résolution 1D</h3>
-      <p class="sub-note">Deux configurations de modulation, chacune résolue par Lax-Wendroff et ADER 4.</p>
+      <p class="sub-note">Deux configurations de modulation (schéma de Lax-Wendroff) : modulation d'impédance (1) et modulation de célérité (2).</p>
       <div class="video-grid">
-        <figure class="video-card" id="ch2-1d-c1-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_1D_config1_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 1 · Lax-Wendroff<a class="permalink" href="#ch2-1d-c1-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — configuration 1, schéma Lax-Wendroff.</figcaption>
+        <figure class="video-card" id="ch2-1d-c1">
+          <img src="videos/LWmt1D_1.gif" alt="Modulation 1D, configuration 1" loading="lazy">
+          <figcaption><span class="cap-title">Configuration (1)<a class="permalink" href="#ch2-1d-c1" title="Lien direct vers cette vidéo">🔗</a></span>Modulation d'impédance — schéma Lax-Wendroff.</figcaption>
         </figure>
-        <figure class="video-card" id="ch2-1d-c1-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_1D_config1_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 1 · ADER 4<a class="permalink" href="#ch2-1d-c1-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — configuration 1, schéma ADER 4.</figcaption>
+        <figure class="video-card" id="ch2-1d-c2">
+          <img src="videos/LWmt1D_2.gif" alt="Modulation 1D, configuration 2" loading="lazy">
+          <figcaption><span class="cap-title">Configuration (2)<a class="permalink" href="#ch2-1d-c2" title="Lien direct vers cette vidéo">🔗</a></span>Modulation de célérité — schéma Lax-Wendroff.</figcaption>
         </figure>
-        <figure class="video-card" id="ch2-1d-c2-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_1D_config2_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 2 · Lax-Wendroff<a class="permalink" href="#ch2-1d-c2-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — configuration 2, schéma Lax-Wendroff.</figcaption>
-        </figure>
-        <figure class="video-card" id="ch2-1d-c2-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_1D_config2_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 2 · ADER 4<a class="permalink" href="#ch2-1d-c2-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 1D — configuration 2, schéma ADER 4.</figcaption>
+      </div>
+
+      <h3 class="sub" id="ch2-ampli">Amplification paramétrique</h3>
+      <p class="sub-note">Configuration (1), fréquence de modulation très supérieure à la fréquence source — croissance exponentielle de l'énergie.</p>
+      <div class="video-grid">
+        <figure class="video-card" id="ch2-ampli-lw">
+          <img src="videos/ampli_parametrique.gif" alt="Amplification paramétrique" loading="lazy">
+          <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch2-ampli-lw" title="Lien direct vers cette vidéo">🔗</a></span>Vitesse, pression, énergie et impédance — amplification paramétrique.</figcaption>
         </figure>
       </div>
 
       <h3 class="sub" id="ch2-2d">Résolution 2D</h3>
-      <p class="sub-note">Deux configurations de modulation, chacune résolue par Lax-Wendroff et ADER 4.</p>
+      <p class="sub-note">Deux configurations de modulation (schéma de Lax-Wendroff).</p>
       <div class="video-grid">
-        <figure class="video-card" id="ch2-2d-c1-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_2D_config1_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 1 · Lax-Wendroff<a class="permalink" href="#ch2-2d-c1-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — configuration 1, schéma Lax-Wendroff.</figcaption>
+        <figure class="video-card" id="ch2-2d-c1">
+          <img src="videos/LW2Dmt_1.gif" alt="Modulation 2D, configuration 1" loading="lazy">
+          <figcaption><span class="cap-title">Configuration (1)<a class="permalink" href="#ch2-2d-c1" title="Lien direct vers cette vidéo">🔗</a></span>Modulation d'impédance — schéma Lax-Wendroff.</figcaption>
         </figure>
-        <figure class="video-card" id="ch2-2d-c1-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_2D_config1_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 1 · ADER 4<a class="permalink" href="#ch2-2d-c1-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — configuration 1, schéma ADER 4.</figcaption>
-        </figure>
-        <figure class="video-card" id="ch2-2d-c2-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_2D_config2_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 2 · Lax-Wendroff<a class="permalink" href="#ch2-2d-c2-lw" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — configuration 2, schéma Lax-Wendroff.</figcaption>
-        </figure>
-        <figure class="video-card" id="ch2-2d-c2-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch2_module_2D_config2_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
-          <figcaption><span class="cap-title">Config. 2 · ADER 4<a class="permalink" href="#ch2-2d-c2-ader" title="Lien direct vers cette vidéo">🔗</a></span>Résolution 2D — configuration 2, schéma ADER 4.</figcaption>
+        <figure class="video-card" id="ch2-2d-c2">
+          <img src="videos/LW2Dmt_2.gif" alt="Modulation 2D, configuration 2" loading="lazy">
+          <figcaption><span class="cap-title">Configuration (2)<a class="permalink" href="#ch2-2d-c2" title="Lien direct vers cette vidéo">🔗</a></span>Modulation de célérité — schéma Lax-Wendroff.</figcaption>
         </figure>
       </div>
-      <p class="placeholder-hint">💡 Deux configurations de modulation × deux schémas = 4 vidéos par section. Remplacez les <code>src="videos/…"</code> par vos fichiers réels.</p>
     </section>
 
     <!-- ---------- Chapitre 3 ---------- -->
@@ -416,39 +406,27 @@
       <p class="section-intro">Étude d'un milieu composé de deux matériaux, sous deux hypothèses : le milieu microstructuré (avec interfaces) et le milieu homogénéisé anisotrope.</p>
 
       <h3 class="sub" id="ch3-micro">Milieu microstructuré</h3>
-      <p class="sub-note">Propagation à travers les interfaces, résolue par les deux schémas.</p>
+      <p class="sub-note">Propagation à travers les interfaces, résolue par les deux schémas (ρ₁ = 1000 kg/m³, κ₁ = 1e9 Pa, ρ₂ = 100 kg/m³, κ₂ = 2,5e7 Pa, α = 0,25).</p>
       <div class="video-grid">
         <figure class="video-card" id="ch3-micro-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch3_microstructure_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
+          <img src="videos/LW_ms_nmt.gif" alt="Milieu microstructuré, Lax-Wendroff" loading="lazy">
           <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch3-micro-lw" title="Lien direct vers cette vidéo">🔗</a></span>Milieu microstructuré — schéma Lax-Wendroff.</figcaption>
         </figure>
         <figure class="video-card" id="ch3-micro-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch3_microstructure_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
+          <img src="videos/ADER4_ms_nmt.gif" alt="Milieu microstructuré, ADER4" loading="lazy">
           <figcaption><span class="cap-title">ADER 4<a class="permalink" href="#ch3-micro-ader" title="Lien direct vers cette vidéo">🔗</a></span>Milieu microstructuré — schéma ADER 4.</figcaption>
         </figure>
       </div>
 
       <h3 class="sub" id="ch3-aniso">Milieu homogénéisé anisotrope</h3>
-      <p class="sub-note">Modèle homogénéisé équivalent (anisotrope), résolu par les deux schémas.</p>
+      <p class="sub-note">Modèle homogénéisé équivalent (anisotrope), résolu par les deux schémas, pour le même bicouche physique que ci-dessus.</p>
       <div class="video-grid">
         <figure class="video-card" id="ch3-aniso-lw">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch3_homogeneise_anisotrope_LW.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
+          <img src="videos/LW_aniso_nmt.gif" alt="Milieu homogénéisé anisotrope, Lax-Wendroff" loading="lazy">
           <figcaption><span class="cap-title">Lax-Wendroff<a class="permalink" href="#ch3-aniso-lw" title="Lien direct vers cette vidéo">🔗</a></span>Milieu homogénéisé anisotrope — schéma Lax-Wendroff.</figcaption>
         </figure>
         <figure class="video-card" id="ch3-aniso-ader">
-          <video controls preload="metadata" playsinline poster="">
-            <source src="videos/ch3_homogeneise_anisotrope_ADER4.mp4" type="video/mp4">
-            Votre navigateur ne peut pas lire cette vidéo.
-          </video>
+          <img src="videos/ADER4_aniso_nmt.gif" alt="Milieu homogénéisé anisotrope, ADER4" loading="lazy">
           <figcaption><span class="cap-title">ADER 4<a class="permalink" href="#ch3-aniso-ader" title="Lien direct vers cette vidéo">🔗</a></span>Milieu homogénéisé anisotrope — schéma ADER 4.</figcaption>
         </figure>
       </div>

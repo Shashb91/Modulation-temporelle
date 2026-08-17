@@ -46,10 +46,7 @@ rho_, kappa_ = rho_echelon, kappa_echelon
 mod = dict(rho_mt=(rho_, rho_), kappa_mt=(kappa_, kappa_),
            eps_r=(eps, eps), eps_kappa=(0, 0), omega=2 * np.pi * f_mt, param=param)
 
-# ============================================================
-# 1) Milieu HOMOGÉNÉISÉ anisotrope (constant en temps)
-#    -> tracé de la SOLUTION (Lax-Wendroff puis ADER4)
-# ============================================================
+# Milieu HOMOGÉNÉISÉ anisotrope (constant en temps)
 LaxWendroff_aniso_ = Donnee2D(label="Lax-Wendroff aniso", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                               S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0)
 ADER4_aniso_       = Donnee2D(label="ADER4 aniso",         kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
@@ -61,10 +58,7 @@ ADER4_aniso(ADER4_aniso_)
 anim2D(LaxWendroff_aniso_, duree=duree_anim)
 anim2D(ADER4_aniso_, duree=duree_anim)
 
-# ============================================================
-# 2) Milieu HOMOGÉNÉISÉ anisotrope + MODULATION TEMPORELLE
-#    -> tracé de la SOLUTION (Lax-Wendroff puis ADER4)
-# ============================================================
+# Milieu HOMOGÉNÉISÉ anisotrope + MODULATION TEMPORELLE
 LaxWendroff_aniso_mt_ = Donnee2D(label="Lax-Wendroff aniso mt", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                                  S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0, **mod)
 ADER4_aniso_mt_       = Donnee2D(label="ADER4 aniso mt",         kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
@@ -76,10 +70,7 @@ ADER4_aniso_mt(ADER4_aniso_mt_)
 anim2D(LaxWendroff_aniso_mt_, duree=duree_anim)
 anim2D(ADER4_aniso_mt_, duree=duree_anim)
 
-# ============================================================
-# 3) Milieu MICRO-STRUCTURÉ (constant en temps)
-#    -> tracé de la SOLUTION (Lax-Wendroff puis ADER4)
-# ============================================================
+# Milieu MICRO-STRUCTURÉ (constant en temps)
 LaxWendroff_ms_ = Donnee2D(label="Lax-Wendroff ms", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                            S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0)
 l, L = 5 * LaxWendroff_ms_.dy, 15 * LaxWendroff_ms_.dy
@@ -92,10 +83,7 @@ l, L = 5 * ADER4_ms_.dy, 15 * ADER4_ms_.dy
 ADER4_ms(ADER4_ms_, l, L)
 anim2D_ms(ADER4_ms_, l, L, duree=duree_anim)
 
-# ============================================================
-# 4) Milieu MICRO-STRUCTURÉ + MODULATION TEMPORELLE (échelon)
-#    -> tracé de la SOLUTION (Lax-Wendroff puis ADER4)
-# ============================================================
+# Milieu MICRO-STRUCTURÉ + MODULATION TEMPORELLE (échelon)
 LaxWendroff_ms_mt_ = Donnee2D(label="Lax-Wendroff ms mt", kappa=kappa, rho=rho, alpha=alpha, Mx=M, My=M,
                               S=pt_source_2D, xc=xc, yc=xc, tc=tc, f=f, CFL=CFL, c=c0, **mod)
 l, L = 5 * LaxWendroff_ms_mt_.dy, 15 * LaxWendroff_ms_mt_.dy

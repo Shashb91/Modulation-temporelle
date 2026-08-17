@@ -205,14 +205,13 @@ def tracer1D_comparaison(t, data1, data2):
     :param data2: Donnee1D, regroupe l'ensemble des données du problème tracé avec des markers transparents
     :return: plot
     """
-    assert data1 == data2, "Les paramètres sont différents"
     t1 = int(data1.N*t/data1.tc[1])
     t2 = int(data2.N*t/data2.tc[1])
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 5))
     ax1.plot(data1.x, data1.U[t1, :, 0], 'b-', lw=2, label=data1.label)
     ax1.plot(data2.x, data2.U[t2, :, 0], marker = '.',mec = 'dodgerblue', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax1.set_xlim(data1.x[0], data1.x[-1])
-    ax1.set_ylim(np.min(data1.U[:, :, 0]) * 1.1, np.max(data1.U[:, :, 0]) * 1.1)
+    ax1.set_ylim(max(np.min(data1.U[:, :, 0]), np.min(data2.U[...,0])) * 1.1, max(np.max(data1.U[:, :, 0]), np.max(data2.U[...,0])) * 1.1)
     ax1.set_xlabel('Position x (m)')
     ax1.set_ylabel('Vitesse v (m/s)')
     ax1.set_title('Champ des vitesses')
@@ -224,7 +223,7 @@ def tracer1D_comparaison(t, data1, data2):
     ax2.plot(data1.x, data1.U[t1, :, 1], 'r-', lw=2, label=data1.label)
     ax2.plot(data2.x, data2.U[t2, :, 1], marker = '.',mec = 'deeppink', mew = 2, ms = 9,mfc = 'none', lw=0, linestyle='', label=data2.label)
     ax2.set_xlim(data1.x[0], data1.x[-1])
-    ax2.set_ylim(np.min(data1.U[:, :, 1]) * 1.1, np.max(data1.U[:, :, 1]) * 1.1)
+    ax2.set_ylim(max(np.min(data1.U[:, :, 1]), np.min(data2.U[...,1])) * 1.1, max(np.max(data1.U[:, :, 1]), np.max(data2.U[...,1])) * 1.1)
     ax2.set_xlabel('Position x (m)')
     ax2.set_ylabel('Pression p (Pa)')
     ax2.set_title('Champ des pressions')

@@ -471,6 +471,19 @@
 </footer>
 
 <script>
+  // --- Lien depuis le rapport PDF : ?goto=id -> redirige vers #id ---
+  // (utilisé au lieu d'un vrai fragment #... dans le PDF, car hyperref n'aime
+  // pas le caractère # a l'interieur d'une legende de figure)
+  (function(){
+    var goto = new URLSearchParams(window.location.search).get('goto');
+    if (goto && document.getElementById(goto)) {
+      window.location.hash = goto;
+      if (history.replaceState) {
+        history.replaceState(null, '', location.pathname + '#' + goto);
+      }
+    }
+  })();
+
   // --- Onglets Résumé FR / EN ---
   document.querySelectorAll('.abstract-tabs button').forEach(function(btn){
     btn.addEventListener('click',function(){
